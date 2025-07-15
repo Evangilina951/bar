@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Промокоды и наборы</title>
+  <link href="styles.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="bg-gray-100">
+  <div id="nav"></div>
+  <div id="app" class="container mx-auto p-4">
+    <div id="promocodes" class="page">
+      <h1 class="text-2xl mb-4">Промокоды и наборы</h1>
+      <input id="promo-code" type="text" placeholder="Код" class="border p-2 mb-2">
+      <input id="promo-discount" type="number" placeholder="Скидка (%)" class="border p-2 mb-2">
+      <button onclick="addPromocode()" class="bg-blue-600 text-white p-2 rounded">Добавить</button>
+      <ul id="promocodes-list" class="mt-4"></ul>
+    </div>
+  </div>
+</body>
+</html>
