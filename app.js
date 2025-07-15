@@ -1,13 +1,15 @@
 // Инициализация Firebase
 const firebaseConfig = {
-  // Замените на ваш конфиг Firebase
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+  // Конфиг Firebase
+  apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
+  authDomain: "evabar-ac842.firebaseapp.com",
+  databaseURL: "https://evabar-ac842-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "evabar-ac842",
+  storageBucket: "evabar-ac842.firebasestorage.app",
+  messagingSenderId: "938549088383",
+  appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
+  };
+
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
