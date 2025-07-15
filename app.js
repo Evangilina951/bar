@@ -6,7 +6,7 @@ function initializeApp() {
     return;
   }
 
-  // Инициализация Firebase с вашим конфигом
+  // Инициализация Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
     authDomain: "evabar-ac842.firebaseapp.com",
@@ -50,6 +50,7 @@ function initializeApp() {
       window.location.href = 'index.html';
     } catch (error) {
       console.error('Ошибка выхода:', error);
+      alert('Ошибка выхода: ' + error.message);
     }
   }
 
@@ -459,6 +460,23 @@ function initializeApp() {
       }
     });
   });
+
+  // Экспортируем функции для глобального доступа
+  window.login = login;
+  window.logout = logout;
+  window.addToOrder = addToOrder;
+  window.placeOrder = placeOrder;
+  window.addPromocode = addPromocode;
+  window.addDish = addDish;
+  window.addCategory = addCategory;
+  window.toggleCategoryVisibility = toggleCategoryVisibility;
+  window.addIngredient = addIngredient;
+  window.placeIngredientOrder = placeIngredientOrder;
+  window.addEmployee = addEmployee;
+  window.addToDeliveryOrder = addToDeliveryOrder;
+  window.placeDeliveryOrder = placeDeliveryOrder;
+  window.updateDeliveryStatus = updateDeliveryStatus;
+  window.generateGeneralReport = generateGeneralReport;
 }
 
 // Проверяем, загружен ли Firebase SDK, перед запуском приложения
@@ -467,20 +485,3 @@ if (document.readyState === 'loading') {
 } else {
   initializeApp();
 }
-
-// Экспортируем функции для глобального доступа
-window.login = login;
-window.logout = logout;
-window.addToOrder = addToOrder;
-window.placeOrder = placeOrder;
-window.addPromocode = addPromocode;
-window.addDish = addDish;
-window.addCategory = addCategory;
-window.toggleCategoryVisibility = toggleCategoryVisibility;
-window.addIngredient = addIngredient;
-window.placeIngredientOrder = placeIngredientOrder;
-window.addEmployee = addEmployee;
-window.addToDeliveryOrder = addToDeliveryOrder;
-window.placeDeliveryOrder = placeDeliveryOrder;
-window.updateDeliveryStatus = updateDeliveryStatus;
-window.generateGeneralReport = generateGeneralReport;
