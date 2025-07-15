@@ -1,0 +1,37 @@
+/* Подключение Tailwind CSS */
+@import "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css";
+
+/* Дополнительные стили для кастомизации */
+body {
+  font-family: Arial, sans-serif;
+}
+
+.page {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+nav a, nav button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+nav a:hover, nav button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+input, select, button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
