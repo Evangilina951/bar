@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Инвентаризация</title>
+  <link href="styles.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="bg-gray-100">
+  <div id="nav"></div>
+  <div id="app" class="container mx-auto p-4">
+    <div id="inventory" class="page">
+      <h1 class="text-2xl mb-4">Инвентаризация</h1>
+      <input id="ingredient-name" type="text" placeholder="Название ингредиента" class="border p-2 mb-2">
+      <input id="ingredient-quantity" type="number" placeholder="Количество" class="border p-2 mb-2">
+      <input id="ingredient-price" type="number" placeholder="Цена за единицу" class="border p-2 mb-2">
+      <button onclick="addIngredient()" class="bg-blue-600 text-white p-2 rounded">Добавить ингредиент</button>
+      <ul id="inventory-list" class="mt-4"></ul>
+    </div>
+  </div>
+</body>
+</html>
