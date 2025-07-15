@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Заказ ингредиентов</title>
+  <link href="styles.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="bg-gray-100">
+  <div id="nav"></div>
+  <div id="app" class="container mx-auto p-4">
+    <div id="order-ingredients" class="page">
+      <h1 class="text-2xl mb-4">Заказ ингредиентов</h1>
+      <ul id="order-ingredients-list" class="mt-4"></ul>
+      <button onclick="placeIngredientOrder()" class="bg-green-600 text-white p-2 rounded mt-2">Заказать</button>
+    </div>
+  </div>
+</body>
+</html>
