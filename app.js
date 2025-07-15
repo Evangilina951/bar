@@ -35,11 +35,16 @@ function initializeApp() {
   async function login() {
     const email = document.getElementById('email')?.value;
     const password = document.getElementById('password')?.value;
+    if (!email || !password) {
+      alert('Ошибка входа: Введите email и пароль.');
+      return;
+    }
     try {
       await auth.signInWithEmailAndPassword(email, password);
       window.location.href = 'menu.html';
     } catch (error) {
-      alert('Ошибка входа: ' + error.message);
+      console.error('Ошибка входа:', error);
+      alert('Ошибка входа: Неверный email или пароль. Пожалуйста, проверьте данные или сбросьте пароль.');
     }
   }
 
@@ -454,7 +459,8 @@ function initializeApp() {
       } else {
         document.getElementById('nav-login')?.classList.remove('hidden');
         document.querySelectorAll('#nav a:not(#nav-login), #logout').forEach(el => el.classList.add('hidden'));
-        if (window.location.pathname !== '/index.html') {
+        // Перенаправляем только если не на index.html или /bar/index.html
+        if (window.location.pathname !== '/index.html' && window.location.pathname !== '/bar/index.html') {
           window.location.href = 'index.html';
         }
       }
