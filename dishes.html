@@ -1,3 +1,6 @@
+`:
+
+<xaiArtifact artifact_id="45553ad3-2205-4f36-8578-b2e4b083e3cb" artifact_version_id="5808f1d9-813c-4588-9619-e260aca90327" title="dishes.html" contentType="text/html">
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -20,7 +23,12 @@
       <select id="dish-category" class="border p-2 mb-2"></select>
       <button onclick="addDish()" class="bg-blue-600 text-white p-2 rounded">Добавить блюдо</button>
       <input id="category-name" type="text" placeholder="Новая категория" class="border p-2 mb-2 mt-4">
+      <input id="category-visible" type="checkbox" checked class="mr-2">
+      <label for="category-visible">Отображать в меню</label>
       <button onclick="addCategory()" class="bg-blue-600 text-white p-2 rounded">Добавить категорию</button>
+      <h2 class="text-xl mt-4">Список категорий</h2>
+      <ul id="categories-list" class="mt-4"></ul>
+      <h2 class="text-xl mt-4">Список блюд</h2>
       <ul id="dishes-list" class="mt-4"></ul>
     </div>
   </div>
