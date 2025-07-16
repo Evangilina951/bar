@@ -210,6 +210,12 @@ function initializeApp() {
     }
 
     try {
+      const category = await db.collection('categories').doc(category_id).get();
+      if (!category.exists) {
+        alert('Выбранная категория не существует.');
+        return;
+      }
+
       const { price_current_dish, min_dish } = await calculateDishMetrics(ingredients);
       if (price_current_dish === 0 && min_dish === 0) {
         alert('Ошибка: Не удалось рассчитать себестоимость. Проверьте, что все ингредиенты существуют.');
@@ -266,6 +272,12 @@ function initializeApp() {
     }
 
     try {
+      const category = await db.collection('categories').doc(category_id).get();
+      if (!category.exists) {
+        alert('Выбранная категория не существует.');
+        return;
+      }
+
       const { price_current_dish, min_dish } = await calculateDishMetrics(ingredients);
       if (price_current_dish === 0 && min_dish === 0) {
         alert('Ошибка: Не удалось рассчитать себестоимость. Проверьте, что все ингредиенты существуют.');
@@ -310,6 +322,10 @@ function initializeApp() {
         return;
       }
       const dishData = dish.data();
+
+      // Загружаем категории перед заполнением формы
+      await loadCategories();
+
       document.getElementById('dish-name').value = dishData.name_dish;
       document.getElementById('dish-description').value = dishData.description_dish;
       document.getElementById('dish-price').value = dishData.price_dish;
@@ -358,12 +374,18 @@ function initializeApp() {
     const name = document.getElementById('category-name')?.value;
     const isVisible = document.getElementById('category-visible')?.checked;
     const number = parseInt(document.getElementById('category-number')?.value) || 0;
+    if (!name) {
+      alert('Пожалуйста, введите название категории.');
+      return;
+    }
     try {
       await db.collection('categories').add({ name, isVisible, number });
       loadCategories();
       loadCategoryList();
+      alert('Категория успешно добавлена!');
     } catch (error) {
       console.error('Ошибка добавления категории:', error);
+      alert('Ошибка при добавлении категории: ' + error.message);
     }
   }
 
@@ -387,6 +409,10 @@ function initializeApp() {
       const categories = await db.collection('categories').orderBy('number', 'asc').get();
       const list = document.getElementById('categories-list');
       list.innerHTML = '';
+      if (categories.empty) {
+        list.innerHTML = '<li>Категории отсутствуют</li>';
+        return;
+      }
       categories.forEach(cat => {
         list.innerHTML += `
           <li>
@@ -398,6 +424,7 @@ function initializeApp() {
       });
     } catch (error) {
       console.error('Ошибка загрузки списка категорий:', error);
+      alert('Ошибка при загрузке категорий: ' + error.message);
     }
   }
 
@@ -405,8 +432,10 @@ function initializeApp() {
     try {
       await db.collection('categories').doc(categoryId).update({ isVisible });
       loadCategoryList();
+      loadDishes();
     } catch (error) {
       console.error('Ошибка изменения видимости категории:', error);
+      alert('Ошибка при изменении видимости категории: ' + error.message);
     }
   }
 
@@ -421,6 +450,10 @@ function initializeApp() {
       });
       const list = document.getElementById('dishes-list');
       list.innerHTML = '';
+      if (dishes.empty) {
+        list.innerHTML = '<li>Блюда отсутствуют</li>';
+        return;
+      }
       for (const dish of dishes.docs) {
         const dishData = dish.data();
         const ingredients = dishData.ingredients || [];
@@ -450,6 +483,7 @@ function initializeApp() {
       }
     } catch (error) {
       console.error('Ошибка загрузки блюд:', error);
+      alert('Ошибка при загрузке блюд: ' + error.message);
     }
   }
 
@@ -460,9 +494,13 @@ function initializeApp() {
       const ingredients = await db.collection('ingredients').get();
       selects.forEach(select => {
         select.innerHTML = '<option value="">Выберите ингредиент</option>';
-        ingredients.forEach(ing => {
-          select.innerHTML += `<option value="${ing.id}">${ing.data().name_product}</option>`;
-        });
+        if (ingredients.empty) {
+          select.innerHTML += '<option value="" disabled>Ингредиенты отсутствуют</option>';
+        } else {
+          ingredients.forEach(ing => {
+            select.innerHTML += `<option value="${ing.id}">${ing.data().name_product}</option>`;
+          });
+        }
       });
     } catch (error) {
       console.error('Ошибка загрузки ингредиентов:', error);
@@ -488,6 +526,10 @@ function initializeApp() {
     const current_price_product = parseFloat(document.getElementById('ingredient-price')?.value);
     const supplier_product = document.getElementById('ingredient-supplier')?.value || '';
     const weight_product = parseInt(document.getElementById('ingredient-weight')?.value);
+    if (!name_product || !stock_quantity_product || !current_price_product || !weight_product) {
+      alert('Пожалуйста, заполните все обязательные поля для ингредиента.');
+      return;
+    }
     try {
       const ingredientRef = await db.collection('ingredients').add({
         name_product,
@@ -499,6 +541,7 @@ function initializeApp() {
       await db.collection('ingredients').doc(ingredientRef.id).update({ product_id: ingredientRef.id });
       loadInventory();
       loadIngredientsSelect();
+      alert('Ингредиент успешно добавлен!');
     } catch (error) {
       console.error('Ошибка добавления ингредиента:', error);
       alert('Ошибка при добавлении ингредиента: ' + error.message);
@@ -511,6 +554,10 @@ function initializeApp() {
       const ingredients = await db.collection('ingredients').get();
       const list = document.getElementById('inventory-list');
       list.innerHTML = '';
+      if (ingredients.empty) {
+        list.innerHTML = '<li>Ингредиенты отсутствуют</li>';
+        return;
+      }
       ingredients.forEach(ing => {
         const ingData = ing.data();
         list.innerHTML += `
@@ -520,6 +567,7 @@ function initializeApp() {
       });
     } catch (error) {
       console.error('Ошибка загрузки инвентаря:', error);
+      alert('Ошибка при загрузке инвентаря: ' + error.message);
     }
   }
 
@@ -529,6 +577,10 @@ function initializeApp() {
       const ingredients = await db.collection('ingredients').get();
       const list = document.getElementById('order-ingredients-list');
       list.innerHTML = '';
+      if (ingredients.empty) {
+        list.innerHTML = '<li>Ингредиенты отсутствуют</li>';
+        return;
+      }
       ingredients.forEach(ing => {
         if (ing.data().stock_quantity_product < 10) {
           list.innerHTML += `<li>${ing.data().name_product} - Нужно: ${10 - ing.data().stock_quantity_product}</li>`;
@@ -540,7 +592,30 @@ function initializeApp() {
   }
 
   async function placeIngredientOrder() {
-    alert('Заказ ингредиентов оформлен!');
+    try {
+      const ingredients = await db.collection('ingredients').get();
+      const orderItems = [];
+      ingredients.forEach(ing => {
+        if (ing.data().stock_quantity_product < 10) {
+          orderItems.push({
+            name_product: ing.data().name_product,
+            quantity_needed: 10 - ing.data().stock_quantity_product
+          });
+        }
+      });
+      if (orderItems.length === 0) {
+        alert('Нет ингредиентов, которые нужно заказать.');
+        return;
+      }
+      await db.collection('ingredient-orders').add({
+        items: orderItems,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert('Заказ ингредиентов оформлен!');
+    } catch (error) {
+      console.error('Ошибка оформления заказа ингредиентов:', error);
+      alert('Ошибка при оформлении заказа ингредиентов: ' + error.message);
+    }
   }
 
   async function loadPersonalReport() {
@@ -549,6 +624,10 @@ function initializeApp() {
       const orders = await db.collection('orders').where('user', '==', auth.currentUser.uid).get();
       const list = document.getElementById('personal-report-list');
       list.innerHTML = '';
+      if (orders.empty) {
+        list.innerHTML = '<li>Заказы отсутствуют</li>';
+        return;
+      }
       orders.forEach(order => {
         list.innerHTML += `<li>Заказ: ${order.data().items.map(item => item.name).join(', ')}</li>`;
       });
@@ -565,6 +644,10 @@ function initializeApp() {
       const orders = await db.collection('orders').where('timestamp', '>=', start).where('timestamp', '<=', end).get();
       const list = document.getElementById('general-report-list');
       list.innerHTML = '';
+      if (orders.empty) {
+        list.innerHTML = '<li>Заказы отсутствуют</li>';
+        return;
+      }
       orders.forEach(order => {
         list.innerHTML += `<li>Заказ: ${order.data().items.map(item => item.name).join(', ')}</li>`;
       });
@@ -576,11 +659,17 @@ function initializeApp() {
   async function addEmployee() {
     const name = document.getElementById('employee-name')?.value;
     const phone = document.getElementById('employee-phone')?.value;
+    if (!name || !phone) {
+      alert('Пожалуйста, заполните все поля для сотрудника.');
+      return;
+    }
     try {
       await db.collection('employees').add({ name, phone });
       loadEmployees();
+      alert('Сотрудник успешно добавлен!');
     } catch (error) {
       console.error('Ошибка добавления сотрудника:', error);
+      alert('Ошибка при добавлении сотрудника: ' + error.message);
     }
   }
 
@@ -590,6 +679,10 @@ function initializeApp() {
       const employees = await db.collection('employees').get();
       const list = document.getElementById('employees-list');
       list.innerHTML = '';
+      if (employees.empty) {
+        list.innerHTML = '<li>Сотрудники отсутствуют</li>';
+        return;
+      }
       employees.forEach(emp => {
         list.innerHTML += `<li>${emp.data().name} - ${emp.data().phone}</li>`;
       });
@@ -610,6 +703,10 @@ function initializeApp() {
         .get();
       const deliveryMenu = document.getElementById('delivery-menu');
       deliveryMenu.innerHTML = '';
+      if (categories.empty) {
+        deliveryMenu.innerHTML = '<p>Категории отсутствуют</p>';
+        return;
+      }
       categories.forEach(cat => {
         const catDiv = document.createElement('div');
         catDiv.innerHTML = `<h2 class="text-xl">${cat.data().name}</h2>`;
@@ -646,6 +743,10 @@ function initializeApp() {
     const orderList = document.getElementById('delivery-order-items');
     if (!orderList) return;
     orderList.innerHTML = '';
+    if (deliveryOrderItems.length === 0) {
+      orderList.innerHTML = '<li>Заказ пуст</li>';
+      return;
+    }
     deliveryOrderItems.forEach(item => {
       orderList.innerHTML += `<li>${item.name} - ${item.price} $</li>`;
     });
@@ -654,6 +755,10 @@ function initializeApp() {
   async function placeDeliveryOrder() {
     const address = document.getElementById('delivery-address')?.value;
     const comment = document.getElementById('delivery-comment')?.value;
+    if (!address) {
+      alert('Пожалуйста, укажите адрес доставки.');
+      return;
+    }
     try {
       await db.collection('delivery-orders').add({
         items: deliveryOrderItems,
@@ -678,6 +783,10 @@ function initializeApp() {
       const orders = await db.collection('delivery-orders').get();
       const list = document.getElementById('delivery-orders-list');
       list.innerHTML = '';
+      if (orders.empty) {
+        list.innerHTML = '<li>Заказы доставки отсутствуют</li>';
+        return;
+      }
       orders.forEach(order => {
         list.innerHTML += `
           <li>
@@ -699,6 +808,7 @@ function initializeApp() {
       loadDeliveryOrders();
     } catch (error) {
       console.error('Ошибка обновления статуса доставки:', error);
+      alert('Ошибка при обновлении статуса доставки: ' + error.message);
     }
   }
 
