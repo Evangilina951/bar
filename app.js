@@ -1,9 +1,11 @@
+// Инициализация приложения и настройка Firebase
 function initializeApp() {
   if (typeof firebase === 'undefined') {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
     return;
   }
 
+  // Конфигурация Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
     authDomain: "evabar-ac842.firebaseapp.com",
@@ -17,8 +19,10 @@ function initializeApp() {
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const SALARY_RATE = 0.1;
+  // Константа для расчета зарплаты сотрудника
+  const SALARY_RATE = 0.4;
 
+  // Загружает навигационное меню из nav.html
   async function loadNav() {
     try {
       const response = await fetch('nav.html');
@@ -29,6 +33,7 @@ function initializeApp() {
     }
   }
 
+  // Выполняет вход пользователя по email и паролю
   async function login() {
     const email = document.getElementById('email')?.value;
     const password = document.getElementById('password')?.value;
@@ -45,6 +50,7 @@ function initializeApp() {
     }
   }
 
+  // Выполняет выход пользователя из системы
   async function logout() {
     try {
       await auth.signOut();
@@ -55,6 +61,7 @@ function initializeApp() {
     }
   }
 
+  // Рассчитывает себестоимость блюда на основе ингредиентов
   async function calculateDishMetrics(ingredients) {
     let price_current_dish = 0;
 
@@ -80,6 +87,7 @@ function initializeApp() {
     return { price_current_dish };
   }
 
+  // Загружает меню с категориями и блюдами
   async function loadMenu() {
     if (!document.getElementById('categories')) return;
     try {
@@ -122,12 +130,16 @@ function initializeApp() {
     }
   }
 
+  // Хранит элементы заказа
   let orderItems = [];
+
+  // Добавляет блюдо в заказ
   function addToOrder(dishId, name, price) {
     orderItems.push({ dishId, name, price });
     renderOrder();
   }
 
+  // Отображает список заказанных блюд
   function renderOrder() {
     const orderList = document.getElementById('order-items');
     if (!orderList) return;
@@ -141,6 +153,7 @@ function initializeApp() {
     });
   }
 
+  // Оформляет заказ и обновляет запасы ингредиентов
   async function placeOrder() {
     const comment = document.getElementById('order-comment')?.value;
     try {
@@ -164,13 +177,14 @@ function initializeApp() {
       orderItems = [];
       renderOrder();
       alert('Заказ оформлен!');
-      loadOrderIngredients(); // Обновляем список заказа ингредиентов
+      loadOrderIngredients();
     } catch (error) {
       console.error('Ошибка оформления заказа:', error);
       alert('Ошибка при оформлении заказа: ' + error.message);
     }
   }
 
+  // Добавляет промокод в базу данных
   async function addPromocode() {
     const code = document.getElementById('promo-code')?.value;
     const discount = parseInt(document.getElementById('promo-discount')?.value);
@@ -188,6 +202,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список промокодов
   async function loadPromocodes() {
     if (!document.getElementById('promocodes-list')) return;
     try {
@@ -206,6 +221,7 @@ function initializeApp() {
     }
   }
 
+  // Добавляет новое блюдо в базу данных
   async function addDish() {
     const name_dish = document.getElementById('dish-name')?.value;
     const description_dish = document.getElementById('dish-description')?.value;
@@ -262,7 +278,7 @@ function initializeApp() {
       document.getElementById('dish-form').reset();
       document.querySelectorAll('.ingredient-row:not(:first-child)').forEach(row => row.remove());
       loadIngredientsSelect();
-      loadOrderIngredients(); // Обновляем заказ ингредиентов
+      loadOrderIngredients();
       alert('Блюдо успешно добавлено!');
     } catch (error) {
       console.error('Ошибка добавления блюда:', error);
@@ -270,6 +286,7 @@ function initializeApp() {
     }
   }
 
+  // Обновляет существующее блюдо
   async function editDish(dishId) {
     const name_dish = document.getElementById('dish-name')?.value;
     const description_dish = document.getElementById('dish-description')?.value;
@@ -326,14 +343,15 @@ function initializeApp() {
       loadIngredientsSelect();
       document.getElementById('dish-form').dataset.dishId = '';
       document.getElementById('dish-form-button').textContent = 'Добавить блюдо';
-      loadOrderIngredients(); // Обновляем заказ ингредиентов
+      loadOrderIngredients();
       alert('Блюдо успешно обновлено!');
     } catch (error) {
       console.error('Ошибка обновления блюда:', error);
-      alert('Ошибка при обновлении блюда: ' + error.message);
+      alert('Ошибка при обновления блюда: ' + error.message);
     }
   }
 
+  // Загружает данные блюда для редактирования
   async function loadDishForEdit(dishId) {
     try {
       const dish = await db.collection('dishes').doc(dishId).get();
@@ -390,6 +408,7 @@ function initializeApp() {
     }
   }
 
+  // Добавляет новую категорию
   async function addCategory() {
     const name = document.getElementById('category-name')?.value;
     const isVisible = document.getElementById('category-visible')?.checked;
@@ -409,6 +428,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список категорий в выпадающий список
   async function loadCategories() {
     if (!document.getElementById('dish-category')) return;
     try {
@@ -427,6 +447,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список категорий для отображения
   async function loadCategoryList() {
     if (!document.getElementById('categories-list')) return;
     try {
@@ -452,6 +473,7 @@ function initializeApp() {
     }
   }
 
+  // Переключает видимость категории
   async function toggleCategoryVisibility(categoryId, isVisible) {
     try {
       await db.collection('categories').doc(categoryId).update({ isVisible });
@@ -463,6 +485,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список блюд
   async function loadDishes() {
     if (!document.getElementById('dishes-list')) return;
     try {
@@ -511,6 +534,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список ингредиентов в выпадающие списки
   async function loadIngredientsSelect() {
     const selects = document.querySelectorAll('.dish-ingredient:not([data-loaded])');
     if (!selects.length) return;
@@ -526,14 +550,15 @@ function initializeApp() {
             select.innerHTML += `<option value="${ing.id}">${ing.data().name_product}</option>`;
           });
         }
-        select.value = currentValue; // Восстанавливаем значение
-        select.dataset.loaded = 'true'; // Помечаем как загруженный
+        select.value = currentValue;
+        select.dataset.loaded = 'true';
       });
     } catch (error) {
       console.error('Ошибка загрузки ингредиентов:', error);
     }
   }
 
+  // Добавляет новую строку для выбора ингредиента в форме блюда
   function addIngredientRow() {
     const container = document.getElementById('ingredients-container');
     const row = document.createElement('div');
@@ -545,9 +570,10 @@ function initializeApp() {
     `;
     container.appendChild(row);
     const newSelect = row.querySelector('.dish-ingredient');
-    loadIngredientsSelectForRow(newSelect); // Загружаем только для новой строки
+    loadIngredientsSelectForRow(newSelect);
   }
 
+  // Загружает список ингредиентов для одной строки в форме блюда
   async function loadIngredientsSelectForRow(select) {
     try {
       const ingredients = await db.collection('ingredients').get();
@@ -565,6 +591,7 @@ function initializeApp() {
     }
   }
 
+  // Добавляет новый ингредиент в базу данных
   async function addIngredient() {
     const name_product = document.getElementById('ingredient-name')?.value;
     const stock_quantity_product = parseInt(document.getElementById('ingredient-quantity')?.value);
@@ -595,6 +622,7 @@ function initializeApp() {
     }
   }
 
+  // Обновляет существующий ингредиент
   async function editIngredient(ingredientId) {
     const name_product = document.getElementById('ingredient-name')?.value;
     const stock_quantity_product = parseInt(document.getElementById('ingredient-quantity')?.value);
@@ -622,10 +650,11 @@ function initializeApp() {
       alert('Ингредиент успешно обновлен!');
     } catch (error) {
       console.error('Ошибка обновления ингредиента:', error);
-      alert('Ошибка при обновлении ингредиента: ' + error.message);
+      alert('Ошибка при обновления ингредиента: ' + error.message);
     }
   }
 
+  // Загружает данные ингредиента для редактирования
   async function loadIngredientForEdit(ingredientId) {
     try {
       const ingredient = await db.collection('ingredients').doc(ingredientId).get();
@@ -647,6 +676,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список ингредиентов для инвентаризации
   async function loadInventory() {
     if (!document.getElementById('inventory-list')) return;
     try {
@@ -671,6 +701,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список ингредиентов, необходимых для заказа
   async function loadOrderIngredients() {
     if (!document.getElementById('order-ingredients-list')) return;
     try {
@@ -712,12 +743,13 @@ function initializeApp() {
       if (!hasItems) {
         list.innerHTML = '<li>Ингредиенты для заказа отсутствуют</li>';
       }
-    } catch (error) {
+    } coup (error) {
       console.error('Ошибка загрузки заказа ингредиентов:', error);
       alert('Ошибка при загрузке заказа ингредиентов: ' + error.message);
     }
   }
 
+  // Оформляет заказ недостающих ингредиентов
   async function placeIngredientOrder() {
     try {
       const dishes = await db.collection('dishes').get();
@@ -773,6 +805,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает личную отчетность пользователя
   async function loadPersonalReport() {
     if (!document.getElementById('personal-report-list')) return;
     try {
@@ -791,6 +824,7 @@ function initializeApp() {
     }
   }
 
+  // Генерирует общий отчет по заказам за период
   async function generateGeneralReport() {
     if (!document.getElementById('general-report-list')) return;
     try {
@@ -811,6 +845,7 @@ function initializeApp() {
     }
   }
 
+  // Добавляет нового сотрудника
   async function addEmployee() {
     const name = document.getElementById('employee-name')?.value;
     const phone = document.getElementById('employee-phone')?.value;
@@ -828,6 +863,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает список сотрудников
   async function loadEmployees() {
     if (!document.getElementById('employees-list')) return;
     try {
@@ -846,6 +882,7 @@ function initializeApp() {
     }
   }
 
+  // Загружает меню для доставки
   async function loadDeliveryMenu() {
     if (!document.getElementById('delivery-menu')) return;
     try {
@@ -888,12 +925,16 @@ function initializeApp() {
     }
   }
 
+  // Хранит элементы заказа доставки
   let deliveryOrderItems = [];
+
+  // Добавляет блюдо в заказ доставки
   function addToDeliveryOrder(dishId, name, price) {
     deliveryOrderItems.push({ dishId, name, price });
     renderDeliveryOrder();
   }
 
+  // Отображает список заказанных блюд для доставки
   function renderDeliveryOrder() {
     const orderList = document.getElementById('delivery-order-items');
     if (!orderList) return;
@@ -907,6 +948,7 @@ function initializeApp() {
     });
   }
 
+  // Оформляет заказ доставки
   async function placeDeliveryOrder() {
     const address = document.getElementById('delivery-address')?.value;
     const comment = document.getElementById('delivery-comment')?.value;
@@ -926,13 +968,14 @@ function initializeApp() {
       deliveryOrderItems = [];
       renderDeliveryOrder();
       alert('Заказ доставки оформлен!');
-      loadOrderIngredients(); // Обновляем заказ ингредиентов
+      loadOrderIngredients();
     } catch (error) {
       console.error('Ошибка оформления заказа доставки:', error);
       alert('Ошибка при оформлении заказа доставки: ' + error.message);
     }
   }
 
+  // Загружает список заказов доставки
   async function loadDeliveryOrders() {
     if (!document.getElementById('delivery-orders-list')) return;
     try {
@@ -958,6 +1001,7 @@ function initializeApp() {
     }
   }
 
+  // Обновляет статус заказа доставки
   async function updateDeliveryStatus(orderId, status) {
     try {
       await db.collection('delivery-orders').doc(orderId).update({ status });
@@ -968,6 +1012,7 @@ function initializeApp() {
     }
   }
 
+  // Отслеживает изменения состояния авторизации и загружает данные
   auth.onAuthStateChanged(user => {
     loadNav().then(() => {
       if (user) {
@@ -995,6 +1040,7 @@ function initializeApp() {
     });
   });
 
+  // Экспорт функций в глобальную область видимости
   window.login = login;
   window.logout = logout;
   window.addToOrder = addToOrder;
@@ -1018,6 +1064,7 @@ function initializeApp() {
   window.loadIngredientsSelectForRow = loadIngredientsSelectForRow;
 }
 
+// Запускает приложение после загрузки DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
