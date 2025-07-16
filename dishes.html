@@ -15,24 +15,26 @@
   <div id="app" class="container mx-auto p-4">
     <div id="dishes" class="page">
       <h1 class="text-2xl mb-4">Блюда и категории</h1>
-      <h2 class="text-xl mt-4">Добавить блюдо</h2>
-      <input id="dish-name" type="text" placeholder="Название блюда" class="border p-2 mb-2 w-full">
-      <input id="dish-description" type="text" placeholder="Описание/состав" class="border p-2 mb-2 w-full">
-      <input id="dish-price" type="number" placeholder="Цена с наценкой" class="border p-2 mb-2 w-full">
-      <select id="dish-category" class="border p-2 mb-2 w-full"></select>
-      <input id="dish-image" type="text" placeholder="URL изображения" class="border p-2 mb-2 w-full">
-      <input id="dish-active" type="checkbox" checked class="mr-2">
-      <label for="dish-active">Доступно для заказа</label>
-      <input id="dish-weight" type="number" placeholder="Вес (г)" class="border p-2 mb-2 w-full">
-      <h3 class="text-lg mt-4">Ингредиенты</h3>
-      <div id="ingredients-container">
-        <div class="ingredient-row mb-2 flex">
-          <select class="dish-ingredient border p-2 mr-2 w-2/3" onchange="updateIngredients()"></select>
-          <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" onchange="updateIngredients()">
+      <h2 class="text-xl mt-4">Добавить/Редактировать блюдо</h2>
+      <form id="dish-form" class="mb-4">
+        <input id="dish-name" type="text" placeholder="Название блюда" class="border p-2 mb-2 w-full">
+        <input id="dish-description" type="text" placeholder="Описание/состав" class="border p-2 mb-2 w-full">
+        <input id="dish-price" type="number" placeholder="Цена с наценкой" class="border p-2 mb-2 w-full">
+        <select id="dish-category" class="border p-2 mb-2 w-full"></select>
+        <input id="dish-image" type="text" placeholder="URL изображения" class="border p-2 mb-2 w-full">
+        <input id="dish-active" type="checkbox" checked class="mr-2">
+        <label for="dish-active">Доступно для заказа</label>
+        <input id="dish-weight" type="number" placeholder="Вес (г)" class="border p-2 mb-2 w-full">
+        <h3 class="text-lg mt-4">Ингредиенты</h3>
+        <div id="ingredients-container">
+          <div class="ingredient-row mb-2 flex">
+            <select class="dish-ingredient border p-2 mr-2 w-2/3"></select>
+            <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество">
+          </div>
         </div>
-      </div>
-      <button onclick="addIngredientRow()" class="bg-gray-600 text-white p-2 rounded w-full mt-2">Добавить ингредиент</button>
-      <button onclick="addDish()" class="bg-blue-600 text-white p-2 rounded w-full mt-2">Добавить блюдо</button>
+        <button type="button" onclick="addIngredientRow()" class="bg-gray-600 text-white p-2 rounded w-full mt-2">Добавить ингредиент</button>
+        <button id="dish-form-button" type="button" onclick="document.getElementById('dish-form').dataset.dishId ? editDish(document.getElementById('dish-form').dataset.dishId) : addDish()" class="bg-blue-600 text-white p-2 rounded w-full mt-2">Добавить блюдо</button>
+      </form>
 
       <h2 class="text-xl mt-4">Добавить категорию</h2>
       <input id="category-name" type="text" placeholder="Новая категория" class="border p-2 mb-2 w-full">
