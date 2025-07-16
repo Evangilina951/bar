@@ -716,8 +716,8 @@ function initializeApp() {
         row.innerHTML = `
           <td class="border border-gray-300 p-2">${ingData.name_product || 'Без названия'}</td>
           <td class="border border-gray-300 p-2" onclick="editQuantity('${ing.id}', ${ingData.stock_quantity_product || 0})">
-            <span class="quantity-display hidden">${ingData.stock_quantity_product || 0}</span>
-            <input type="number" class="quantity-input border p-2 w-full" id="quantity-${ing.id}" value="${ingData.stock_quantity_product || 0}" onblur="saveQuantity('${ing.id}')" onkeypress="if(event.key === 'Enter') saveQuantity('${ing.id}')">
+            <span class="quantity-display">${ingData.stock_quantity_product || 0}</span>
+            <input type="number" class="quantity-input border p-2 w-full hidden" id="quantity-${ing.id}" value="${ingData.stock_quantity_product || 0}" onblur="saveQuantity('${ing.id}')" onkeypress="if(event.key === 'Enter') saveQuantity('${ing.id}')">
           </td>
           <td class="border border-gray-300 p-2">${ingData.current_price_product || 0}</td>
           <td class="border border-gray-300 p-2">${ingData.weight_product || 0}</td>
@@ -1038,7 +1038,11 @@ function initializeApp() {
   }
 
   function saveQuantity(ingredientId) {
-    const td = document.querySelector(`td[onclick="editQuantity('${ingredientId}', ${document.getElementById(`quantity-${ingredientId}`).value})"]`);
+    const td = document.querySelector(`td[onclick*="${ingredientId}"]`); // Поиск по части атрибута onclick с ingredientId
+    if (!td) {
+      console.error('Не найден элемент td для ingredientId:', ingredientId);
+      return;
+    }
     const input = td.querySelector('.quantity-input');
     const span = td.querySelector('.quantity-display');
     if (input && span) {
