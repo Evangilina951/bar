@@ -636,10 +636,23 @@ function initializeApp() {
       document.getElementById('ingredient-weight').value = ingData.weight_product;
       document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
       document.getElementById('ingredient-form-button').textContent = 'Сохранить изменения';
-      document.getElementById('ingredient-form-button').onclick = () => editIngredient(ingredientId);
+      document.getElementById('ingredient-form-button').onclick = () => handleIngredientForm(new Event('submit'));
     } catch (error) {
       console.error('Ошибка загрузки ингредиента для редактирования:', error);
       alert('Ошибка при загрузке ингредиента: ' + error.message);
+    }
+  }
+
+  async function deleteIngredient(ingredientId) {
+    try {
+      await db.collection('ingredients').doc(ingredientId).delete();
+      loadInventory();
+      loadIngredientsSelect();
+      loadOrderIngredients();
+      alert('Ингредиент успешно удален!');
+    } catch (error) {
+      console.error('Ошибка удаления ингредиента:', error);
+      alert('Ошибка при удалении ингредиента: ' + error.message);
     }
   }
 
@@ -695,18 +708,25 @@ function initializeApp() {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td class="border border-gray-300 p-2">${ingData.name_product || 'Без названия'}</td>
-          <td class="border border-gray-300 p-2">
-            <span class="quantity-display" onclick="editQuantity('${ing.id}')">${ingData.stock_quantity_product || 0}</span>
-            <input type="number" class="quantity-input hidden border p-2 w-full" id="quantity-${ing.id}" onblur="saveQuantity('${ing.id}')" onkeypress="if(event.key === 'Enter') saveQuantity('${ing.id}')">
+          <td class="border border-gray-300 p-2" onclick="editQuantity('${ing.id}', ${ingData.stock_quantity_product || 0})">
+            <span class="quantity-display hidden">${ingData.stock_quantity_product || 0}</span>
+            <input type="number" class="quantity-input border p-2 w-full" id="quantity-${ing.id}" value="${ingData.stock_quantity_product || 0}" onblur="saveQuantity('${ing.id}')" onkeypress="if(event.key === 'Enter') saveQuantity('${ing.id}')">
           </td>
           <td class="border border-gray-300 p-2">${ingData.current_price_product || 0}</td>
           <td class="border border-gray-300 p-2">${ingData.weight_product || 0}</td>
           <td class="border border-gray-300 p-2">${ingData.supplier_product || 'Нет'}</td>
           <td class="border border-gray-300 p-2 text-center">
-            <button onclick="loadIngredientForEdit('${ing.id}')" class="text-blue-600 hover:text-blue-800">
-              <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <button onclick="loadIngredientForEdit('${ing.id}')" class="bg-yellow-600 text-white px-3 py-1 rounded flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
+              Редактировать
+            </button>
+            <button onclick="deleteIngredient('${ing.id}')" class="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1 ml-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              Удалить
             </button>
           </td>
         `;
@@ -998,19 +1018,22 @@ function initializeApp() {
     }
   }
 
-  function editQuantity(ingredientId) {
-    const span = document.querySelector(`.quantity-display[onclick="editQuantity('${ingredientId}')"]`);
-    const input = document.getElementById(`quantity-${ingredientId}`);
-    if (span && input) {
+  function editQuantity(ingredientId, currentValue) {
+    const td = document.querySelector(`td[onclick="editQuantity('${ingredientId}', ${currentValue})"]`);
+    const span = td.querySelector('.quantity-display');
+    const input = td.querySelector('.quantity-input');
+    if (td && span && input) {
       span.classList.add('hidden');
       input.classList.remove('hidden');
+      input.value = currentValue; // Устанавливаем текущее значение
       input.focus();
     }
   }
 
   function saveQuantity(ingredientId) {
-    const input = document.getElementById(`quantity-${ingredientId}`);
-    const span = document.querySelector(`.quantity-display[onclick="editQuantity('${ingredientId}')"]`);
+    const td = document.querySelector(`td[onclick="editQuantity('${ingredientId}', ${document.getElementById(`quantity-${ingredientId}`).value})"]`);
+    const input = td.querySelector('.quantity-input');
+    const span = td.querySelector('.quantity-display');
     if (input && span) {
       const newQuantity = input.value;
       input.classList.add('hidden');
@@ -1033,6 +1056,7 @@ function initializeApp() {
   window.addIngredient = addIngredient;
   window.editIngredient = editIngredient;
   window.loadIngredientForEdit = loadIngredientForEdit;
+  window.deleteIngredient = deleteIngredient;
   window.addEmployee = addEmployee;
   window.addToDeliveryOrder = addToDeliveryOrder;
   window.placeDeliveryOrder = placeDeliveryOrder;
