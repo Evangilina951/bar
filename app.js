@@ -743,7 +743,7 @@ function initializeApp() {
       if (!hasItems) {
         list.innerHTML = '<li>Ингредиенты для заказа отсутствуют</li>';
       }
-    } coup (error) {
+    } catch (error) {
       console.error('Ошибка загрузки заказа ингредиентов:', error);
       alert('Ошибка при загрузке заказа ингредиентов: ' + error.message);
     }
