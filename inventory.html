@@ -4,36 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Инвентаризация</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script defer src="app.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-    .hidden { display: none; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
     .quantity-display { cursor: pointer; }
     .quantity-input { width: 100%; padding: 4px; }
     button svg { vertical-align: middle; }
   </style>
 </head>
-<body>
+<body class="font-sans p-4">
   <div id="nav"></div>
-  <h1>Инвентаризация</h1>
-  <h2>Добавить ингредиент</h2>
-  <form id="ingredient-form">
-    <input type="text" id="ingredient-name" placeholder="Название" required>
-    <input type="number" id="ingredient-quantity" placeholder="Количество" required>
-    <input type="number" id="ingredient-price" placeholder="Цена" step="0.01" required>
-    <input type="text" id="ingredient-supplier" placeholder="Поставщик">
-    <input type="number" id="ingredient-weight" placeholder="Вес (кг)" step="0.01" required>
-    <button type="submit" onclick="addIngredient(event)" id="ingredient-form-button">Добавить ингредиент</button>
+  <h1 class="text-2xl font-bold mb-4">Инвентаризация</h1>
+  <h2 class="text-xl font-semibold mb-2">Добавить ингредиент</h2>
+  <form id="ingredient-form" class="mb-4 space-y-2">
+    <input type="text" id="ingredient-name" placeholder="Название" class="border p-2 w-full" required>
+    <input type="number" id="ingredient-quantity" placeholder="Количество" class="border p-2 w-full" required>
+    <input type="number" id="ingredient-price" placeholder="Цена" step="0.01" class="border p-2 w-full" required>
+    <input type="text" id="ingredient-supplier" placeholder="Поставщик" class="border p-2 w-full">
+    <input type="number" id="ingredient-weight" placeholder="Вес (кг)" step="0.01" class="border p-2 w-full" required>
+    <button type="submit" onclick="handleIngredientForm(event)" id="ingredient-form-button" class="bg-blue-600 text-white p-2 rounded">Добавить ингредиент</button>
   </form>
-  <h2>Список ингредиентов</h2>
+  <h2 class="text-xl font-semibold mb-2">Список ингредиентов</h2>
   <div id="inventory-list"></div>
-  <h2>Ингредиенты для заказа</h2>
-  <ul id="order-ingredients-list"></ul>
+  <h2 class="text-xl font-semibold mb-2">Ингредиенты для заказа</h2>
+  <ul id="order-ingredients-list" class="list-disc pl-5"></ul>
 </body>
 </html>
