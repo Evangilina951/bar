@@ -4,6 +4,7 @@ function initializeApp() {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
     return;
   }
+  console.log('Firebase загружен успешно.');
 
   // Конфигурация Firebase
   const firebaseConfig = {
@@ -15,9 +16,16 @@ function initializeApp() {
     messagingSenderId: "938549088383",
     appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
   };
-  firebase.initializeApp(firebaseConfig);
+  try {
+    firebase.initializeApp(firebaseConfig);
+    console.log('Firebase инициализирован.');
+  } catch (error) {
+    console.error('Ошибка инициализации Firebase:', error);
+    return;
+  }
   const auth = firebase.auth();
   const db = firebase.firestore();
+  console.log('Firestore доступен:', !!db);
 
   // Константа для расчета зарплаты сотрудника
   const SALARY_RATE = 0.4;
@@ -592,7 +600,8 @@ function initializeApp() {
   }
 
   // Добавляет новый ингредиент в базу данных
-  async function addIngredient() {
+  async function addIngredient(event) {
+    event.preventDefault(); // Предотвращаем стандартное поведение формы
     const name_product = document.getElementById('ingredient-name')?.value;
     const stock_quantity_product = parseInt(document.getElementById('ingredient-quantity')?.value);
     const current_price_product = parseFloat(document.getElementById('ingredient-price')?.value);
@@ -698,7 +707,9 @@ function initializeApp() {
   async function loadInventory() {
     if (!document.getElementById('inventory-list')) return;
     try {
+      console.log('Загрузка инвентаря началась...');
       const ingredients = await db.collection('ingredients').get();
+      console.log('Получено ингредиентов:', ingredients.size);
       const list = document.getElementById('inventory-list');
       list.innerHTML = `
         <table class="min-w-full border-collapse border border-gray-300">
@@ -718,20 +729,22 @@ function initializeApp() {
       `;
       const tbody = list.querySelector('tbody');
       if (ingredients.empty) {
+        console.log('Ингредиенты отсутствуют в базе данных.');
         tbody.innerHTML = '<tr><td colspan="6" class="border border-gray-300 p-2 text-center">Ингредиенты отсутствуют</td></tr>';
         return;
       }
       ingredients.forEach(ing => {
         const ingData = ing.data();
+        console.log('Обработка ингредиента:', ingData.name_product);
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td class="border border-gray-300 p-2">${ingData.name_product}</td>
+          <td class="border border-gray-300 p-2">${ingData.name_product || 'Без названия'}</td>
           <td class="border border-gray-300 p-2">
-            <span class="quantity-display cursor-pointer" onclick="editQuantity(this, '${ing.id}', ${ingData.stock_quantity_product})">${ingData.stock_quantity_product}</span>
+            <span class="quantity-display cursor-pointer" onclick="editQuantity(this, '${ing.id}', ${ingData.stock_quantity_product || 0})">${ingData.stock_quantity_product || 0}</span>
             <input type="number" class="quantity-input hidden border p-1 w-full" onblur="saveQuantity(this, '${ing.id}')" onkeypress="if(event.key === 'Enter') saveQuantity(this, '${ing.id}')">
           </td>
-          <td class="border border-gray-300 p-2">${ingData.current_price_product}</td>
-          <td class="border border-gray-300 p-2">${ingData.weight_product}</td>
+          <td class="border border-gray-300 p-2">${ingData.current_price_product || 0}</td>
+          <td class="border border-gray-300 p-2">${ingData.weight_product || 0}</td>
           <td class="border border-gray-300 p-2">${ingData.supplier_product || 'Нет'}</td>
           <td class="border border-gray-300 p-2 text-center">
             <button onclick="loadIngredientForEdit('${ing.id}')" class="text-blue-600 hover:text-blue-800" title="Редактировать">
@@ -743,27 +756,6 @@ function initializeApp() {
         `;
         tbody.appendChild(row);
       });
-
-      // Функция для редактирования количества
-      window.editQuantity = function(span, ingredientId, currentQuantity) {
-        const td = span.parentElement;
-        const input = td.querySelector('.quantity-input');
-        span.classList.add('hidden');
-        input.classList.remove('hidden');
-        input.value = currentQuantity;
-        input.focus();
-      };
-
-      // Функция для сохранения количества
-      window.saveQuantity = function(input, ingredientId) {
-        const td = input.parentElement;
-        const span = td.querySelector('.quantity-display');
-        const newQuantity = input.value;
-        span.textContent = newQuantity;
-        span.classList.remove('hidden');
-        input.classList.add('hidden');
-        updateIngredientQuantity(ingredientId, newQuantity);
-      };
     } catch (error) {
       console.error('Ошибка загрузки инвентаря:', error);
       alert('Ошибка при загрузке инвентаря: ' + error.message);
