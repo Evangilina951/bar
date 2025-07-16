@@ -572,6 +572,13 @@ function initializeApp() {
       return;
     }
     try {
+      const ingredientsSnapshot = await db.collection('ingredients').get();
+      const existingIngredient = ingredientsSnapshot.docs.find(doc => doc.data().name_product.toLowerCase() === name_product.toLowerCase());
+      if (existingIngredient) {
+        alert('Ингредиент с таким названием уже существует!');
+        return;
+      }
+
       const ingredientRef = await db.collection('ingredients').add({
         name_product,
         stock_quantity_product,
@@ -666,7 +673,7 @@ function initializeApp() {
       await db.collection('ingredients').doc(ingredientId).update({
         stock_quantity_product: parsedQuantity
       });
-      loadOrderIngredients();
+      loadInventory(); // Обновляем таблицу после изменения
     } catch (error) {
       console.error('Ошибка обновления количества ингредиента:', error);
       alert('Ошибка при обновлении количества: ' + error.message);
@@ -716,17 +723,15 @@ function initializeApp() {
           <td class="border border-gray-300 p-2">${ingData.weight_product || 0}</td>
           <td class="border border-gray-300 p-2">${ingData.supplier_product || 'Нет'}</td>
           <td class="border border-gray-300 p-2 text-center">
-            <button onclick="loadIngredientForEdit('${ing.id}')" class="bg-yellow-600 text-white px-3 py-1 rounded flex items-center gap-1">
+            <button onclick="loadIngredientForEdit('${ing.id}')" class="bg-yellow-600 p-2 rounded">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
-              Редактировать
             </button>
-            <button onclick="deleteIngredient('${ing.id}')" class="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1 ml-2">
+            <button onclick="deleteIngredient('${ing.id}')" class="bg-red-600 p-2 rounded ml-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
               </svg>
-              Удалить
             </button>
           </td>
         `;
@@ -1001,6 +1006,8 @@ function initializeApp() {
       }
     });
   });
+
+  document.getElementById('ingredient-form').addEventListener('submit', handleIngredientForm);
 
   function handleIngredientForm(event) {
     event.preventDefault();
