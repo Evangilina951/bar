@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Инвентаризация</title>
   <link href="styles.css" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="app.js" defer></script>
 </head>
 <body class="bg-gray-100">
@@ -15,11 +15,28 @@
   <div id="app" class="container mx-auto p-4">
     <div id="inventory" class="page">
       <h1 class="text-2xl mb-4">Инвентаризация</h1>
-      <input id="ingredient-name" type="text" placeholder="Название ингредиента" class="border p-2 mb-2">
-      <input id="ingredient-quantity" type="number" placeholder="Количество" class="border p-2 mb-2">
-      <input id="ingredient-price" type="number" placeholder="Цена за единицу" class="border p-2 mb-2">
-      <button onclick="addIngredient()" class="bg-blue-600 text-white p-2 rounded">Добавить ингредиент</button>
+      
+      <h2 class="text-xl mt-4">Добавить ингредиент</h2>
+      <div class="mb-4">
+        <label for="ingredient-name" class="block mb-1">Название ингредиента</label>
+        <input id="ingredient-name" type="text" placeholder="Название ингредиента" class="border p-2 mb-2 w-full">
+        <label for="ingredient-quantity" class="block mb-1">Количество на складе</label>
+        <input id="ingredient-quantity" type="number" placeholder="Количество на складе" class="border p-2 mb-2 w-full">
+        <label for="ingredient-price" class="block mb-1">Цена за единицу</label>
+        <input id="ingredient-price" type="number" step="0.01" placeholder="Цена за единицу" class="border p-2 mb-2 w-full">
+        <label for="ingredient-supplier" class="block mb-1">Поставщик (опционально)</label>
+        <input id="ingredient-supplier" type="text" placeholder="Поставщик (опционально)" class="border p-2 mb-2 w-full">
+        <label for="ingredient-weight" class="block mb-1">Вес единицы (г)</label>
+        <input id="ingredient-weight" type="number" placeholder="Вес единицы (г)" class="border p-2 mb-2 w-full">
+        <button onclick="addIngredient()" class="bg-blue-600 text-white p-2 rounded w-full">Добавить ингредиент</button>
+      </div>
+
+      <h2 class="text-xl mt-4">Список ингредиентов</h2>
       <ul id="inventory-list" class="mt-4"></ul>
+
+      <h2 class="text-xl mt-4">Заказ ингредиентов</h2>
+      <ul id="order-ingredients-list" class="mt-4"></ul>
+      <button onclick="placeIngredientOrder()" class="bg-blue-600 text-white p-2 rounded w-full mt-2">Оформить заказ ингредиентов</button>
     </div>
   </div>
 </body>
