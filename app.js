@@ -59,7 +59,16 @@ function initializeApp() {
     let price_current_dish = 0;
     let min_dish = Number.MAX_SAFE_INTEGER;
 
+    if (!ingredients || ingredients.length === 0) {
+      console.warn('Массив ingredients пустой или отсутствует');
+      return { price_current_dish: 0, min_dish: 0 };
+    }
+
     for (const ing of ingredients) {
+      if (!ing.ingredient_id || !ing.quantity) {
+        console.warn(`Некорректный ингредиент: ${JSON.stringify(ing)}`);
+        continue;
+      }
       const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
       if (ingredient.exists) {
         const ingData = ingredient.data();
@@ -68,7 +77,6 @@ function initializeApp() {
         min_dish = Math.min(min_dish, availableDishes);
       } else {
         console.warn(`Ингредиент ${ing.ingredient_id} не найден`);
-        return { price_current_dish: 0, min_dish: 0 };
       }
     }
 
@@ -196,8 +204,17 @@ function initializeApp() {
       quantity: parseInt(row.querySelector('.dish-ingredient-quantity').value) || 0
     })).filter(ing => ing.ingredient_id && ing.quantity > 0);
 
+    if (!name_dish || !price_dish || !category_id || !weight_dish || ingredients.length === 0) {
+      alert('Пожалуйста, заполните все обязательные поля и добавьте хотя бы один ингредиент.');
+      return;
+    }
+
     try {
       const { price_current_dish, min_dish } = await calculateDishMetrics(ingredients);
+      if (price_current_dish === 0 && min_dish === 0) {
+        alert('Ошибка: Не удалось рассчитать себестоимость. Проверьте, что все ингредиенты существуют.');
+        return;
+      }
       const salary_dish = (price_dish - price_current_dish) * SALARY_RATE;
       const price_profit_dish = price_dish - price_current_dish - salary_dish;
 
@@ -219,9 +236,121 @@ function initializeApp() {
 
       await db.collection('dishes').doc(dishRef.id).update({ dish_id: dishRef.id });
       loadDishes();
+      document.getElementById('dish-form').reset();
+      document.querySelectorAll('.ingredient-row:not(:first-child)').forEach(row => row.remove());
+      loadIngredientsSelect();
+      alert('Блюдо успешно добавлено!');
     } catch (error) {
       console.error('Ошибка добавления блюда:', error);
       alert('Ошибка при добавлении блюда: ' + error.message);
+    }
+  }
+
+  async function editDish(dishId) {
+    const name_dish = document.getElementById('dish-name')?.value;
+    const description_dish = document.getElementById('dish-description')?.value;
+    const price_dish = parseInt(document.getElementById('dish-price')?.value);
+    const category_id = document.getElementById('dish-category')?.value;
+    const image_dish = document.getElementById('dish-image')?.value;
+    const is_active_dish = document.getElementById('dish-active')?.checked;
+    const weight_dish = parseInt(document.getElementById('dish-weight')?.value);
+    const ingredientRows = document.querySelectorAll('.ingredient-row');
+    const ingredients = Array.from(ingredientRows).map(row => ({
+      ingredient_id: row.querySelector('.dish-ingredient').value,
+      quantity: parseInt(row.querySelector('.dish-ingredient-quantity').value) || 0
+    })).filter(ing => ing.ingredient_id && ing.quantity > 0);
+
+    if (!name_dish || !price_dish || !category_id || !weight_dish || ingredients.length === 0) {
+      alert('Пожалуйста, заполните все обязательные поля и добавьте хотя бы один ингредиент.');
+      return;
+    }
+
+    try {
+      const { price_current_dish, min_dish } = await calculateDishMetrics(ingredients);
+      if (price_current_dish === 0 && min_dish === 0) {
+        alert('Ошибка: Не удалось рассчитать себестоимость. Проверьте, что все ингредиенты существуют.');
+        return;
+      }
+      const salary_dish = (price_dish - price_current_dish) * SALARY_RATE;
+      const price_profit_dish = price_dish - price_current_dish - salary_dish;
+
+      await db.collection('dishes').doc(dishId).update({
+        category_id,
+        name_dish,
+        description_dish,
+        price_dish,
+        price_current_dish,
+        salary_dish,
+        price_profit_dish,
+        image_dish,
+        is_active_dish,
+        min_dish,
+        weight_dish,
+        ingredients
+      });
+
+      loadDishes();
+      document.getElementById('dish-form').reset();
+      document.querySelectorAll('.ingredient-row:not(:first-child)').forEach(row => row.remove());
+      loadIngredientsSelect();
+      document.getElementById('dish-form').dataset.dishId = '';
+      document.getElementById('dish-form-button').textContent = 'Добавить блюдо';
+      alert('Блюдо успешно обновлено!');
+    } catch (error) {
+      console.error('Ошибка обновления блюда:', error);
+      alert('Ошибка при обновлении блюда: ' + error.message);
+    }
+  }
+
+  async function loadDishForEdit(dishId) {
+    try {
+      const dish = await db.collection('dishes').doc(dishId).get();
+      if (!dish.exists) {
+        alert('Блюдо не найдено');
+        return;
+      }
+      const dishData = dish.data();
+      document.getElementById('dish-name').value = dishData.name_dish;
+      document.getElementById('dish-description').value = dishData.description_dish;
+      document.getElementById('dish-price').value = dishData.price_dish;
+      document.getElementById('dish-category').value = dishData.category_id;
+      document.getElementById('dish-image').value = dishData.image_dish || '';
+      document.getElementById('dish-active').checked = dishData.is_active_dish;
+      document.getElementById('dish-weight').value = dishData.weight_dish;
+
+      const container = document.getElementById('ingredients-container');
+      container.innerHTML = `
+        <div class="ingredient-row mb-2 flex">
+          <select class="dish-ingredient border p-2 mr-2 w-2/3"></select>
+          <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество">
+        </div>
+      `;
+      dishData.ingredients.forEach((ing, index) => {
+        if (index > 0) {
+          const row = document.createElement('div');
+          row.className = 'ingredient-row mb-2 flex';
+          row.innerHTML = `
+            <select class="dish-ingredient border p-2 mr-2 w-2/3"></select>
+            <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество">
+            <button onclick="this.parentElement.remove();" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
+          `;
+          container.appendChild(row);
+        }
+        const row = container.querySelectorAll('.ingredient-row')[index];
+        row.querySelector('.dish-ingredient-quantity').value = ing.quantity;
+      });
+
+      await loadIngredientsSelect();
+      dishData.ingredients.forEach((ing, index) => {
+        const row = container.querySelectorAll('.ingredient-row')[index];
+        row.querySelector('.dish-ingredient').value = ing.ingredient_id;
+      });
+
+      document.getElementById('dish-form').dataset.dishId = dishId;
+      document.getElementById('dish-form-button').textContent = 'Сохранить изменения';
+    } catch (error) {
+      console.error('Ошибка загрузки блюда для редактирования:', error);
+      alert('Ошибка при загрузке блюда: ' + error.message);
     }
   }
 
@@ -243,7 +372,7 @@ function initializeApp() {
     try {
       const categories = await db.collection('categories').orderBy('number', 'asc').get();
       const select = document.getElementById('dish-category');
-      select.innerHTML = '';
+      select.innerHTML = '<option value="">Выберите категорию</option>';
       categories.forEach(cat => {
         select.innerHTML += `<option value="${cat.id}">${cat.data().name}</option>`;
       });
@@ -285,6 +414,11 @@ function initializeApp() {
     if (!document.getElementById('dishes-list')) return;
     try {
       const dishes = await db.collection('dishes').get();
+      const categories = await db.collection('categories').get();
+      const categoryMap = {};
+      categories.forEach(cat => {
+        categoryMap[cat.id] = cat.data().name;
+      });
       const list = document.getElementById('dishes-list');
       list.innerHTML = '';
       for (const dish of dishes.docs) {
@@ -295,11 +429,13 @@ function initializeApp() {
           const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
           if (ingredient.exists) {
             ingredientNames.push(`${ingredient.data().name_product} (${ing.quantity})`);
+          } else {
+            ingredientNames.push(`Неизвестный ингредиент (${ing.quantity})`);
           }
         }
         list.innerHTML += `
           <li>
-            ${dishData.name_dish} - ${dishData.price_dish} $ (Категория: ${dishData.category_id})<br>
+            ${dishData.name_dish} - ${dishData.price_dish} $ (Категория: ${categoryMap[dishData.category_id] || dishData.category_id})<br>
             Описание: ${dishData.description_dish}<br>
             Себестоимость: ${dishData.price_current_dish} $<br>
             Зарплата сотрудника: ${dishData.salary_dish} $<br>
@@ -308,7 +444,8 @@ function initializeApp() {
             Активно: ${dishData.is_active_dish ? 'Да' : 'Нет'}<br>
             Мин. порций: ${dishData.min_dish}<br>
             Вес: ${dishData.weight_dish} г<br>
-            Ингредиенты: ${ingredientNames.join(', ')}
+            Ингредиенты: ${ingredientNames.join(', ') || 'Нет'}<br>
+            <button onclick="loadDishForEdit('${dish.id}')" class="bg-yellow-600 text-white p-1 rounded mt-2">Редактировать</button>
           </li>`;
       }
     } catch (error) {
@@ -337,16 +474,12 @@ function initializeApp() {
     const row = document.createElement('div');
     row.className = 'ingredient-row mb-2 flex';
     row.innerHTML = `
-      <select class="dish-ingredient border p-2 mr-2 w-2/3" onchange="updateIngredients()"></select>
-      <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" onchange="updateIngredients()">
-      <button onclick="this.parentElement.remove(); updateIngredients();" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
+      <select class="dish-ingredient border p-2 mr-2 w-2/3"></select>
+      <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество">
+      <button onclick="this.parentElement.remove();" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
     `;
     container.appendChild(row);
     loadIngredientsSelect();
-  }
-
-  function updateIngredients() {
-    // Пустая функция для обработки изменений в списке ингредиентов
   }
 
   async function addIngredient() {
@@ -602,6 +735,8 @@ function initializeApp() {
   window.placeOrder = placeOrder;
   window.addPromocode = addPromocode;
   window.addDish = addDish;
+  window.editDish = editDish;
+  window.loadDishForEdit = loadDishForEdit;
   window.addCategory = addCategory;
   window.toggleCategoryVisibility = toggleCategoryVisibility;
   window.addIngredient = addIngredient;
@@ -612,7 +747,6 @@ function initializeApp() {
   window.updateDeliveryStatus = updateDeliveryStatus;
   window.generateGeneralReport = generateGeneralReport;
   window.addIngredientRow = addIngredientRow;
-  window.updateIngredients = updateIngredients;
 }
 
 if (document.readyState === 'loading') {
