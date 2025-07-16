@@ -1,12 +1,9 @@
-// Функция для проверки загрузки Firebase SDK
 function initializeApp() {
-  // Проверяем, что firebase определен
   if (typeof firebase === 'undefined') {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
     return;
   }
 
-  // Инициализация Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
     authDomain: "evabar-ac842.firebaseapp.com",
@@ -20,7 +17,8 @@ function initializeApp() {
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // Загрузка навигации
+  const SALARY_RATE = 0.1;
+
   async function loadNav() {
     try {
       const response = await fetch('nav.html');
@@ -31,7 +29,6 @@ function initializeApp() {
     }
   }
 
-  // Авторизация: вход пользователя
   async function login() {
     const email = document.getElementById('email')?.value;
     const password = document.getElementById('password')?.value;
@@ -48,7 +45,6 @@ function initializeApp() {
     }
   }
 
-  // Выход из системы
   async function logout() {
     try {
       await auth.signOut();
@@ -59,23 +55,54 @@ function initializeApp() {
     }
   }
 
-  // Загрузка меню: категории и блюда (только видимые категории)
+  async function calculateDishMetrics(ingredients) {
+    let price_current_dish = 0;
+    let min_dish = Number.MAX_SAFE_INTEGER;
+
+    for (const ing of ingredients) {
+      const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
+      if (ingredient.exists) {
+        const ingData = ingredient.data();
+        price_current_dish += ing.quantity * ingData.current_price_product;
+        const availableDishes = Math.floor(ingData.stock_quantity_product / ing.quantity);
+        min_dish = Math.min(min_dish, availableDishes);
+      } else {
+        console.warn(`Ингредиент ${ing.ingredient_id} не найден`);
+        return { price_current_dish: 0, min_dish: 0 };
+      }
+    }
+
+    return { price_current_dish, min_dish };
+  }
+
   async function loadMenu() {
     if (!document.getElementById('categories')) return;
     try {
-      const categories = await db.collection('categories').where('isVisible', '==', true).get();
-      const dishes = await db.collection('dishes').get();
+      const categories = await db.collection('categories')
+        .where('isVisible', '==', true)
+        .orderBy('number', 'asc')
+        .get();
+      const dishes = await db.collection('dishes')
+        .where('is_active_dish', '==', true)
+        .get();
       const categoriesDiv = document.getElementById('categories');
       categoriesDiv.innerHTML = '';
       categories.forEach(cat => {
         const catDiv = document.createElement('div');
         catDiv.innerHTML = `<h2 class="text-xl">${cat.data().name}</h2>`;
         dishes.forEach(dish => {
-          if (dish.data().category === cat.id) {
+          if (dish.data().category_id === cat.id) {
+            const dishData = dish.data();
             catDiv.innerHTML += `
-              <div class="border p-2">
-                <p>${dish.data().name} - ${dish.data().price} $</p>
-                <button onclick="addToOrder('${dish.id}', '${dish.data().name}', ${dish.data().price})" class="bg-blue-600 text-white p-1 rounded">Добавить</button>
+              <div class="border p-2 flex items-center">
+                ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="w-16 h-16 object-cover mr-4">` : ''}
+                <div>
+                  <p class="font-bold">${dishData.name_dish} - ${dishData.price_dish} $</p>
+                  <p>${dishData.description_dish}</p>
+                  <p>Вес: ${dishData.weight_dish} г</p>
+                  <p>Доступно: ${dishData.min_dish} порций</p>
+                  <button onclick="addToOrder('${dish.id}', '${dishData.name_dish}', ${dishData.price_dish})" class="bg-blue-600 text-white p-1 rounded mt-2">Добавить</button>
+                </div>
               </div>`;
           }
         });
@@ -86,7 +113,6 @@ function initializeApp() {
     }
   }
 
-  // Управление заказом
   let orderItems = [];
   function addToOrder(dishId, name, price) {
     orderItems.push({ dishId, name, price });
@@ -102,7 +128,6 @@ function initializeApp() {
     });
   }
 
-  // Оформление заказа
   async function placeOrder() {
     const comment = document.getElementById('order-comment')?.value;
     try {
@@ -112,15 +137,14 @@ function initializeApp() {
         user: auth.currentUser.uid,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
-      // Списание ингредиентов
       for (const item of orderItems) {
         const dish = await db.collection('dishes').doc(item.dishId).get();
         const ingredients = dish.data().ingredients || [];
         for (const ing of ingredients) {
-          const ingredientRef = db.collection('ingredients').doc(ing.id);
+          const ingredientRef = db.collection('ingredients').doc(ing.ingredient_id);
           const ingredient = await ingredientRef.get();
           await ingredientRef.update({
-            quantity: ingredient.data().quantity - ing.quantity
+            stock_quantity_product: ingredient.data().stock_quantity_product - ing.quantity
           });
         }
       }
@@ -133,7 +157,6 @@ function initializeApp() {
     }
   }
 
-  // Управление промокодами
   async function addPromocode() {
     const code = document.getElementById('promo-code')?.value;
     const discount = parseInt(document.getElementById('promo-discount')?.value);
@@ -159,24 +182,55 @@ function initializeApp() {
     }
   }
 
-  // Управление блюдами и категориями
   async function addDish() {
-    const name = document.getElementById('dish-name')?.value;
-    const price = parseInt(document.getElementById('dish-price')?.value);
-    const category = document.getElementById('dish-category')?.value;
+    const name_dish = document.getElementById('dish-name')?.value;
+    const description_dish = document.getElementById('dish-description')?.value;
+    const price_dish = parseInt(document.getElementById('dish-price')?.value);
+    const category_id = document.getElementById('dish-category')?.value;
+    const image_dish = document.getElementById('dish-image')?.value;
+    const is_active_dish = document.getElementById('dish-active')?.checked;
+    const weight_dish = parseInt(document.getElementById('dish-weight')?.value);
+    const ingredientRows = document.querySelectorAll('.ingredient-row');
+    const ingredients = Array.from(ingredientRows).map(row => ({
+      ingredient_id: row.querySelector('.dish-ingredient').value,
+      quantity: parseInt(row.querySelector('.dish-ingredient-quantity').value) || 0
+    })).filter(ing => ing.ingredient_id && ing.quantity > 0);
+
     try {
-      await db.collection('dishes').add({ name, price, category });
+      const { price_current_dish, min_dish } = await calculateDishMetrics(ingredients);
+      const salary_dish = (price_dish - price_current_dish) * SALARY_RATE;
+      const price_profit_dish = price_dish - price_current_dish - salary_dish;
+
+      const dishRef = await db.collection('dishes').add({
+        dish_id: '',
+        category_id,
+        name_dish,
+        description_dish,
+        price_dish,
+        price_current_dish,
+        salary_dish,
+        price_profit_dish,
+        image_dish,
+        is_active_dish,
+        min_dish,
+        weight_dish,
+        ingredients
+      });
+
+      await db.collection('dishes').doc(dishRef.id).update({ dish_id: dishRef.id });
       loadDishes();
     } catch (error) {
       console.error('Ошибка добавления блюда:', error);
+      alert('Ошибка при добавлении блюда: ' + error.message);
     }
   }
 
   async function addCategory() {
     const name = document.getElementById('category-name')?.value;
     const isVisible = document.getElementById('category-visible')?.checked;
+    const number = parseInt(document.getElementById('category-number')?.value) || 0;
     try {
-      await db.collection('categories').add({ name, isVisible });
+      await db.collection('categories').add({ name, isVisible, number });
       loadCategories();
       loadCategoryList();
     } catch (error) {
@@ -187,7 +241,7 @@ function initializeApp() {
   async function loadCategories() {
     if (!document.getElementById('dish-category')) return;
     try {
-      const categories = await db.collection('categories').get();
+      const categories = await db.collection('categories').orderBy('number', 'asc').get();
       const select = document.getElementById('dish-category');
       select.innerHTML = '';
       categories.forEach(cat => {
@@ -201,13 +255,13 @@ function initializeApp() {
   async function loadCategoryList() {
     if (!document.getElementById('categories-list')) return;
     try {
-      const categories = await db.collection('categories').get();
+      const categories = await db.collection('categories').orderBy('number', 'asc').get();
       const list = document.getElementById('categories-list');
       list.innerHTML = '';
       categories.forEach(cat => {
         list.innerHTML += `
           <li>
-            ${cat.data().name} (Видимость: ${cat.data().isVisible ? 'Вкл' : 'Выкл'})
+            ${cat.data().name} (Порядок: ${cat.data().number}, Видимость: ${cat.data().isVisible ? 'Вкл' : 'Выкл'})
             <button onclick="toggleCategoryVisibility('${cat.id}', ${!cat.data().isVisible})" class="bg-blue-600 text-white p-1 rounded ml-2">
               ${cat.data().isVisible ? 'Скрыть' : 'Показать'}
             </button>
@@ -233,24 +287,88 @@ function initializeApp() {
       const dishes = await db.collection('dishes').get();
       const list = document.getElementById('dishes-list');
       list.innerHTML = '';
-      dishes.forEach(dish => {
-        list.innerHTML += `<li>${dish.data().name} - ${dish.data().price} $ (${dish.data().category})</li>`;
-      });
+      for (const dish of dishes.docs) {
+        const dishData = dish.data();
+        const ingredients = dishData.ingredients || [];
+        let ingredientNames = [];
+        for (const ing of ingredients) {
+          const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
+          if (ingredient.exists) {
+            ingredientNames.push(`${ingredient.data().name_product} (${ing.quantity})`);
+          }
+        }
+        list.innerHTML += `
+          <li>
+            ${dishData.name_dish} - ${dishData.price_dish} $ (Категория: ${dishData.category_id})<br>
+            Описание: ${dishData.description_dish}<br>
+            Себестоимость: ${dishData.price_current_dish} $<br>
+            Зарплата сотрудника: ${dishData.salary_dish} $<br>
+            Прибыль: ${dishData.price_profit_dish} $<br>
+            Фото: ${dishData.image_dish || 'Нет'}<br>
+            Активно: ${dishData.is_active_dish ? 'Да' : 'Нет'}<br>
+            Мин. порций: ${dishData.min_dish}<br>
+            Вес: ${dishData.weight_dish} г<br>
+            Ингредиенты: ${ingredientNames.join(', ')}
+          </li>`;
+      }
     } catch (error) {
       console.error('Ошибка загрузки блюд:', error);
     }
   }
 
-  // Инвентаризация
-  async function addIngredient() {
-    const name = document.getElementById('ingredient-name')?.value;
-    const quantity = parseInt(document.getElementById('ingredient-quantity')?.value);
-    const price = parseInt(document.getElementById('ingredient-price')?.value);
+  async function loadIngredientsSelect() {
+    const selects = document.querySelectorAll('.dish-ingredient');
+    if (!selects.length) return;
     try {
-      await db.collection('ingredients').add({ name, quantity, price });
+      const ingredients = await db.collection('ingredients').get();
+      selects.forEach(select => {
+        select.innerHTML = '<option value="">Выберите ингредиент</option>';
+        ingredients.forEach(ing => {
+          select.innerHTML += `<option value="${ing.id}">${ing.data().name_product}</option>`;
+        });
+      });
+    } catch (error) {
+      console.error('Ошибка загрузки ингредиентов:', error);
+    }
+  }
+
+  function addIngredientRow() {
+    const container = document.getElementById('ingredients-container');
+    const row = document.createElement('div');
+    row.className = 'ingredient-row mb-2 flex';
+    row.innerHTML = `
+      <select class="dish-ingredient border p-2 mr-2 w-2/3" onchange="updateIngredients()"></select>
+      <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" onchange="updateIngredients()">
+      <button onclick="this.parentElement.remove(); updateIngredients();" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
+    `;
+    container.appendChild(row);
+    loadIngredientsSelect();
+  }
+
+  function updateIngredients() {
+    // Пустая функция для обработки изменений в списке ингредиентов
+  }
+
+  async function addIngredient() {
+    const name_product = document.getElementById('ingredient-name')?.value;
+    const stock_quantity_product = parseInt(document.getElementById('ingredient-quantity')?.value);
+    const current_price_product = parseFloat(document.getElementById('ingredient-price')?.value);
+    const supplier_product = document.getElementById('ingredient-supplier')?.value || '';
+    const weight_product = parseInt(document.getElementById('ingredient-weight')?.value);
+    try {
+      const ingredientRef = await db.collection('ingredients').add({
+        name_product,
+        stock_quantity_product,
+        current_price_product,
+        supplier_product,
+        weight_product
+      });
+      await db.collection('ingredients').doc(ingredientRef.id).update({ product_id: ingredientRef.id });
       loadInventory();
+      loadIngredientsSelect();
     } catch (error) {
       console.error('Ошибка добавления ингредиента:', error);
+      alert('Ошибка при добавлении ингредиента: ' + error.message);
     }
   }
 
@@ -261,14 +379,17 @@ function initializeApp() {
       const list = document.getElementById('inventory-list');
       list.innerHTML = '';
       ingredients.forEach(ing => {
-        list.innerHTML += `<li>${ing.data().name} - ${ing.data().quantity} (Цена: ${ing.data().price} $)</li>`;
+        const ingData = ing.data();
+        list.innerHTML += `
+          <li>
+            ${ingData.name_product} - ${ingData.stock_quantity_product} (Цена: ${ingData.current_price_product} $, Вес: ${ingData.weight_product} г, Поставщик: ${ingData.supplier_product || 'Нет'})
+          </li>`;
       });
     } catch (error) {
       console.error('Ошибка загрузки инвентаря:', error);
     }
   }
 
-  // Заказ ингредиентов
   async function loadOrderIngredients() {
     if (!document.getElementById('order-ingredients-list')) return;
     try {
@@ -276,8 +397,8 @@ function initializeApp() {
       const list = document.getElementById('order-ingredients-list');
       list.innerHTML = '';
       ingredients.forEach(ing => {
-        if (ing.data().quantity < 10) {
-          list.innerHTML += `<li>${ing.data().name} - Нужно: ${10 - ing.data().quantity}</li>`;
+        if (ing.data().stock_quantity_product < 10) {
+          list.innerHTML += `<li>${ing.data().name_product} - Нужно: ${10 - ing.data().stock_quantity_product}</li>`;
         }
       });
     } catch (error) {
@@ -289,7 +410,6 @@ function initializeApp() {
     alert('Заказ ингредиентов оформлен!');
   }
 
-  // Отчетность
   async function loadPersonalReport() {
     if (!document.getElementById('personal-report-list')) return;
     try {
@@ -320,7 +440,6 @@ function initializeApp() {
     }
   }
 
-  // Сотрудники
   async function addEmployee() {
     const name = document.getElementById('employee-name')?.value;
     const phone = document.getElementById('employee-phone')?.value;
@@ -346,23 +465,34 @@ function initializeApp() {
     }
   }
 
-  // Доставка
   async function loadDeliveryMenu() {
     if (!document.getElementById('delivery-menu')) return;
     try {
-      const categories = await db.collection('categories').where('isVisible', '==', true).get();
-      const dishes = await db.collection('dishes').get();
+      const categories = await db.collection('categories')
+        .where('isVisible', '==', true)
+        .orderBy('number', 'asc')
+        .get();
+      const dishes = await db.collection('dishes')
+        .where('is_active_dish', '==', true)
+        .get();
       const deliveryMenu = document.getElementById('delivery-menu');
       deliveryMenu.innerHTML = '';
       categories.forEach(cat => {
         const catDiv = document.createElement('div');
         catDiv.innerHTML = `<h2 class="text-xl">${cat.data().name}</h2>`;
         dishes.forEach(dish => {
-          if (dish.data().category === cat.id) {
+          if (dish.data().category_id === cat.id) {
+            const dishData = dish.data();
             catDiv.innerHTML += `
-              <div class="border p-2">
-                <p>${dish.data().name} - ${dish.data().price} $</p>
-                <button onclick="addToDeliveryOrder('${dish.id}', '${dish.data().name}', ${dish.data().price})" class="bg-blue-600 text-white p-1 rounded">Добавить</button>
+              <div class="border p-2 flex items-center">
+                ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="w-16 h-16 object-cover mr-4">` : ''}
+                <div>
+                  <p class="font-bold">${dishData.name_dish} - ${dishData.price_dish} $</p>
+                  <p>${dishData.description_dish}</p>
+                  <p>Вес: ${dishData.weight_dish} г</p>
+                  <p>Доступно: ${dishData.min_dish} порций</p>
+                  <button onclick="addToDeliveryOrder('${dish.id}', '${dishData.name_dish}', ${dishData.price_dish})" class="bg-blue-600 text-white p-1 rounded mt-2">Добавить</button>
+                </div>
               </div>`;
           }
         });
@@ -439,7 +569,6 @@ function initializeApp() {
     }
   }
 
-  // Инициализация при загрузке страницы
   auth.onAuthStateChanged(user => {
     loadNav().then(() => {
       if (user) {
@@ -456,10 +585,10 @@ function initializeApp() {
         loadEmployees();
         loadDeliveryMenu();
         loadDeliveryOrders();
+        loadIngredientsSelect();
       } else {
         document.getElementById('nav-login')?.classList.remove('hidden');
         document.querySelectorAll('#nav a:not(#nav-login), #logout').forEach(el => el.classList.add('hidden'));
-        // Перенаправляем только если не на index.html или /bar/index.html
         if (window.location.pathname !== '/index.html' && window.location.pathname !== '/bar/index.html') {
           window.location.href = 'index.html';
         }
@@ -467,7 +596,6 @@ function initializeApp() {
     });
   });
 
-  // Экспортируем функции для глобального доступа
   window.login = login;
   window.logout = logout;
   window.addToOrder = addToOrder;
@@ -483,9 +611,10 @@ function initializeApp() {
   window.placeDeliveryOrder = placeDeliveryOrder;
   window.updateDeliveryStatus = updateDeliveryStatus;
   window.generateGeneralReport = generateGeneralReport;
+  window.addIngredientRow = addIngredientRow;
+  window.updateIngredients = updateIngredients;
 }
 
-// Проверяем, загружен ли Firebase SDK, перед запуском приложения
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
