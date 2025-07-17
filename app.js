@@ -632,17 +632,21 @@ function initializeApp() {
 
   async function loadIngredientForEdit(ingredientId) {
     try {
+      console.log('Загрузка ингредиента для редактирования, ID:', ingredientId);
       const ingredient = await db.collection('ingredients').doc(ingredientId).get();
       if (!ingredient.exists) {
+        console.error('Ингредиент с ID', ingredientId, 'не найден');
         alert('Ингредиент не найден');
         return;
       }
       const ingData = ingredient.data();
-      document.getElementById('ingredient-name').value = ingData.name_product;
-      document.getElementById('ingredient-quantity').value = ingData.stock_quantity_product;
-      document.getElementById('ingredient-price').value = ingData.current_price_product;
+      console.log('Данные ингредиента:', ingData);
+
+      document.getElementById('ingredient-name').value = ingData.name_product || '';
+      document.getElementById('ingredient-quantity').value = ingData.stock_quantity_product || 0;
+      document.getElementById('ingredient-price').value = ingData.current_price_product || 0;
       document.getElementById('ingredient-supplier').value = ingData.supplier_product || '';
-      document.getElementById('ingredient-weight').value = ingData.weight_product;
+      document.getElementById('ingredient-weight').value = ingData.weight_product || 0;
       document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
       document.getElementById('ingredient-form-button').textContent = 'Сохранить изменения';
       showIngredientForm();
