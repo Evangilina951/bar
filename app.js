@@ -1059,7 +1059,7 @@ function initializeApp() {
   function showIngredientForm() {
     const form = document.getElementById('ingredient-form');
     form.style.display = 'block';
-    document.getElementById('ingredient-form').reset();
+    form.reset();
     document.getElementById('ingredient-form').dataset.ingredientId = '';
     document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
   }
