@@ -23,7 +23,7 @@ function initializeApp() {
     return;
   }
   const auth = firebase.auth();
-  const db = firebase.firestore();
+  const db = firebase.firestore(); // Убедимся, что Firestore доступен
   console.log('Firestore доступен:', !!db);
 
   const SALARY_RATE = 0.4;
