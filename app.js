@@ -590,6 +590,7 @@ function initializeApp() {
       loadInventory();
       loadIngredientsSelect();
       loadOrderIngredients();
+      hideIngredientForm();
       alert('Ингредиент успешно добавлен!');
     } catch (error) {
       console.error('Ошибка добавления ингредиента:', error);
@@ -618,6 +619,7 @@ function initializeApp() {
       loadInventory();
       loadIngredientsSelect();
       loadOrderIngredients();
+      hideIngredientForm();
       document.getElementById('ingredient-form').reset();
       document.getElementById('ingredient-form').dataset.ingredientId = '';
       document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
@@ -643,7 +645,7 @@ function initializeApp() {
       document.getElementById('ingredient-weight').value = ingData.weight_product;
       document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
       document.getElementById('ingredient-form-button').textContent = 'Сохранить изменения';
-      document.getElementById('ingredient-form-button').onclick = () => handleIngredientForm(new Event('submit'));
+      showIngredientForm();
     } catch (error) {
       console.error('Ошибка загрузки ингредиента для редактирования:', error);
       alert('Ошибка при загрузке ингредиента: ' + error.message);
@@ -1054,6 +1056,22 @@ function initializeApp() {
     }
   }
 
+  function showIngredientForm() {
+    const form = document.getElementById('ingredient-form');
+    form.style.display = 'block';
+    document.getElementById('ingredient-form').reset();
+    document.getElementById('ingredient-form').dataset.ingredientId = '';
+    document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
+  }
+
+  function hideIngredientForm() {
+    const form = document.getElementById('ingredient-form');
+    form.style.display = 'none';
+    form.reset();
+    form.dataset.ingredientId = '';
+    document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
+  }
+
   window.login = login;
   window.logout = logout;
   window.addToOrder = addToOrder;
@@ -1077,6 +1095,8 @@ function initializeApp() {
   window.loadIngredientsSelectForRow = loadIngredientsSelectForRow;
   window.editQuantity = editQuantity;
   window.saveQuantity = saveQuantity;
+  window.showIngredientForm = showIngredientForm;
+  window.hideIngredientForm = hideIngredientForm;
 }
 
 if (document.readyState === 'loading') {
