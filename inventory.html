@@ -9,47 +9,37 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script defer src="app.js"></script>
-  <style>
-    .quantity-display { cursor: pointer; }
-    .quantity-input { width: 100%; padding: 4px; }
-    #ingredient-form { display: none; }
-    button svg { vertical-align: middle; }
-    .form-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
-    .form-row label { min-width: 100px; }
-  </style>
 </head>
 <body class="font-sans p-4">
-  <div id="nav"></div>
+  <nav id="nav"></nav>
   <h1 class="text-2xl font-bold mb-4">Инвентаризация</h1>
-  <button id="add-ingredient-btn" onclick="showIngredientForm()" class="bg-green-600 text-white p-2 rounded mb-4">Добавить новый ингредиент</button>
-  <form id="ingredient-form" class="mb-4 space-y-2" onsubmit="handleIngredientForm(event)">
-    <h2 class="text-xl font-semibold">Форма ингредиента</h2>
-    <div class="form-row">
-      <label for="ingredient-name" class="block text-sm font-medium">Название:</label>
-      <input type="text" id="ingredient-name" placeholder="Название" class="border p-2 w-full" required>
+  <button onclick="showIngredientForm()" class="bg-blue-600 text-white p-2 rounded mb-4">Добавить новый ингредиент</button>
+  <form id="ingredient-form" style="display: none;" class="space-y-4 mb-4">
+    <h2 class="text-xl">Форма ингредиента</h2>
+    <div>
+      <label for="ingredient-name" class="block text-sm font-medium text-gray-700">Название:</label>
+      <input type="text" id="ingredient-name" name="ingredient-name" class="mt-1 block w-full border p-2 rounded" required>
     </div>
-    <div class="form-row">
-      <label for="ingredient-quantity" class="block text-sm font-medium">Количество:</label>
-      <input type="number" id="ingredient-quantity" placeholder="Количество" class="border p-2 w-full" required>
+    <div>
+      <label for="ingredient-quantity" class="block text-sm font-medium text-gray-700">Количество:</label>
+      <input type="number" id="ingredient-quantity" name="ingredient-quantity" class="mt-1 block w-full border p-2 rounded" required>
     </div>
-    <div class="form-row">
-      <label for="ingredient-price" class="block text-sm font-medium">Цена ($):</label>
-      <input type="number" id="ingredient-price" placeholder="Цена" step="0.01" class="border p-2 w-full" required>
+    <div>
+      <label for="ingredient-price" class="block text-sm font-medium text-gray-700">Цена ($):</label>
+      <input type="number" step="0.01" id="ingredient-price" name="ingredient-price" class="mt-1 block w-full border p-2 rounded" required>
     </div>
-    <div class="form-row">
-      <label for="ingredient-supplier" class="block text-sm font-medium">Поставщик:</label>
-      <input type="text" id="ingredient-supplier" placeholder="Поставщик" class="border p-2 w-full">
+    <div>
+      <label for="ingredient-supplier" class="block text-sm font-medium text-gray-700">Поставщик:</label>
+      <input type="text" id="ingredient-supplier" name="ingredient-supplier" class="mt-1 block w-full border p-2 rounded">
     </div>
-    <div class="form-row">
-      <label for="ingredient-weight" class="block text-sm font-medium">Вес (кг):</label>
-      <input type="number" id="ingredient-weight" placeholder="Вес (кг)" step="0.01" class="border p-2 w-full" required>
+    <div>
+      <label for="ingredient-weight" class="block text-sm font-medium text-gray-700">Вес (кг):</label>
+      <input type="number" step="0.01" id="ingredient-weight" name="ingredient-weight" class="mt-1 block w-full border p-2 rounded" required>
     </div>
     <button type="submit" id="ingredient-form-button" class="bg-blue-600 text-white p-2 rounded">Добавить ингредиент</button>
-    <button type="button" id="cancel-ingredient-btn" onclick="hideIngredientForm()" class="bg-gray-500 text-white p-2 rounded ml-2">Отмена</button>
+    <button type="button" onclick="hideIngredientForm()" class="bg-red-600 text-white p-2 rounded">Отмена</button>
   </form>
-  <h2 class="text-xl font-semibold mb-2">Список ингредиентов</h2>
   <div id="inventory-list"></div>
-  <h2 class="text-xl font-semibold mb-2">Ингредиенты для заказа</h2>
-  <ul id="order-ingredients-list" class="list-disc pl-5"></ul>
+  <div id="order-ingredients-list"></div>
 </body>
 </html>
