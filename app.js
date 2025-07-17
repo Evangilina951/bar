@@ -652,6 +652,7 @@ function initializeApp() {
       document.getElementById('ingredient-price').value = ingData.current_price_product || 0;
       document.getElementById('ingredient-supplier').value = ingData.supplier_product || '';
       document.getElementById('ingredient-weight').value = ingData.weight_product || 0;
+
       document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
       document.getElementById('ingredient-form-button').textContent = 'Сохранить изменения';
       showIngredientForm();
@@ -1078,9 +1079,6 @@ function initializeApp() {
     const form = document.getElementById('ingredient-form');
     if (form) {
       form.style.display = 'block';
-      form.reset();
-      document.getElementById('ingredient-form').dataset.ingredientId = '';
-      document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
     } else {
       console.warn('Форма с id="ingredient-form" не найдена при вызове showIngredientForm.');
     }
@@ -1090,7 +1088,6 @@ function initializeApp() {
     const form = document.getElementById('ingredient-form');
     if (form) {
       form.style.display = 'none';
-      form.reset();
       form.dataset.ingredientId = '';
       document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
     } else {
