@@ -1013,7 +1013,13 @@ function initializeApp() {
     });
   });
 
-  document.getElementById('ingredient-form').addEventListener('submit', handleIngredientForm);
+  // Добавляем проверку перед установкой слушателя
+  const ingredientForm = document.getElementById('ingredient-form');
+  if (ingredientForm) {
+    ingredientForm.addEventListener('submit', handleIngredientForm);
+  } else {
+    console.warn('Элемент с id="ingredient-form" не найден на этой странице. Слушатель не добавлен.');
+  }
 
   function handleIngredientForm(event) {
     event.preventDefault();
@@ -1062,20 +1068,29 @@ function initializeApp() {
 
   function showIngredientForm() {
     const form = document.getElementById('ingredient-form');
-    form.style.display = 'block';
-    form.reset();
-    document.getElementById('ingredient-form').dataset.ingredientId = '';
-    document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
+    if (form) {
+      form.style.display = 'block';
+      form.reset();
+      document.getElementById('ingredient-form').dataset.ingredientId = '';
+      document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
+    } else {
+      console.warn('Форма с id="ingredient-form" не найдена при вызове showIngredientForm.');
+    }
   }
 
   function hideIngredientForm() {
     const form = document.getElementById('ingredient-form');
-    form.style.display = 'none';
-    form.reset();
-    form.dataset.ingredientId = '';
-    document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
+    if (form) {
+      form.style.display = 'none';
+      form.reset();
+      form.dataset.ingredientId = '';
+      document.getElementById('ingredient-form-button').textContent = 'Добавить ингредиент';
+    } else {
+      console.warn('Форма с id="ingredient-form" не найдена при вызове hideIngredientForm.');
+    }
   }
 
+  // Экспортируем функции в глобальную область видимости
   window.login = login;
   window.logout = logout;
   window.addToOrder = addToOrder;
