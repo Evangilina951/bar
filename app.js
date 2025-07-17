@@ -23,16 +23,21 @@ function initializeApp() {
     return;
   }
   const auth = firebase.auth();
-  const db = firebase.firestore(); // Убедимся, что Firestore доступен
+  const db = firebase.firestore();
   console.log('Firestore доступен:', !!db);
 
   const SALARY_RATE = 0.4;
 
   async function loadNav() {
+    const navElement = document.getElementById('nav');
+    if (!navElement) {
+      console.warn('Элемент с id="nav" не найден. Загрузка nav.html пропущена.');
+      return;
+    }
     try {
       const response = await fetch('nav.html');
       const navHtml = await response.text();
-      document.getElementById('nav').innerHTML = navHtml;
+      navElement.innerHTML = navHtml;
     } catch (error) {
       console.error('Ошибка загрузки nav.html:', error);
     }
@@ -987,30 +992,33 @@ function initializeApp() {
   }
 
   auth.onAuthStateChanged(user => {
-    loadNav().then(() => {
-      if (user) {
-        document.getElementById('nav-login')?.classList.add('hidden');
-        document.querySelectorAll('#nav a:not(#nav-login), #logout').forEach(el => el.classList.remove('hidden'));
-        loadMenu();
-        loadPromocodes();
-        loadDishes();
-        loadCategories();
-        loadCategoryList();
-        loadInventory();
-        loadOrderIngredients();
-        loadPersonalReport();
-        loadEmployees();
-        loadDeliveryMenu();
-        loadDeliveryOrders();
-        loadIngredientsSelect();
-      } else {
-        document.getElementById('nav-login')?.classList.remove('hidden');
-        document.querySelectorAll('#nav a:not(#nav-login), #logout').forEach(el => el.classList.add('hidden'));
-        if (window.location.pathname !== '/index.html' && window.location.pathname !== '/bar/index.html') {
-          window.location.href = 'index.html';
-        }
+    if (user) {
+      const navElement = document.getElementById('nav');
+      if (navElement) {
+        loadNav().then(() => {
+          document.getElementById('nav-login')?.classList.add('hidden');
+          document.querySelectorAll('#nav a:not(#nav-login), #logout').forEach(el => el.classList.remove('hidden'));
+          loadMenu();
+          loadPromocodes();
+          loadDishes();
+          loadCategories();
+          loadCategoryList();
+          loadInventory();
+          loadOrderIngredients();
+          loadPersonalReport();
+          loadEmployees();
+          loadDeliveryMenu();
+          loadDeliveryOrders();
+          loadIngredientsSelect();
+        });
       }
-    });
+    } else {
+      document.getElementById('nav-login')?.classList.remove('hidden');
+      document.querySelectorAll('#nav a:not(#nav-login), #logout').forEach(el => el.classList.add('hidden'));
+      if (window.location.pathname !== '/index.html' && window.location.pathname !== '/bar/index.html') {
+        window.location.href = 'index.html';
+      }
+    }
   });
 
   // Добавляем проверку перед установкой слушателя
