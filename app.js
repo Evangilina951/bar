@@ -660,6 +660,10 @@ function initializeApp() {
         return;
       }
 
+      // Показываем форму перед установкой значений
+      showIngredientForm();
+      console.log('Форма показана, состояние:', { display: form.style.display, visibility: form.style.visibility });
+
       // Проверяем и устанавливаем значения полей
       const nameField = document.getElementById('ingredient-name');
       const quantityField = document.getElementById('ingredient-quantity');
@@ -687,14 +691,13 @@ function initializeApp() {
 
       document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
       document.getElementById('ingredient-form-button').textContent = 'Сохранить';
-      showIngredientForm();
       console.log('Форма заполнена данными:', ingData);
       console.log('Состояние формы после заполнения:', {
         display: form.style.display,
         visibility: form.style.visibility
       });
 
-      // Временная синхронизация
+      // Проверка значений после задержки
       setTimeout(() => {
         console.log('Проверка значений после задержки:', {
           name: nameField.value,
@@ -1197,7 +1200,7 @@ function initializeApp() {
     if (form) {
       form.style.display = 'block';
       form.style.visibility = 'visible';
-      form.reset();
+      // Убрано form.reset(), так как оно сбрасывает значения
     } else {
       console.warn('Форма с id="ingredient-form" не найдена при вызове showIngredientForm.');
     }
