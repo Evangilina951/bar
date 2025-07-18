@@ -1,7 +1,7 @@
 // Подключение Firebase
 if (typeof firebase === 'undefined') {
   console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
-  return;
+  return; // Корректное завершение, если Firebase не загружен
 }
 console.log('Firebase загружен успешно.');
 
@@ -19,7 +19,7 @@ try {
   console.log('Firebase инициализирован.');
 } catch (error) {
   console.error('Ошибка инициализации Firebase:', error);
-  return;
+  return; // Корректное завершение при ошибке инициализации
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
