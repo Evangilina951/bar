@@ -2,7 +2,7 @@
 <html lang="ru">
   <head>
     <title>Вход</title>
-    <!-- Подключение Tailwind CSS для стилизации (опционально, можно убрать) -->
+    <!-- Подключение Tailwind CSS для стилизации -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Подключение Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
@@ -12,7 +12,13 @@
     <link rel="icon" href="data:;base64,=">
   </head>
   <body class="flex items-center justify-center min-h-screen bg-gray-100">
-    <form class="bg-white p-6 rounded shadow-md w-full max-w-sm">
+    <div id="nav" class="w-full bg-gray-800 text-white p-4">
+      <a href="index.html" id="nav-login" class="mr-4">Вход</a>
+      <a href="menu.html" id="nav-menu" class="mr-4 hidden">Меню</a>
+      <a href="inventory.html" id="nav-inventory" class="mr-4 hidden">Инвентарь</a>
+      <button id="logout" onclick="logout()" class="hidden">Выход</button>
+    </div>
+    <form class="bg-white p-6 rounded shadow-md w-full max-w-sm mt-4">
       <h2 class="text-2xl font-bold mb-4 text-center">Вход</h2>
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
@@ -22,8 +28,8 @@
         <label for="password" class="block text-sm font-medium text-gray-700">Пароль</label>
         <input type="password" id="password" class="mt-1 block w-full p-2 border rounded" />
       </div>
-      <button type="button" onclick="login()">Войти</button>
+      <button type="button" onclick="login()" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Войти</button>
     </form>
-    <script src="js/init.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
