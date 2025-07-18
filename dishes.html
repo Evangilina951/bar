@@ -1,124 +1,119 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <title>Блюда и категории</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <link rel="icon" href="data:;base64,=">
-    <style>
-      .ingredient-row input[type="text"] {
-        width: 60%;
-      }
-      .ingredient-row select {
-        width: 40%;
-      }
-      .dish-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1rem;
-      }
-      .hidden {
-        display: none;
-      }
-    </style>
-  </head>
-  <body class="bg-gray-100 min-h-screen">
-    <div id="nav" class="w-full bg-gray-800 text-white p-4">
-      <a href="index.html" id="nav-login" class="mr-4">Вход</a>
-      <a href="menu.html" id="nav-menu" class="mr-4 hidden">Меню</a>
-      <a href="inventory.html" id="nav-inventory" class="mr-4 hidden">Инвентарь</a>
-      <button id="logout" onclick="logout()" class="hidden">Выход</button>
-    </div>
-    <div class="flex p-4">
-      <!-- Форма добавления/редактирования блюда (слева) -->
-      <div class="w-1/2 pr-4">
-        <button onclick="showDishForm()" class="bg-blue-600 text-white p-2 rounded mb-4">Добавить/Редактировать блюдо</button>
-        <form id="dish-form" class="bg-white p-6 rounded shadow-md hidden" data-dish-id="">
-          <h2 class="text-2xl font-bold mb-4">Добавить/Редактировать блюдо</h2>
-          <div class="mb-4">
-            <label for="dish-name" class="block text-sm font-medium text-gray-700">Название блюда</label>
-            <input type="text" id="dish-name" class="mt-1 block w-full p-2 border rounded" required>
-          </div>
-          <div class="mb-4">
-            <label for="dish-description" class="block text-sm font-medium text-gray-700">Описание/состав</label>
-            <input type="text" id="dish-description" class="mt-1 block w-full p-2 border rounded">
-          </div>
-          <div class="mb-4">
-            <label for="dish-price" class="block text-sm font-medium text-gray-700">Цена в меню</label>
-            <input type="number" id="dish-price" class="mt-1 block w-full p-2 border rounded" step="0.01" required>
-          </div>
-          <div class="mb-4">
-            <label for="dish-category" class="block text-sm font-medium text-gray-700">Категория</label>
-            <select id="dish-category" class="mt-1 block w-full p-2 border rounded" required>
-              <option value="">Выберите категорию</option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label for="dish-image" class="block text-sm font-medium text-gray-700">URL изображения</label>
-            <input type="text" id="dish-image" class="mt-1 block w-full p-2 border rounded" placeholder="Введите URL">
-            <img id="dish-image-preview" class="mt-2 max-h-32" src="" alt="Предпросмотр изображения">
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700">Доступно для заказа</label>
-            <input type="checkbox" id="dish-active" class="mt-1">
-          </div>
-          <div class="mb-4">
-            <label for="dish-weight" class="block text-sm font-medium text-gray-700">Вес (г)</label>
-            <input type="number" id="dish-weight" class="mt-1 block w-full p-2 border rounded" step="0.1" min="0">
-          </div>
-          <div class="mb-4">
-            <label for="dish-min-portions" class="block text-sm font-medium text-gray-700">Мин. порций</label>
-            <input type="number" id="dish-min-portions" class="mt-1 block w-full p-2 border rounded" min="0" required>
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700">Ингредиенты</label>
-            <div id="ingredients-container">
-              <div class="ingredient-row mb-2 flex">
-                <input type="text" id="ingredient-search" class="border p-2 mr-2 w-2/3" placeholder="Введите название ингредиента" list="ingredient-options">
-                <datalist id="ingredient-options"></datalist>
-                <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" min="0" step="0.1">
-              </div>
-            </div>
-            <button type="button" onclick="addIngredientRow()" class="bg-green-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
-          </div>
-          <button type="submit" id="dish-form-button" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Добавить блюдо</button>
-        </form>
+<head>
+  <title>Блюда и категории</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <link rel="icon" href="data:;base64,=">
+  <style>
+    .ingredient-row input[type="text"] {
+      width: 60%;
+    }
+    .ingredient-row select {
+      width: 40%;
+    }
+    .dish-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div id="nav" class="w-full bg-gray-800 text-white p-4">
+    <a href="index.html" id="nav-login" class="mr-4">Вход</a>
+    <a href="menu.html" id="nav-menu" class="mr-4 hidden">Меню</a>
+    <a href="inventory.html" id="nav-inventory" class="mr-4 hidden">Инвентарь</a>
+    <button id="logout" onclick="logout()" class="hidden">Выход</button>
+  </div>
+  <div class="p-4">
+    <!-- Форма добавления/редактирования блюда -->
+    <button onclick="showDishForm()" class="bg-blue-600 text-white p-2 rounded mb-4">Добавить/Редактировать блюдо</button>
+    <form id="dish-form" class="bg-white p-6 rounded shadow-md hidden" data-dish-id="">
+      <h2 class="text-2xl font-bold mb-4">Добавить/Редактировать блюдо</h2>
+      <div class="mb-4">
+        <label for="dish-name" class="block text-sm font-medium text-gray-700">Название блюда</label>
+        <input type="text" id="dish-name" class="mt-1 block w-full p-2 border rounded" required>
       </div>
-      <!-- Форма добавления категории (справа) -->
-      <div class="w-1/2 pl-4">
-        <form id="category-form" class="bg-white p-6 rounded shadow-md">
-          <h2 class="text-2xl font-bold mb-4">Добавить категорию</h2>
-          <div class="mb-4">
-            <label for="category-name" class="block text-sm font-medium text-gray-700">Название категории</label>
-            <input type="text" id="category-name" class="mt-1 block w-full p-2 border rounded" required>
-          </div>
-          <div class="mb-4">
-            <label for="category-number" class="block text-sm font-medium text-gray-700">Порядок (1, 2, 3...)</label>
-            <input type="number" id="category-number" class="mt-1 block w-full p-2 border rounded" min="1" required>
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700">Отображать в меню</label>
-            <input type="checkbox" id="category-visible" class="mt-1" checked>
-          </div>
-          <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Добавить категорию</button>
-        </form>
+      <div class="mb-4">
+        <label for="dish-description" class="block text-sm font-medium text-gray-700">Описание/состав</label>
+        <input type="text" id="dish-description" class="mt-1 block w-full p-2 border rounded">
       </div>
-    </div>
+      <div class="mb-4">
+        <label for="dish-price" class="block text-sm font-medium text-gray-700">Цена в меню</label>
+        <input type="number" id="dish-price" class="mt-1 block w-full p-2 border rounded" step="0.01" required>
+      </div>
+      <div class="mb-4">
+        <label for="dish-category" class="block text-sm font-medium text-gray-700">Категория</label>
+        <select id="dish-category" class="mt-1 block w-full p-2 border rounded" required>
+          <option value="">Выберите категорию</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="dish-image" class="block text-sm font-medium text-gray-700">URL изображения</label>
+        <input type="text" id="dish-image" class="mt-1 block w-full p-2 border rounded" placeholder="Введите URL">
+        <img id="dish-image-preview" class="mt-2 max-h-32" src="" alt="Предпросмотр изображения">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Доступно для заказа</label>
+        <input type="checkbox" id="dish-active" class="mt-1">
+      </div>
+      <div class="mb-4">
+        <label for="dish-weight" class="block text-sm font-medium text-gray-700">Вес (г)</label>
+        <input type="number" id="dish-weight" class="mt-1 block w-full p-2 border rounded" step="0.1" min="0">
+      </div>
+      <div class="mb-4">
+        <label for="dish-min-portions" class="block text-sm font-medium text-gray-700">Мин. порций</label>
+        <input type="number" id="dish-min-portions" class="mt-1 block w-full p-2 border rounded" min="0" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Ингредиенты</label>
+        <div id="ingredients-container">
+          <div class="ingredient-row mb-2 flex">
+            <input type="text" id="ingredient-search" class="border p-2 mr-2 w-2/3" placeholder="Введите название ингредиента" list="ingredient-options">
+            <datalist id="ingredient-options"></datalist>
+            <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" min="0" step="0.1">
+          </div>
+        </div>
+        <button type="button" onclick="addIngredientRow()" class="bg-green-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
+      </div>
+      <button type="submit" id="dish-form-button" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Добавить блюдо</button>
+    </form>
+
+    <!-- Форма добавления категории -->
+    <form id="category-form" class="bg-white p-6 rounded shadow-md mt-4">
+      <h2 class="text-2xl font-bold mb-4">Добавить категорию</h2>
+      <div class="mb-4">
+        <label for="category-name" class="block text-sm font-medium text-gray-700">Название категории</label>
+        <input type="text" id="category-name" class="mt-1 block w-full p-2 border rounded" required>
+      </div>
+      <div class="mb-4">
+        <label for="category-number" class="block text-sm font-medium text-gray-700">Порядок (1, 2, 3...)</label>
+        <input type="number" id="category-number" class="mt-1 block w-full p-2 border rounded" min="0">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Отображать в меню</label>
+        <input type="checkbox" id="category-visible" class="mt-1" checked>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Добавить категорию</button>
+    </form>
+
     <!-- Список категорий -->
-    <div class="p-4">
-      <h2 class="text-2xl font-bold mb-4">Список категорий</h2>
-      <select id="filter-category" class="mb-4 p-2 border rounded" onchange="loadDishes()">
+    <div id="categories-list" class="mt-4">
+      <h2 class="text-xl font-bold">Список категорий</h2>
+      <select id="filter-category" class="mt-1 block w-full p-2 border rounded" onchange="loadDishes()">
         <option value="">Все категории</option>
       </select>
-      <ul id="categories-list" class="list-disc pl-5"></ul>
     </div>
+
     <!-- Список блюд -->
-    <div class="p-4">
-      <h2 class="text-2xl font-bold mb-4">Список блюд</h2>
-      <div id="dishes-list" class="dish-grid"></div>
-    </div>
-    <script src="app.js"></script>
-  </body>
+    <div id="dishes-list" class="mt-4 dish-grid"></div>
+  </div>
+  <script src="app.js" defer></script>
+</body>
 </html>
