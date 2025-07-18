@@ -638,6 +638,11 @@ function initializeApp() {
 
   async function loadIngredientForEdit(ingredientId) {
     try {
+      if (!auth.currentUser) {
+        console.error('Пользователь не авторизован');
+        alert('Пожалуйста, войдите в систему.');
+        return;
+      }
       console.log('Загрузка ингредиента для редактирования, ID:', ingredientId);
       const ingredient = await db.collection('ingredients').doc(ingredientId).get();
       if (!ingredient.exists) {
@@ -823,17 +828,46 @@ function initializeApp() {
         list.innerHTML += '<p>Ингредиенты для заказа отсутствуют</p>';
       } else {
         for (const [supplier, items] of Object.entries(supplierOrders)) {
-          list.innerHTML += `<h3 class="text-lg font-semibold mt-4">Заказ ${supplier}</h3><ol class="list-decimal list-inside">`;
+          list.innerHTML += `<h3 class="text-lg font-semibold mt-4">Заказ ${supplier}</h3>`;
+          list.innerHTML += `
+            <table class="min-w-full border-collapse border border-gray-300 mt-2">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="border border-gray-300 p-2">Наименование</th>
+                  <th class="border border-gray-300 p-2">Количество</th>
+                  <th class="border border-gray-300 p-2">Вес (кг)</th>
+                  <th class="border border-gray-300 p-2">Сумма ($)</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
           let totalCost = 0;
           let totalWeight = 0;
-          items.forEach((item, index) => {
+          items.forEach(item => {
             const cost = item.quantity * item.price;
             const weight = item.quantity * item.weight;
             totalCost += cost;
             totalWeight += weight;
-            list.innerHTML += `<li>${item.name} - ${item.quantity}<br>Сумма: ${cost.toFixed(2)} $<br>Вес: ${weight.toFixed(2)} кг</li>`;
+            list.innerHTML += `
+              <tr>
+                <td class="border border-gray-300 p-2">${item.name}</td>
+                <td class="border border-gray-300 p-2">${item.quantity}</td>
+                <td class="border border-gray-300 p-2">${weight.toFixed(2)}</td>
+                <td class="border border-gray-300 p-2">${cost.toFixed(2)}</td>
+              </tr>
+            `;
           });
-          list.innerHTML += `</ol><p class="mt-2">Общая сумма заказа: ${totalCost.toFixed(2)} $<br>Общий вес: ${totalWeight.toFixed(2)} кг</p>`;
+          list.innerHTML += `
+              </tbody>
+              <tfoot>
+                <tr class="bg-gray-100">
+                  <td class="border border-gray-300 p-2 font-bold" colspan="2">Итого:</td>
+                  <td class="border border-gray-300 p-2">${totalWeight.toFixed(2)} кг</td>
+                  <td class="border border-gray-300 p-2">${totalCost.toFixed(2)} $</td>
+                </tr>
+              </tfoot>
+            </table>
+          `;
         }
       }
     } catch (error) {
@@ -1142,7 +1176,7 @@ function initializeApp() {
     const button = document.getElementById('toggle-unused');
     const showUnused = button.dataset.show === 'true';
     button.dataset.show = !showUnused;
-    button.textContent = showUnused ? 'Скрыть неиспользуемые' : 'Показать все';
+    button.textContent = !showUnused ? 'Скрыть неиспользуемые' : 'Показать все';
     loadInventory();
   }
 
