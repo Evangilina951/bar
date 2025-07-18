@@ -1,128 +1,109 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <title>Блюда и категории</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <link rel="icon" href="data:;base64,=">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список блюд</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    .ingredient-row input[type="text"] {
-      width: 60%;
-    }
-    .ingredient-row select {
-      width: 40%;
-    }
     .dish-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 1rem;
+    }
+    @media (min-width: 640px) {
+      .dish-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
     }
     .hidden {
       display: none;
     }
+    .visible {
+      display: block;
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <div id="nav" class="w-full bg-gray-800 text-white p-4">
-    <a href="index.html" id="nav-login" class="mr-4">Вход</a>
-    <a href="menu.html" id="nav-menu" class="mr-4 hidden">Меню</a>
-    <a href="inventory.html" id="nav-inventory" class="mr-4 hidden">Инвентарь</a>
-    <button id="logout" onclick="logout()" class="hidden">Выход</button>
+<body class="bg-gray-100 p-4">
+  <div id="nav"></div>
+
+  <!-- Секция фильтрации по категориям -->
+  <div id="categories-list" class="mt-4">
+    <h2 class="text-xl font-bold">Список категорий</h2>
+    <select id="filter-category" class="mt-1 block w-full p-2 border rounded" onchange="loadDishes()">
+      <option value="">Все категории</option>
+    </select>
   </div>
-  <div class="p-4">
-    <!-- Форма добавления/редактирования блюда -->
-    <button onclick="showDishForm()" class="bg-blue-600 text-white p-2 rounded mb-4">Добавить/Редактировать блюдо</button>
-    <form id="dish-form" class="bg-white p-6 rounded shadow-md hidden" data-dish-id="">
-      <h2 class="text-2xl font-bold mb-4">Добавить/Редактировать блюдо</h2>
-      <div class="mb-4">
-        <label for="dish-name" class="block text-sm font-medium text-gray-700">Название блюда</label>
-        <input type="text" id="dish-name" class="mt-1 block w-full p-2 border rounded" required>
-      </div>
-      <div class="mb-4">
-        <label for="dish-description" class="block text-sm font-medium text-gray-700">Описание/состав</label>
-        <input type="text" id="dish-description" class="mt-1 block w-full p-2 border rounded">
-      </div>
-      <div class="mb-4">
-        <label for="dish-price" class="block text-sm font-medium text-gray-700">Цена в меню</label>
-        <input type="number" id="dish-price" class="mt-1 block w-full p-2 border rounded" step="0.01" required>
-      </div>
-      <div class="mb-4">
-        <label for="dish-category" class="block text-sm font-medium text-gray-700">Категория</label>
-        <select id="dish-category" class="mt-1 block w-full p-2 border rounded" required>
-          <option value="">Выберите категорию</option>
-        </select>
-      </div>
-      <div class="mb-4">
-        <label for="dish-image" class="block text-sm font-medium text-gray-700">URL изображения</label>
-        <input type="text" id="dish-image" class="mt-1 block w-full p-2 border rounded" placeholder="Введите URL">
-        <img id="dish-image-preview" class="mt-2 max-h-32" src="" alt="Предпросмотр изображения">
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700">Доступно для заказа</label>
-        <input type="checkbox" id="dish-active" class="mt-1">
-      </div>
-      <div class="mb-4">
-        <label for="dish-weight" class="block text-sm font-medium text-gray-700">Вес (г)</label>
-        <input type="number" id="dish-weight" class="mt-1 block w-full p-2 border rounded" step="0.1" min="0">
-      </div>
-      <div class="mb-4">
-        <label for="dish-min-portions" class="block text-sm font-medium text-gray-700">Мин. порций</label>
-        <input type="number" id="dish-min-portions" class="mt-1 block w-full p-2 border rounded" min="0" required>
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700">Ингредиенты</label>
-        <div id="ingredients-container">
-          <div class="ingredient-row mb-2 flex">
-            <input type="text" id="ingredient-search" class="border p-2 mr-2 w-2/3" placeholder="Введите название ингредиента" list="ingredient-options">
-            <datalist id="ingredient-options"></datalist>
-            <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" min="0" step="0.1">
-          </div>
-        </div>
-        <button type="button" onclick="addIngredientRow()" class="bg-green-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
-      </div>
-      <button type="submit" id="dish-form-button" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Добавить блюдо</button>
-    </form>
 
-    <!-- Форма добавления категории -->
-    <form id="category-form" class="bg-white p-6 rounded shadow-md mt-4">
-      <h2 class="text-2xl font-bold mb-4">Добавить категорию</h2>
-      <div class="mb-4">
-        <label for="category-name" class="block text-sm font-medium text-gray-700">Название категории</label>
-        <input type="text" id="category-name" class="mt-1 block w-full p-2 border rounded" required>
-      </div>
-      <div class="mb-4">
-        <label for="category-number" class="block text-sm font-medium text-gray-700">Порядок (1, 2, 3...)</label>
-        <input type="number" id="category-number" class="mt-1 block w-full p-2 border rounded" min="0">
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700">Отображать в меню</label>
-        <input type="checkbox" id="category-visible" class="mt-1" checked>
-      </div>
-      <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Добавить категорию</button>
-    </form>
+  <!-- Список блюд -->
+  <div id="dishes-list" class="mt-4 dish-grid"></div>
 
-    <!-- Список категорий -->
-    <div id="categories-list" class="mt-4">
-      <h2 class="text-xl font-bold">Список категорий</h2>
-      <select id="filter-category" class="mt-1 block w-full p-2 border rounded" onchange="loadDishes()">
-        <option value="">Все категории</option>
+  <!-- Список ингредиентов для заказа -->
+  <div id="order-ingredients-list" class="mt-4"></div>
+
+  <!-- Форма редактирования/добавления блюда (скрыта по умолчанию) -->
+  <form id="dish-form" class="mt-4 p-4 bg-white rounded shadow hidden" data-dish-id="">
+    <h2 class="text-xl font-bold mb-4">Редактировать/Добавить блюдо</h2>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Название блюда</label>
+      <input type="text" id="dish-name" class="mt-1 block w-full p-2 border rounded" placeholder="Введите название">
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Описание</label>
+      <textarea id="dish-description" class="mt-1 block w-full p-2 border rounded" placeholder="Введите описание"></textarea>
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Цена ($)</label>
+      <input type="number" id="dish-price" class="mt-1 block w-full p-2 border rounded" placeholder="Введите цену" step="0.01" min="0">
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Категория</label>
+      <select id="dish-category" class="mt-1 block w-full p-2 border rounded">
+        <option value="">Выберите категорию</option>
       </select>
     </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Изображение (URL)</label>
+      <input type="text" id="dish-image" class="mt-1 block w-full p-2 border rounded" placeholder="Введите URL изображения">
+      <img id="dish-image-preview" class="mt-2 max-h-32" alt="Предпросмотр изображения">
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Активно</label>
+      <input type="checkbox" id="dish-active" class="mt-1">
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Вес (г)</label>
+      <input type="number" id="dish-weight" class="mt-1 block w-full p-2 border rounded" placeholder="Введите вес" step="0.1" min="0">
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Мин. порции</label>
+      <input type="number" id="dish-min-portions" class="mt-1 block w-full p-2 border rounded" placeholder="Введите мин. порции" min="0">
+    </div>
+    <div id="ingredients-container" class="mb-4">
+      <h3 class="text-lg font-medium">Ингредиенты</h3>
+      <div class="ingredient-row mb-2 flex">
+        <input type="text" id="ingredient-search" class="border p-2 mr-2 w-2/3" placeholder="Введите название ингредиента" list="ingredient-options">
+        <datalist id="ingredient-options"></datalist>
+        <input type="number" class="dish-ingredient-quantity border p-2 w-1/3" placeholder="Количество" min="0" step="0.1">
+        <button type="button" onclick="addIngredientRow()" class="bg-green-600 text-white p-1 rounded ml-2">Добавить</button>
+      </div>
+    </div>
+    <button type="submit" id="dish-form-button" class="bg-blue-600 text-white p-2 rounded">Добавить блюдо</button>
+    <button type="button" onclick="document.getElementById('dish-form').classList.add('hidden')" class="bg-red-600 text-white p-2 rounded ml-2">Отмена</button>
+  </form>
 
-    <!-- Список блюд -->
-    <div id="dishes-list" class="mt-4 dish-grid"></div>
-  </div>
+  <!-- Подключение Firebase и пользовательского скрипта -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="app.js" defer></script>
-<script>
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
+  <script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        initializeApp();
+      });
+    } else {
       initializeApp();
-    });
-  } else {
-    initializeApp();
-  }
-</script>
+    }
+  </script>
 </body>
 </html>
