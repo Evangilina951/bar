@@ -1,8 +1,9 @@
 // Подключение Firebase
 if (typeof firebase === 'undefined') {
   console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
-  return;
+  return; // Корректное завершение, если Firebase отсутствует
 }
+
 console.log('Firebase загружен успешно.');
 
 const firebaseConfig = {
@@ -14,13 +15,15 @@ const firebaseConfig = {
   messagingSenderId: "938549088383",
   appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
 };
+
 try {
   firebase.initializeApp(firebaseConfig);
   console.log('Firebase инициализирован.');
 } catch (error) {
   console.error('Ошибка инициализации Firebase:', error);
-  return;
+  return; // Корректное завершение при ошибке
 }
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 console.log('Firestore доступен:', !!db);
@@ -160,3 +163,5 @@ window.addToDeliveryOrder = addToDeliveryOrder;
 window.placeDeliveryOrder = placeDeliveryOrder;
 window.loadDeliveryOrders = loadDeliveryOrders;
 window.updateDeliveryStatus = updateDeliveryStatus;
+
+initializeApp();
