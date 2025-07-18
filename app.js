@@ -6,21 +6,28 @@ function initializeApp() {
   }
   console.log('Firebase загружен успешно.');
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
-    authDomain: "evabar-ac842.firebaseapp.com",
-    databaseURL: "https://evabar-ac842-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "evabar-ac842",
-    storageBucket: "evabar-ac842.firebasestorage.app",
-    messagingSenderId: "938549088383",
-    appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
-  };
-  try {
-    firebase.initializeApp(firebaseConfig);
-    console.log('Firebase инициализирован.');
-  } catch (error) {
-    console.error('Ошибка инициализации Firebase:', error);
-    return;
+  // Проверка существования приложения
+  if (!firebase.apps.length) {
+    const firebaseConfig = {
+      apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
+      authDomain: "evabar-ac842.firebaseapp.com",
+      databaseURL: "https://evabar-ac842-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "evabar-ac842",
+      storageBucket: "evabar-ac842.firebasestorage.app",
+      messagingSenderId: "938549088383",
+      appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
+    };
+    try {
+      firebase.initializeApp(firebaseConfig);
+      console.log('Firebase инициализирован.');
+    } catch (error) {
+      console.error('Ошибка инициализации Firebase:', error);
+      return;
+    }
+  } else {
+    console.log('Firebase уже инициализирован, повторная инициализация пропущена.');
+    // Используем существующее приложение
+    firebase.app();
   }
   const auth = firebase.auth();
   const db = firebase.firestore();
@@ -473,14 +480,13 @@ function initializeApp() {
     }
   }
 
-  // Обёртываем loadDishes в IIFE для корректной работы с await
   async function loadDishes() {
     const list = document.getElementById('dishes-list');
     if (!list) return;
+    const filterCategory = document.getElementById('filter-category');
     try {
-      const filterCategory = document.getElementById('filter-category').value;
       const dishesQuery = db.collection('dishes').where('is_active_dish', '==', true);
-      const dishes = await (filterCategory ? dishesQuery.where('category_id', '==', filterCategory).get() : dishesQuery.get());
+      const dishes = await (filterCategory ? dishesQuery.where('category_id', '==', filterCategory.value).get() : dishesQuery.get());
       const categories = await db.collection('categories').get();
       const categoryMap = {};
       categories.forEach(cat => categoryMap[cat.id] = cat.data().name);
@@ -780,7 +786,7 @@ function initializeApp() {
   async function loadOrderIngredients() {
     const list = document.getElementById('order-ingredients-list');
     if (!list) {
-      console.error('Элемент с id="order-ingredients-list" не найден');
+      console.warn('Элемент с id="order-ingredients-list" не найден, загрузка пропущена.');
       return;
     }
     try {
