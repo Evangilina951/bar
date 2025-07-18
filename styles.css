@@ -35,3 +35,30 @@ ul {
   list-style-type: disc;
   padding-left: 1.5rem;
 }
+
+/* Стили для контейнера таблицы заказов */
+.order-table-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.order-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-table-container th,
+.order-table-container td {
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.order-table-container th {
+  background-color: #f9fafb;
+  font-weight: bold;
+}
+
+.order-table-container tr:nth-child(even) {
+  background-color: #f3f4f6;
+}
