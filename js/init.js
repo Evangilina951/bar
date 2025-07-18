@@ -1,7 +1,7 @@
 // Подключение Firebase
 if (typeof firebase === 'undefined') {
   console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
-  return; // Корректное завершение, если Firebase не загружен
+  return;
 }
 console.log('Firebase загружен успешно.');
 
@@ -19,7 +19,7 @@ try {
   console.log('Firebase инициализирован.');
 } catch (error) {
   console.error('Ошибка инициализации Firebase:', error);
-  return; // Корректное завершение при ошибке инициализации
+  return;
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -28,12 +28,12 @@ console.log('Firestore доступен:', !!db);
 const SALARY_RATE = 0.4;
 
 // Импорт модулей
-import './auth.js';
-import './menu.js';
-import './ingredients.js';
-import './order.js';
-import './employees.js';
-import './delivery.js';
+import { login, logout } from './auth.js';
+import { loadMenu, addToOrder, placeOrder, addDish, editDish, loadDishForEdit } from './menu.js';
+import { loadInventory, addIngredient, editIngredient, loadIngredientForEdit, deleteIngredient, updateIngredientQuantity, loadIngredientsSelect, addIngredientRow, loadIngredientsSelectForRow, showIngredientForm, hideIngredientForm, toggleUnusedIngredients } from './ingredients.js';
+import { loadOrderIngredients, addPromocode, loadPromocodes, loadPersonalReport, generateGeneralReport } from './order.js';
+import { addEmployee, loadEmployees } from './employees.js';
+import { loadDeliveryMenu, addToDeliveryOrder, placeDeliveryOrder, loadDeliveryOrders, updateDeliveryStatus } from './delivery.js';
 
 // Инициализация приложения
 function initializeApp() {
@@ -130,29 +130,33 @@ function handleIngredientForm(event) {
 // Экспортируем функции в глобальную область видимости
 window.login = login;
 window.logout = logout;
+window.loadMenu = loadMenu;
 window.addToOrder = addToOrder;
 window.placeOrder = placeOrder;
-window.addPromocode = addPromocode;
 window.addDish = addDish;
 window.editDish = editDish;
 window.loadDishForEdit = loadDishForEdit;
-window.addCategory = addCategory;
-window.toggleCategoryVisibility = toggleCategoryVisibility;
+window.loadInventory = loadInventory;
 window.addIngredient = addIngredient;
 window.editIngredient = editIngredient;
 window.loadIngredientForEdit = loadIngredientForEdit;
 window.deleteIngredient = deleteIngredient;
-window.addEmployee = addEmployee;
-window.addToDeliveryOrder = addToDeliveryOrder;
-window.placeDeliveryOrder = placeDeliveryOrder;
-window.updateDeliveryStatus = updateDeliveryStatus;
-window.generateGeneralReport = generateGeneralReport;
+window.updateIngredientQuantity = updateIngredientQuantity;
+window.loadIngredientsSelect = loadIngredientsSelect;
 window.addIngredientRow = addIngredientRow;
 window.loadIngredientsSelectForRow = loadIngredientsSelectForRow;
-window.editQuantity = editQuantity;
-window.saveQuantity = saveQuantity;
 window.showIngredientForm = showIngredientForm;
 window.hideIngredientForm = hideIngredientForm;
 window.toggleUnusedIngredients = toggleUnusedIngredients;
-
-initializeApp();
+window.loadOrderIngredients = loadOrderIngredients;
+window.addPromocode = addPromocode;
+window.loadPromocodes = loadPromocodes;
+window.loadPersonalReport = loadPersonalReport;
+window.generateGeneralReport = generateGeneralReport;
+window.addEmployee = addEmployee;
+window.loadEmployees = loadEmployees;
+window.loadDeliveryMenu = loadDeliveryMenu;
+window.addToDeliveryOrder = addToDeliveryOrder;
+window.placeDeliveryOrder = placeDeliveryOrder;
+window.loadDeliveryOrders = loadDeliveryOrders;
+window.updateDeliveryStatus = updateDeliveryStatus;
