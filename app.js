@@ -673,16 +673,23 @@ function initializeApp() {
         return;
       }
 
-      nameField.value = ingData.name_product || '';
-      quantityField.value = ingData.stock_quantity_product || 0;
-      priceField.value = ingData.current_price_product || 0;
-      supplierField.value = ingData.supplier_product || '';
-      weightField.value = ingData.weight_product || 0;
+      // Принудительное обновление DOM
+      requestAnimationFrame(() => {
+        nameField.value = ingData.name_product || '';
+        quantityField.value = ingData.stock_quantity_product || 0;
+        priceField.value = ingData.current_price_product || 0;
+        supplierField.value = ingData.supplier_product || '';
+        weightField.value = ingData.weight_product || 0;
 
-      document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
-      document.getElementById('ingredient-form-button').textContent = 'Сохранить';
-      showIngredientForm();
-      console.log('Форма заполнена данными:', ingData);
+        document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
+        document.getElementById('ingredient-form-button').textContent = 'Сохранить';
+        showIngredientForm();
+        console.log('Форма заполнена данными:', ingData);
+        console.log('Состояние формы после заполнения:', {
+          display: form.style.display,
+          visibility: form.style.visibility
+        });
+      });
     } catch (error) {
       console.error('Ошибка загрузки ингредиента для редактирования:', error);
       alert('Ошибка при загрузке ингредиента: ' + error.message);
@@ -1175,6 +1182,7 @@ function initializeApp() {
     const form = document.getElementById('ingredient-form');
     if (form) {
       form.style.display = 'block';
+      form.style.visibility = 'visible'; // Принудительно делаем форму видимой
       form.reset();
     } else {
       console.warn('Форма с id="ingredient-form" не найдена при вызове showIngredientForm.');
