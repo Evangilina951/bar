@@ -653,15 +653,36 @@ function initializeApp() {
       const ingData = ingredient.data();
       console.log('Данные ингредиента:', ingData);
 
-      document.getElementById('ingredient-name').value = ingData.name_product || '';
-      document.getElementById('ingredient-quantity').value = ingData.stock_quantity_product || 0;
-      document.getElementById('ingredient-price').value = ingData.current_price_product || 0;
-      document.getElementById('ingredient-supplier').value = ingData.supplier_product || '';
-      document.getElementById('ingredient-weight').value = ingData.weight_product || 0;
+      const form = document.getElementById('ingredient-form');
+      if (!form) {
+        console.error('Форма с id="ingredient-form" не найдена');
+        alert('Форма редактирования не найдена. Обновите страницу.');
+        return;
+      }
+
+      // Проверяем и устанавливаем значения полей
+      const nameField = document.getElementById('ingredient-name');
+      const quantityField = document.getElementById('ingredient-quantity');
+      const priceField = document.getElementById('ingredient-price');
+      const supplierField = document.getElementById('ingredient-supplier');
+      const weightField = document.getElementById('ingredient-weight');
+
+      if (!nameField || !quantityField || !priceField || !supplierField || !weightField) {
+        console.error('Один или несколько полей формы не найдены:', { nameField, quantityField, priceField, supplierField, weightField });
+        alert('Ошибка: Некоторые поля формы отсутствуют. Обновите страницу.');
+        return;
+      }
+
+      nameField.value = ingData.name_product || '';
+      quantityField.value = ingData.stock_quantity_product || 0;
+      priceField.value = ingData.current_price_product || 0;
+      supplierField.value = ingData.supplier_product || '';
+      weightField.value = ingData.weight_product || 0;
 
       document.getElementById('ingredient-form').dataset.ingredientId = ingredientId;
       document.getElementById('ingredient-form-button').textContent = 'Сохранить';
       showIngredientForm();
+      console.log('Форма заполнена данными:', ingData);
     } catch (error) {
       console.error('Ошибка загрузки ингредиента для редактирования:', error);
       alert('Ошибка при загрузке ингредиента: ' + error.message);
