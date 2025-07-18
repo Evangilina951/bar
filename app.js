@@ -473,6 +473,7 @@ function initializeApp() {
     }
   }
 
+  // Обёртываем loadDishes в IIFE для корректной работы с await
   async function loadDishes() {
     const list = document.getElementById('dishes-list');
     if (!list) return;
@@ -492,28 +493,30 @@ function initializeApp() {
         const dishData = dish.data();
         const ingredients = dishData.ingredients || [];
         let ingredientNames = [];
-        for (const ing of ingredients) {
-          const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
-          if (ingredient.exists) {
-            ingredientNames.push(`${ingredient.data().name_product} (${ing.quantity})`);
-          } else {
-            ingredientNames.push(`Неизвестный ингредиент (${ing.quantity})`);
+        (async () => {
+          for (const ing of ingredients) {
+            const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
+            if (ingredient.exists) {
+              ingredientNames.push(`${ingredient.data().name_product} (${ing.quantity})`);
+            } else {
+              ingredientNames.push(`Неизвестный ингредиент (${ing.quantity})`);
+            }
           }
-        }
-        list.innerHTML += `
-          <div class="border p-2">
-            <p class="font-bold">${dishData.name_dish} - ${dishData.price_dish} $</p>
-            <p>Категория: ${categoryMap[dishData.category_id] || 'Нет'}</p>
-            <p>Себестоимость: ${Math.floor(dishData.price_current_dish * 10) / 10} $</p>
-            <p>Зарплата сотрудника: ${Math.floor(dishData.salary_dish * 10) / 10} $</p>
-            <p>Прибыль: ${Math.floor(dishData.price_profit_dish * 10) / 10} $</p>
-            <p>Описание: ${dishData.description_dish}</p>
-            <p>Вес: ${dishData.weight_dish} г</p>
-            <p>Мин. порций: ${dishData.min_dish}</p>
-            <p>Ингредиенты: ${ingredientNames.join(', ') || 'Нет'}</p>
-            ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="mt-2 max-h-32">` : ''}
-            <button onclick="loadDishForEdit('${dish.id}')" class="bg-yellow-600 text-white p-1 rounded mt-2">Редактировать</button>
-          </div>`;
+          list.innerHTML += `
+            <div class="border p-2">
+              <p class="font-bold">${dishData.name_dish} - ${dishData.price_dish} $</p>
+              <p>Категория: ${categoryMap[dishData.category_id] || 'Нет'}</p>
+              <p>Себестоимость: ${Math.floor(dishData.price_current_dish * 10) / 10} $</p>
+              <p>Зарплата сотрудника: ${Math.floor(dishData.salary_dish * 10) / 10} $</p>
+              <p>Прибыль: ${Math.floor(dishData.price_profit_dish * 10) / 10} $</p>
+              <p>Описание: ${dishData.description_dish}</p>
+              <p>Вес: ${dishData.weight_dish} г</p>
+              <p>Мин. порций: ${dishData.min_dish}</p>
+              <p>Ингредиенты: ${ingredientNames.join(', ') || 'Нет'}</p>
+              ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="mt-2 max-h-32">` : ''}
+              <button onclick="loadDishForEdit('${dish.id}')" class="bg-yellow-600 text-white p-1 rounded mt-2">Редактировать</button>
+            </div>`;
+        })();
       });
     } catch (error) {
       console.error('Ошибка загрузки блюд:', error);
