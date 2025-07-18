@@ -13,7 +13,10 @@
 <body class="font-sans p-4">
   <nav id="nav"></nav>
   <h1 class="text-2xl font-bold mb-4">Инвентаризация</h1>
-  <button onclick="showIngredientForm()" class="bg-blue-600 text-white p-2 rounded mb-4">Добавить новый ингредиент</button>
+  <div class="mb-4">
+    <button id="toggle-unused" onclick="toggleUnusedIngredients()" class="bg-blue-600 text-white p-2 rounded mr-2" data-show="true">Скрыть неиспользуемые</button>
+    <button onclick="showIngredientForm()" class="bg-blue-600 text-white p-2 rounded">Добавить новый ингредиент</button>
+  </div>
   <form id="ingredient-form" style="display: none;" class="space-y-4 mb-4">
     <h2 class="text-xl">Форма ингредиента</h2>
     <div>
@@ -22,7 +25,7 @@
     </div>
     <div>
       <label for="ingredient-quantity" class="block text-sm font-medium text-gray-700">Количество:</label>
-      <input type="number" id="ingredient-quantity" name="ingredient-quantity" class="mt-1 block w-full border p-2 rounded" required>
+      <input type="number" id="ingredient-quantity" name="ingredient-quantity" class="mt-1 block w-full border p-2 rounded" min="0">
     </div>
     <div>
       <label for="ingredient-price" class="block text-sm font-medium text-gray-700">Цена ($):</label>
@@ -34,9 +37,9 @@
     </div>
     <div>
       <label for="ingredient-weight" class="block text-sm font-medium text-gray-700">Вес (кг):</label>
-      <input type="number" step="0.01" id="ingredient-weight" name="ingredient-weight" class="mt-1 block w-full border p-2 rounded" required>
+      <input type="number" step="0.01" id="ingredient-weight" name="ingredient-weight" class="mt-1 block w-full border p-2 rounded" min="0">
     </div>
-    <button type="submit" id="ingredient-form-button" class="bg-blue-600 text-white p-2 rounded">Добавить ингредиент</button>
+    <button type="submit" id="ingredient-form-button" class="bg-blue-600 text-white p-2 rounded">Сохранить</button>
     <button type="button" onclick="hideIngredientForm()" class="bg-red-600 text-white p-2 rounded">Отмена</button>
   </form>
   <div id="inventory-list"></div>
