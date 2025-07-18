@@ -853,8 +853,12 @@ function initializeApp() {
       });
 
       const list = document.getElementById('order-ingredients-list');
-      list.innerHTML = '<h2 class="text-xl font-bold mb-2">Заказать</h2><div class="order-table-container max-h-96 overflow-y-auto">';
+      list.innerHTML = '<h2 class="text-xl font-bold mb-2">Заказать</h2>';
       let hasItems = false;
+      let orderItemsText = '';
+      let totalCost = 0;
+      let totalWeight = 0;
+
       const supplierOrders = {};
       for (const [ingId, data] of Object.entries(requiredIngredients)) {
         const stock = ingredientMap[ingId]?.stock || 0;
@@ -875,53 +879,20 @@ function initializeApp() {
       }
 
       if (!hasItems) {
-        list.innerHTML += '<p class="text-gray-500">Ингредиенты для заказа отсутствуют</p></div>';
+        list.innerHTML += '<p class="text-gray-500">Ингредиенты для заказа отсутствуют</p>';
       } else {
         for (const [supplier, items] of Object.entries(supplierOrders)) {
-          list.innerHTML += `<h3 class="text-lg font-semibold mt-4">${supplier}</h3>`;
-          list.innerHTML += `
-            <table class="w-full border-collapse border border-gray-300 bg-white">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="border border-gray-300 p-2 w-1/3 text-left">Наименование</th>
-                  <th class="border border-gray-300 p-2 w-1/6 text-center">Количество</th>
-                  <th class="border border-gray-300 p-2 w-1/6 text-center">Вес (кг)</th>
-                  <th class="border border-gray-300 p-2 w-1/3 text-right">Сумма ($)</th>
-                </tr>
-              </thead>
-              <tbody>
-          `;
-          let totalCost = 0;
-          let totalWeight = 0;
           items.forEach(item => {
             const cost = item.quantity * item.price;
             const weight = item.quantity * item.weight;
+            orderItemsText += `${item.name} ${item.quantity} ${cost.toFixed(2)} `;
             totalCost += cost;
             totalWeight += weight;
-            list.innerHTML += `
-              <tr>
-                <td class="border border-gray-300 p-2">${item.name}</td>
-                <td class="border border-gray-300 p-2 text-center">${item.quantity}</td>
-                <td class="border border-gray-300 p-2 text-center">${weight.toFixed(2)}</td>
-                <td class="border border-gray-300 p-2 text-right">${cost.toFixed(2)}</td>
-              </tr>
-            `;
           });
-          list.innerHTML += `
-              </tbody>
-              <tfoot>
-                <tr class="bg-gray-100 font-bold">
-                  <td class="border border-gray-300 p-2" colspan="2">Итого:</td>
-                  <td class="border border-gray-300 p-2 text-center">${totalWeight.toFixed(2)} кг</td>
-                  <td class="border border-gray-300 p-2 text-right">${totalCost.toFixed(2)} $</td>
-                </tr>
-              </tfoot>
-            </table>
-          `;
         }
-        list.innerHTML += '</div>'; // Закрываем order-table-container
+        list.innerHTML += `${orderItemsText.trim()}Итого: ${totalWeight.toFixed(2)} кг ${totalCost.toFixed(2)} $`;
       }
-      console.log('Таблица заказов отрендерена. HTML:', list.innerHTML);
+      console.log('Таблица заказов отрендерена. Текст:', list.innerHTML);
     } catch (error) {
       console.error('Ошибка загрузки заказа ингредиентов:', error);
       alert('Ошибка при загрузке заказа ингредиентов: ' + error.message);
