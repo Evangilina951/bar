@@ -855,10 +855,6 @@ function initializeApp() {
       const list = document.getElementById('order-ingredients-list');
       list.innerHTML = '<h2 class="text-xl font-bold mb-2">Заказать</h2>';
       let hasItems = false;
-      let orderItemsText = '';
-      let totalCost = 0;
-      let totalWeight = 0;
-
       const supplierOrders = {};
       for (const [ingId, data] of Object.entries(requiredIngredients)) {
         const stock = ingredientMap[ingId]?.stock || 0;
@@ -882,17 +878,20 @@ function initializeApp() {
         list.innerHTML += '<p class="text-gray-500">Ингредиенты для заказа отсутствуют</p>';
       } else {
         for (const [supplier, items] of Object.entries(supplierOrders)) {
+          list.innerHTML += `<h3 class="text-lg font-semibold mt-2">Заказ ${supplier}:</h3>`;
+          let totalCost = 0;
+          let totalWeight = 0;
           items.forEach(item => {
             const cost = item.quantity * item.price;
             const weight = item.quantity * item.weight;
-            orderItemsText += `${item.name} ${item.quantity} ${cost.toFixed(2)} `;
             totalCost += cost;
             totalWeight += weight;
+            list.innerHTML += `${item.name} ${item.quantity} шт ${weight.toFixed(2)} кг ${cost.toFixed(2)}$<br>`;
           });
+          list.innerHTML += `Итого: ${totalWeight.toFixed(2)} кг ${totalCost.toFixed(2)}$<br>`;
         }
-        list.innerHTML += `${orderItemsText.trim()}Итого: ${totalWeight.toFixed(2)} кг ${totalCost.toFixed(2)} $`;
       }
-      console.log('Таблица заказов отрендерена. Текст:', list.innerHTML);
+      console.log('Таблица заказов отрендерена. HTML:', list.innerHTML);
     } catch (error) {
       console.error('Ошибка загрузки заказа ингредиентов:', error);
       alert('Ошибка при загрузке заказа ингредиентов: ' + error.message);
