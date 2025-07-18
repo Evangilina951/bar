@@ -115,14 +115,14 @@
     <div id="dishes-list" class="mt-4 dish-grid"></div>
   </div>
   <script src="app.js" defer></script>
-  <script>
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
-        initializeApp();
-      });
-    } else {
+<script>
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
       initializeApp();
-    }
-  </script>
+    });
+  } else {
+    initializeApp();
+  }
+</script>
 </body>
 </html>
