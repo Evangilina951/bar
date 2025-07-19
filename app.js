@@ -28,7 +28,7 @@ function initializeApp() {
   const SALARY_RATE = 0.4;
   let currentCategoryFilter = null;
 
-  async function loadNav() {
+   async function loadNav() {
     const navElement = document.getElementById('nav');
     if (!navElement) {
       console.warn('Элемент с id="nav" не найден. Загрузка nav.html пропущена.');
@@ -36,10 +36,13 @@ function initializeApp() {
     }
     try {
       const response = await fetch('/bar/nav.html');
-      if (!response.ok) throw new Error('Не удалось загрузить nav.html');
-      navElement.innerHTML = await response.text();
+      if (!response.ok) throw new Error(`HTTP ошибка ${response.status}: Не удалось загрузить nav.html`);
+      const navContent = await response.text();
+      navElement.innerHTML = navContent;
+      console.log('nav.html успешно загружен и вставлен в DOM');
     } catch (error) {
       console.error('Ошибка загрузки nav.html:', error);
+      navElement.innerHTML = '<p class="text-red-600">Ошибка загрузки навигации</p>';
     }
   }
 
