@@ -14,6 +14,9 @@
     .dish-card { width: 200px; border: 1px solid #e5e7eb; padding: 10px; }
     .dish-image { width: 62px; height: 62px; object-fit: contain; }
     .dish-details { display: none; }
+    .edit-btn { background-color: #f4a261; }
+    .delete-btn { background-color: #e76f51; }
+    .toggle-active-btn { background-color: #2a9d8f; }
   </style>
 </head>
 <body>
@@ -68,12 +71,19 @@
   <div id="dishes-list"></div>
 
   <script>
-    document.getElementById('show-inactive-categories').addEventListener('change', function() {
-      if (typeof loadCategoryList === 'function') {
-        loadCategoryList();
-      } else {
-        console.error('Функция loadCategoryList не определена. Проверьте загрузку app.js.');
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('show-inactive-categories').addEventListener('change', function() {
+        if (typeof loadCategoryList === 'function') {
+          loadCategoryList();
+        } else {
+          console.error('Функция loadCategoryList не определена. Проверьте загрузку app.js.');
+          setTimeout(() => {
+            if (typeof loadCategoryList === 'function') {
+              loadCategoryList();
+            }
+          }, 100);
+        }
+      });
     });
   </script>
 </body>
