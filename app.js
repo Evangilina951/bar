@@ -1,3 +1,5 @@
+let firebaseApp = null;
+
 function initializeApp() {
   // Проверка наличия Firebase SDK
   if (typeof firebase === 'undefined') {
@@ -17,19 +19,19 @@ function initializeApp() {
   };
 
   try {
-    firebase.initializeApp(firebaseConfig);
+    firebaseApp = firebase.initializeApp(firebaseConfig);
     console.log('Firebase инициализирован.');
   } catch (error) {
     console.error('Ошибка инициализации Firebase:', error);
     return;
   }
 
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  const auth = firebaseApp.auth();
+  const db = firebaseApp.firestore();
   const SALARY_RATE = 0.4;
   let currentCategoryFilter = null;
 
-  // Загрузка навигации
+  // Остальной код функции initializeApp остается без изменений
   async function loadNav() {
     const navElement = document.getElementById('nav');
     if (!navElement) {
@@ -50,6 +52,10 @@ function initializeApp() {
 
   // Вход в систему
   async function login() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const email = document.getElementById('email')?.value;
     const password = document.getElementById('password')?.value;
     if (!email || !password) {
@@ -67,6 +73,10 @@ function initializeApp() {
 
   // Выход из системы
   async function logout() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       await auth.signOut();
       window.location.href = '/bar/index.html';
@@ -78,6 +88,10 @@ function initializeApp() {
 
   // Расчет метрик блюда
   async function calculateDishMetrics(ingredients) {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return { price_current_dish: 0 };
+    }
     let price_current_dish = 0;
     if (!ingredients || ingredients.length === 0) {
       console.warn('Массив ingredients пустой или отсутствует');
@@ -101,6 +115,10 @@ function initializeApp() {
 
   // Загрузка меню
   async function loadMenu() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const categoriesDiv = document.getElementById('categories');
     if (!categoriesDiv) return;
     try {
@@ -160,6 +178,10 @@ function initializeApp() {
 
   // Оформление заказа
   async function placeOrder() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const comment = document.getElementById('order-comment')?.value || '';
     try {
       await db.collection('orders').add({
@@ -195,6 +217,10 @@ function initializeApp() {
 
   // Управление промокодами
   async function addPromocode() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const code = document.getElementById('promo-code')?.value;
     const discount = parseInt(document.getElementById('promo-discount')?.value) || 0;
     if (!code || !discount) {
@@ -212,6 +238,10 @@ function initializeApp() {
   }
 
   async function loadPromocodes() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('promocodes-list');
     if (!list) return;
     try {
@@ -231,6 +261,10 @@ function initializeApp() {
 
   // Управление блюдами
   async function addDish() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('dish-form');
     if (!form) {
       console.error('Форма с id="dish-form" не найдена в DOM');
@@ -302,6 +336,10 @@ function initializeApp() {
   }
 
   async function editDish(dishId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('dish-form');
     if (!form) {
       console.error('Форма с id="dish-form" не найдена в DOM');
@@ -371,6 +409,10 @@ function initializeApp() {
   }
 
   async function loadDishForEdit(dishId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('dish-form');
     if (!form) {
       console.error('Форма с id="dish-form" не найдена в DOM');
@@ -453,6 +495,10 @@ function initializeApp() {
 
   // Управление категориями
   async function addCategory() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('category-form');
     if (!form) {
       console.error('Форма с id="category-form" не найдена в DOM');
@@ -487,6 +533,10 @@ function initializeApp() {
   }
 
   async function loadCategories() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const select = document.getElementById('dish-category');
     const filterSelect = document.getElementById('filter-category');
     if (!select && !filterSelect) return;
@@ -511,6 +561,10 @@ function initializeApp() {
   }
 
   async function loadCategoryList() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('categories-list');
     if (!list) return;
     const showInactive = document.getElementById('show-inactive-categories')?.checked || false;
@@ -562,6 +616,10 @@ function initializeApp() {
   }
 
   async function loadCategoryForEdit(categoryId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('category-form');
     if (!form) {
       console.error('Форма с id="category-form" не найдена в DOM');
@@ -591,6 +649,10 @@ function initializeApp() {
   }
 
   async function deleteCategory(categoryId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       const dishes = await db.collection('dishes').where('category_id', '==', categoryId).get();
       if (!dishes.empty) {
@@ -608,6 +670,10 @@ function initializeApp() {
   }
 
   async function toggleCategoryVisibility(categoryId, isVisible) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       await db.collection('categories').doc(categoryId).update({ isVisible });
       await loadCategoryList();
@@ -620,6 +686,10 @@ function initializeApp() {
 
   // Загрузка и управление блюдами
   async function loadDishes() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('dishes-list');
     if (!list) return;
     const filterCategory = currentCategoryFilter || document.getElementById('filter-category')?.value;
@@ -680,6 +750,10 @@ function initializeApp() {
   }
 
   async function deleteDish(dishId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       await db.collection('dishes').doc(dishId).delete();
       await loadDishes();
@@ -705,6 +779,10 @@ function initializeApp() {
   }
 
   async function toggleDishVisibility(dishId, isActive) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       await db.collection('dishes').doc(dishId).update({ is_active_dish: isActive });
       await loadDishes();
@@ -720,6 +798,10 @@ function initializeApp() {
 
   // Управление ингредиентами
   async function loadIngredientsSelect() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const searchInputs = document.querySelectorAll('#ingredient-search:not([data-loaded])');
     if (!searchInputs.length) return;
     try {
@@ -778,6 +860,10 @@ function initializeApp() {
   }
 
   async function addIngredient(name_product, stock_quantity_product, current_price_product, supplier_product, weight_product) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     if (!name_product || !current_price_product) {
       alert('Пожалуйста, заполните обязательные поля: название и цену.');
       return;
@@ -812,6 +898,10 @@ function initializeApp() {
   }
 
   async function editIngredient(ingredientId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('ingredient-form');
     if (!form) {
       console.error('Форма с id="ingredient-form" не найдена в DOM');
@@ -850,6 +940,10 @@ function initializeApp() {
   }
 
   async function loadIngredientForEdit(ingredientId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const form = document.getElementById('ingredient-form');
     if (!form) {
       console.error('Форма с id="ingredient-form" не найдена в DOM');
@@ -901,6 +995,10 @@ function initializeApp() {
   }
 
   async function deleteIngredient(ingredientId) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       await db.collection('ingredients').doc(ingredientId).delete();
       await loadInventory();
@@ -916,6 +1014,10 @@ function initializeApp() {
   }
 
   async function updateIngredientQuantity(ingredientId, newQuantity) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       const parsedQuantity = parseInt(newQuantity) || 0;
       await db.collection('ingredients').doc(ingredientId).update({
@@ -932,6 +1034,10 @@ function initializeApp() {
   }
 
   async function loadInventory() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('inventory-list');
     if (!list) return;
     try {
@@ -1007,6 +1113,10 @@ function initializeApp() {
   }
 
   async function loadOrderIngredients() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('order-ingredients-list');
     if (!list) {
       console.warn('Элемент с id="order-ingredients-list" не найден, загрузка пропущена.');
@@ -1086,6 +1196,10 @@ function initializeApp() {
 
   // Отчеты
   async function loadPersonalReport() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('personal-report-list');
     if (!list) return;
     try {
@@ -1104,6 +1218,10 @@ function initializeApp() {
   }
 
   async function generateGeneralReport() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('general-report-list');
     if (!list) return;
     try {
@@ -1125,6 +1243,10 @@ function initializeApp() {
 
   // Управление сотрудниками
   async function addEmployee() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const name = document.getElementById('employee-name')?.value;
     const phone = document.getElementById('employee-phone')?.value;
     if (!name || !phone) {
@@ -1142,6 +1264,10 @@ function initializeApp() {
   }
 
   async function loadEmployees() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('employees-list');
     if (!list) return;
     try {
@@ -1161,6 +1287,10 @@ function initializeApp() {
 
   // Управление меню доставки
   async function loadDeliveryMenu() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const deliveryMenu = document.getElementById('delivery-menu');
     if (!deliveryMenu) return;
     try {
@@ -1217,6 +1347,10 @@ function initializeApp() {
   }
 
   async function placeDeliveryOrder() {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     const address = document.getElementById('delivery-address')?.value;
     const comment = document.getElementById('delivery-comment')?.value || '';
     if (!address) {
@@ -1245,6 +1379,10 @@ function initializeApp() {
   }
 
   async function updateDeliveryStatus(orderId, status) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
     try {
       await db.collection('delivery-orders').doc(orderId).update({ status });
       await loadDeliveryOrders();
@@ -1255,6 +1393,10 @@ function initializeApp() {
   }
 
   async function loadDeliveryOrders() {
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
     const list = document.getElementById('delivery-orders-list');
     if (!list) return;
     try {
