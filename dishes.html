@@ -4,11 +4,11 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="app.js"></script>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    .hidden { display: none; }
+    /* Встроенные стили для дополнительной кастомизации */
     .ingredient-row { margin-bottom: 10px; }
     #ingredients-container input { margin-right: 10px; }
-    button { margin: 5px; padding: 5px 10px; }
     nav a { margin-right: 15px; text-decoration: none; color: #000; }
     nav button { margin-left: 15px; }
   </style>
@@ -16,26 +16,26 @@
 <body>
   <div id="nav"></div>
 
-  <h1>Управление меню</h1>
+  <h1 class="text-2xl font-bold mb-4">Управление меню</h1>
 
-  <div>
-    <button id="show-dish-form" onclick="showDishForm()">Добавить блюдо</button>
-    <button id="show-category-form" onclick="showCategoryForm()">Добавить категорию</button>
+  <div class="flex space-x-4 mb-4">
+    <button id="show-dish-form" onclick="showDishForm()" class="bg-blue-600 text-white px-4 py-2 rounded">Добавить блюдо</button>
+    <button id="show-category-form" onclick="showCategoryForm()" class="bg-green-600 text-white px-4 py-2 rounded">Добавить категорию</button>
   </div>
 
   <div id="dish-form" class="hidden">
-    <h2>Добавить/Редактировать блюдо</h2>
-    <input type="text" id="dish-name" placeholder="Название"><br>
-    <textarea id="dish-description" placeholder="Описание"></textarea><br>
-    <input type="number" id="dish-price" placeholder="Цена ($)" step="0.01"><br>
-    <select id="dish-category">
+    <h2 class="text-xl font-bold mb-2">Добавить/Редактировать блюдо</h2>
+    <input type="text" id="dish-name" placeholder="Название" class="border p-2 w-full mb-2 rounded"><br>
+    <textarea id="dish-description" placeholder="Описание" class="border p-2 w-full mb-2 rounded"></textarea><br>
+    <input type="number" id="dish-price" placeholder="Цена ($)" step="0.01" class="border p-2 w-full mb-2 rounded"><br>
+    <select id="dish-category" class="border p-2 w-full mb-2 rounded">
       <option value="">Выберите категорию</option>
     </select><br>
-    <input type="text" id="dish-image" placeholder="URL изображения"><br>
-    <input type="number" id="dish-weight" placeholder="Вес (г)" step="0.1"><br>
-    <input type="number" id="dish-min-portions" placeholder="Мин. порций" step="1"><br>
-    <input type="checkbox" id="dish-active"> Активно<br>
-    <div id="ingredients-container">
+    <input type="text" id="dish-image" placeholder="URL изображения" class="border p-2 w-full mb-2 rounded"><br>
+    <input type="number" id="dish-weight" placeholder="Вес (г)" step="0.1" class="border p-2 w-full mb-2 rounded"><br>
+    <input type="number" id="dish-min-portions" placeholder="Мин. порций" step="1" class="border p-2 w-full mb-2 rounded"><br>
+    <input type="checkbox" id="dish-active" class="mr-2"> Активно<br>
+    <div id="ingredients-container" class="mb-2">
       <div class="ingredient-row">
         <input type="text" id="ingredient-search-0" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options">
         <datalist id="ingredient-options"></datalist>
@@ -43,22 +43,22 @@
         <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
       </div>
     </div>
-    <button onclick="addIngredientRow()">Добавить ингредиент</button><br>
-    <button id="dish-form-button" onclick="addDish()">Добавить блюдо</button>
-    <button onclick="cancelDishForm()">Отмена</button>
+    <button onclick="addIngredientRow()" class="bg-gray-600 text-white px-2 py-1 rounded mb-2">Добавить ингредиент</button><br>
+    <button id="dish-form-button" onclick="addDish()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">Добавить блюдо</button>
+    <button onclick="cancelDishForm()" class="bg-red-600 text-white px-4 py-2 rounded">Отмена</button>
   </div>
 
   <div id="category-form" class="hidden">
-    <h2>Добавить/Редактировать категорию</h2>
-    <input type="text" id="category-name" placeholder="Название"><br>
-    <input type="number" id="category-number" placeholder="Порядок" step="1"><br>
-    <input type="checkbox" id="category-visible"> Видимость<br>
-    <button id="category-form-button" onclick="addCategory()">Добавить категорию</button>
-    <button onclick="cancelCategoryForm()">Отмена</button>
+    <h2 class="text-xl font-bold mb-2">Добавить/Редактировать категорию</h2>
+    <input type="text" id="category-name" placeholder="Название" class="border p-2 w-full mb-2 rounded"><br>
+    <input type="number" id="category-number" placeholder="Порядок" step="1" class="border p-2 w-full mb-2 rounded"><br>
+    <input type="checkbox" id="category-visible" class="mr-2"> Видимость<br>
+    <button id="category-form-button" onclick="addCategory()" class="bg-green-600 text-white px-4 py-2 rounded mr-2">Добавить категорию</button>
+    <button onclick="cancelCategoryForm()" class="bg-red-600 text-white px-4 py-2 rounded">Отмена</button>
   </div>
 
-  <div>
-    <input type="checkbox" id="show-inactive-categories" onchange="loadCategoryList()"> Показать неактивные категории<br>
+  <div class="mb-4">
+    <input type="checkbox" id="show-inactive-categories" onchange="loadCategoryList()" class="mr-2"> Показать неактивные категории<br>
     <div id="categories-list"></div>
   </div>
 
