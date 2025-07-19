@@ -1,14 +1,19 @@
-<nav id="nav" class="bg-blue-600 text-white p-4 mb-4 rounded">
-  <a href="index.html" id="nav-login" class="mr-2">Вход</a>
-  <a href="menu.html" id="nav-menu" class="mr-2 hidden">Меню</a>
-  <a href="promocodes.html" id="nav-promocodes" class="mr-2 hidden">Промокоды</a>
-  <a href="dishes.html" id="nav-dishes" class="mr-2 hidden">Блюда</a>
-  <a href="inventory.html" id="nav-inventory" class="mr-2 hidden">Инвентаризация</a>
-  <a href="order-ingredients.html" id="nav-order-ingredients" class="mr-2 hidden">Заказ ингредиентов</a>
-  <a href="personal-report.html" id="nav-personal-report" class="mr-2 hidden">Личная отчетность</a>
-  <a href="general-report.html" id="nav-general-report" class="mr-2 hidden">Общая отчетность</a>
-  <a href="employees.html" id="nav-employees" class="mr-2 hidden">Сотрудники</a>
-  <a href="delivery.html" id="nav-delivery" class="mr-2 hidden">Доставка</a>
-  <a href="delivery-orders.html" id="nav-delivery-orders" class="mr-2 hidden">Заказы доставки</a>
-  <button id="logout" class="hidden" onclick="logout()">Выход</button>
+<nav class="bg-blue-800 text-white p-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-lg font-bold">Админ-панель</div>
+    <div class="flex gap-4 items-center">
+      <a href="/bar/index.html" class="hover:underline">Вход</a>
+      <a href="/bar/menu.html" class="hover:underline">Меню</a>
+      <a href="/bar/promocodes.html" class="hover:underline">Промокоды</a>
+      <a href="/bar/dishes.html" class="hover:underline">Блюда</a>
+      <a href="/bar/inventory.html" class="hover:underline">Инвентаризация</a>
+      <a href="/bar/order-ingredients.html" class="hover:underline">Заказ ингредиентов</a>
+      <a href="/bar/personal-report.html" class="hover:underline">Личная отчетность</a>
+      <a href="/bar/general-report.html" class="hover:underline">Общая отчетность</a>
+      <a href="/bar/employees.html" class="hover:underline">Сотрудники</a>
+      <a href="/bar/delivery.html" class="hover:underline">Доставка</a>
+      <a href="/bar/delivery-orders.html" class="hover:underline">Заказы доставки</a>
+      <button onclick="logout()" class="bg-red-600 text-white p-2 rounded hover:bg-red-700">Выход</button>
+    </div>
+  </div>
 </nav>
