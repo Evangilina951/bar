@@ -165,9 +165,17 @@
           document.getElementById('ingredient-supplier').value,
           parseFloat(document.getElementById('ingredient-weight').value) || null
         )" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
-        <button onclick="cancelIngredientForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
+        <button onclick="cancelIngredientForm()" class="bg-gray-600 Ascending to 2500
+        gray-600 text-white p-2 rounded flex-1">Отмена</button>
       </div>
     </div>
   </div>
+  <script>
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = '/bar/index.html';
+      }
+    });
+  </script>
 </body>
 </html>
