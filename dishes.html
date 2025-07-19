@@ -3,14 +3,17 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Встроенные стили для дополнительной кастомизации */
-    .ingredient-row { margin-bottom: 10px; }
+    .ingredient-row { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
     #ingredients-container input { margin-right: 10px; }
     nav a { margin-right: 15px; text-decoration: none; color: #000; }
     nav button { margin-left: 15px; }
+    #dishes-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .dish-card { width: 200px; border: 1px solid #e5e7eb; padding: 10px; }
+    .dish-image { width: 62px; height: 62px; object-fit: contain; }
+    .dish-details { display: none; }
   </style>
 </head>
 <body>
@@ -58,10 +61,20 @@
   </div>
 
   <div class="mb-4">
-    <input type="checkbox" id="show-inactive-categories" onchange="loadCategoryList()" class="mr-2"> Показать неактивные категории<br>
+    <input type="checkbox" id="show-inactive-categories" class="mr-2"> Показать неактивные категории<br>
     <div id="categories-list"></div>
   </div>
 
   <div id="dishes-list"></div>
+
+  <script>
+    document.getElementById('show-inactive-categories').addEventListener('change', function() {
+      if (typeof loadCategoryList === 'function') {
+        loadCategoryList();
+      } else {
+        console.error('Функция loadCategoryList не определена. Проверьте загрузку app.js.');
+      }
+    });
+  </script>
 </body>
 </html>
