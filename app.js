@@ -8,22 +8,28 @@ function initializeApp() {
   }
   console.log('Firebase загружен успешно.');
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
-    authDomain: "evabar-ac842.firebaseapp.com",
-    databaseURL: "https://evabar-ac842-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "evabar-ac842",
-    storageBucket: "evabar-ac842.firebasestorage.app",
-    messagingSenderId: "938549088383",
-    appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
-  };
+  // Проверка, существует ли уже приложение Firebase
+  if (!firebase.getApps().length) {
+    const firebaseConfig = {
+      apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
+      authDomain: "evabar-ac842.firebaseapp.com",
+      databaseURL: "https://evabar-ac842-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "evabar-ac842",
+      storageBucket: "evabar-ac842.firebasestorage.app",
+      messagingSenderId: "938549088383",
+      appId: "1:938549088383:web:9a6d241040520ccfef6f4a"
+    };
 
-  try {
-    firebaseApp = firebase.initializeApp(firebaseConfig);
-    console.log('Firebase инициализирован.');
-  } catch (error) {
-    console.error('Ошибка инициализации Firebase:', error);
-    return;
+    try {
+      firebaseApp = firebase.initializeApp(firebaseConfig);
+      console.log('Firebase инициализирован.');
+    } catch (error) {
+      console.error('Ошибка инициализации Firebase:', error);
+      return;
+    }
+  } else {
+    firebaseApp = firebase.app(); // Используем существующее приложение
+    console.log('Firebase уже инициализирован, используется существующее приложение.');
   }
 
   const auth = firebaseApp.auth();
