@@ -12,12 +12,22 @@
   <style>
     .hidden { display: none !important; }
     #dish-form, #category-form, #ingredient-form {
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 300px;
       background: white;
       padding: 1rem;
       border-radius: 0.5rem;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .forms-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .dish-image {
+      width: 62px !important;
+      height: 62px !important;
+      object-fit: cover;
+      border-radius: 0.25rem;
     }
   </style>
 </head>
@@ -39,89 +49,92 @@
       </select>
     </div>
 
+    <!-- Контейнер для форм -->
+    <div class="forms-container">
+      <!-- Форма для добавления/редактирования блюда -->
+      <div id="dish-form" class="hidden" data-dish-id="">
+        <h2 class="text-lg font-bold mb-4">Добавить/Редактировать блюдо</h2>
+        <div class="mb-2">
+          <label for="dish-name" class="block">Название</label>
+          <input type="text" id="dish-name" class="border p-2 w-full rounded" required>
+        </div>
+        <div class="mb-2">
+          <label for="dish-description" class="block">Описание</label>
+          <textarea id="dish-description" class="border p-2 w-full rounded"></textarea>
+        </div>
+        <div class="mb-2">
+          <label for="dish-price" class="block">Цена ($)</label>
+          <input type="number" id="dish-price" class="border p-2 w-full rounded" step="0.01" min="0" required>
+        </div>
+        <div class="mb-2">
+          <label for="dish-category" class="block">Категория</label>
+          <select id="dish-category" class="border p-2 w-full rounded" required>
+            <option value="">Выберите категорию</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label for="dish-image" class="block">URL изображения</label>
+          <input type="text" id="dish-image" class="border p-2 w-full rounded">
+          <img id="dish-image-preview" class="dish-image mt-2 hidden" src="" alt="Превью изображения">
+        </div>
+        <div class="mb-2">
+          <label for="dish-weight" class="block">Вес (г)</label>
+          <input type="number" id="dish-weight" class="border p-2 w-full rounded" step="0.1" min="0">
+        </div>
+        <div class="mb-2">
+          <label for="dish-min-portions" class="block">Мин. порций</label>
+          <input type="number" id="dish-min-portions" class="border p-2 w-full rounded" min="0" required>
+        </div>
+        <div class="mb-2">
+          <label class="block">Активно</label>
+          <input type="checkbox" id="dish-active" class="mr-2">
+        </div>
+        <div class="mb-2">
+          <label class="block">Ингредиенты</label>
+          <div id="ingredients-container">
+            <div class="ingredient-row mb-2 flex items-center">
+              <input type="text" id="ingredient-search" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options">
+              <datalist id="ingredient-options"></datalist>
+              <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1">
+            </div>
+          </div>
+          <button onclick="addIngredientRow()" class="bg-green-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
+        </div>
+        <div class="flex gap-2">
+          <button id="dish-form-button" onclick="this.form.dataset.dishId ? editDish(this.form.dataset.dishId) : addDish()" class="bg-blue-600 text-white p-2 rounded flex-1">Добавить блюдо</button>
+          <button onclick="cancelDishForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
+        </div>
+      </div>
+
+      <!-- Форма для добавления/редактирования категории -->
+      <div id="category-form" class="hidden" data-category-id="">
+        <h2 class="text-lg font-bold mb-4">Добавить/Редактировать категорию</h2>
+        <div class="mb-2">
+          <label for="category-name" class="block">Название</label>
+          <input type="text" id="category-name" class="border p-2 w-full rounded" required>
+        </div>
+        <div class="mb-2">
+          <label for="category-number" class="block">Порядок</label>
+          <input type="number" id="category-number" class="border p-2 w-full rounded" min="0">
+        </div>
+        <div class="mb-2">
+          <label class="block">Видимость</label>
+          <input type="checkbox" id="category-visible" class="mr-2" checked>
+        </div>
+        <div class="flex gap-2">
+          <button id="category-form-button" onclick="this.form.dataset.categoryId ? addCategory() : addCategory()" class="bg-blue-600 text-white p-2 rounded flex-1">Добавить категорию</button>
+          <button onclick="cancelCategoryForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Список категорий -->
     <div id="categories-list" class="mb-4"></div>
 
     <!-- Список блюд -->
     <div id="dishes-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-    <!-- Форма для добавления/редактирования блюда -->
-    <div id="dish-form" class="hidden" data-dish-id="">
-      <h2 class="text-lg font-bold mb-4">Добавить/Редактировать блюдо</h2>
-      <div class="mb-2">
-        <label for="dish-name" class="block">Название</label>
-        <input type="text" id="dish-name" class="border p-2 w-full rounded" required>
-      </div>
-      <div class="mb-2">
-        <label for="dish-description" class="block">Описание</label>
-        <textarea id="dish-description" class="border p-2 w-full rounded"></textarea>
-      </div>
-      <div class="mb-2">
-        <label for="dish-price" class="block">Цена ($)</label>
-        <input type="number" id="dish-price" class="border p-2 w-full rounded" step="0.01" min="0" required>
-      </div>
-      <div class="mb-2">
-        <label for="dish-category" class="block">Категория</label>
-        <select id="dish-category" class="border p-2 w-full rounded" required>
-          <option value="">Выберите категорию</option>
-        </select>
-      </div>
-      <div class="mb-2">
-        <label for="dish-image" class="block">URL изображения</label>
-        <input type="text" id="dish-image" class="border p-2 w-full rounded">
-        <img id="dish-image-preview" class="w-16 h-16 object-cover mt-2 hidden" src="" alt="Превью изображения">
-      </div>
-      <div class="mb-2">
-        <label for="dish-weight" class="block">Вес (г)</label>
-        <input type="number" id="dish-weight" class="border p-2 w-full rounded" step="0.1" min="0">
-      </div>
-      <div class="mb-2">
-        <label for="dish-min-portions" class="block">Мин. порций</label>
-        <input type="number" id="dish-min-portions" class="border p-2 w-full rounded" min="0" required>
-      </div>
-      <div class="mb-2">
-        <label class="block">Активно</label>
-        <input type="checkbox" id="dish-active" class="mr-2">
-      </div>
-      <div class="mb-2">
-        <label class="block">Ингредиенты</label>
-        <div id="ingredients-container">
-          <div class="ingredient-row mb-2 flex items-center">
-            <input type="text" id="ingredient-search" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options">
-            <datalist id="ingredient-options"></datalist>
-            <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1">
-          </div>
-        </div>
-        <button onclick="addIngredientRow()" class="bg-green-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
-      </div>
-      <div class="flex gap-2">
-        <button id="dish-form-button" onclick="this.form.dataset.dishId ? editDish(this.form.dataset.dishId) : addDish()" class="bg-blue-600 text-white p-2 rounded flex-1">Добавить блюдо</button>
-        <button onclick="cancelDishForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
-      </div>
-    </div>
-
-    <!-- Форма для добавления/редактирования категории -->
-    <div id="category-form" class="hidden" data-category-id="">
-      <h2 class="text-lg font-bold mb-4">Добавить/Редактировать категорию</h2>
-      <div class="mb-2">
-        <label for="category-name" class="block">Название</label>
-        <input type="text" id="category-name" class="border p-2 w-full rounded" required>
-      </div>
-      <div class="mb-2">
-        <label for="category-number" class="block">Порядок</label>
-        <input type="number" id="category-number" class="border p-2 w-full rounded" min="0">
-      </div>
-      <div class="mb-2">
-        <label class="block">Видимость</label>
-        <input type="checkbox" id="category-visible" class="mr-2" checked>
-      </div>
-      <div class="flex gap-2">
-        <button id="category-form-button" onclick="this.form.dataset.categoryId ? addCategory() : addCategory()" class="bg-blue-600 text-white p-2 rounded flex-1">Добавить категорию</button>
-        <button onclick="cancelCategoryForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
-      </div>
-    </div>
-
-    <!-- Форма для добавления/редактирования ингредиента (на случай, если используется) -->
+    <!-- Форма для добавления/редактирования ингредиента -->
     <div id="ingredient-form" class="hidden" data-ingredient-id="">
       <h2 class="text-lg font-bold mb-4">Добавить/Редактировать ингредиент</h2>
       <div class="mb-2">
