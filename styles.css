@@ -1,7 +1,5 @@
-/* Подключение Tailwind CSS */
 @import "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css";
 
-/* Дополнительные стили для кастомизации */
 body {
   font-family: Arial, sans-serif;
 }
@@ -36,7 +34,6 @@ ul {
   padding-left: 1.5rem;
 }
 
-/* Стили для контейнера таблицы заказов */
 .order-table-container {
   border: 1px solid #e5e7eb;
   border-radius: 0.25rem;
@@ -63,7 +60,6 @@ ul {
   background-color: #f3f4f6;
 }
 
-/* Стили для формы ингредиентов */
 #dish-form, #category-form {
   padding: 15px;
   border: 1px solid #e5e7eb;
@@ -106,7 +102,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; /* Фиксированная ширина для иконок */
+  width: 40px;
   height: 40px;
 }
 
