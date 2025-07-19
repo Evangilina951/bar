@@ -18,9 +18,9 @@
     .delete-btn { background-color: #e76f51; }
     .toggle-active-btn { background-color: #2a9d8f; }
     .toggle-inactive-btn { background-color: #e63946; }
-    .container { display: flex; }
-    #categories-list { width: 30%; padding-right: 20px; border-right: 1px solid #e5e7eb; }
-    #dishes-list-container { width: 70%; padding-left: 20px; }
+    .container { display: flex; height: calc(100vh - 150px); }
+    #categories-list { width: 30%; padding-right: 20px; border-right: 1px solid #e5e7eb; overflow-y: auto; }
+    #dishes-list-container { width: 70%; padding-left: 20px; overflow-y: auto; }
   </style>
 </head>
 <body>
