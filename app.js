@@ -351,14 +351,14 @@ function initializeApp() {
   function renderDishCard(dish, ingredientNames, categoryMap) {
     const list = document.getElementById('dishes-list');
     const dishCard = document.createElement('div');
-    dishCard.className = 'bg-white p-4 rounded shadow';
+    dishCard.className = 'dish-card';
     dishCard.innerHTML = `
       <div class="flex flex-col h-full">
-        ${dish.data().image_dish ? `<img src="${dish.data().image_dish}" alt="${dish.data().name_dish}" class="w-[62px] h-[62px] object-cover rounded mb-2">` : '<div class="w-[62px] h-[62px] bg-gray-200 rounded mb-2"></div>'}
+        ${dish.data().image_dish ? `<img src="${dish.data().image_dish}" alt="${dish.data().name_dish}" class="dish-image">` : '<div class="dish-image bg-gray-200"></div>'}
         <p class="font-bold">${dish.data().name_dish} - ${dish.data().price_dish} $</p>
         <p class="text-sm text-gray-600">Категория: ${categoryMap[dish.data().category_id] || 'Нет'}</p>
         <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2">Развернуть</button>
-        <div class="dish-details hidden mt-2">
+        <div class="dish-details">
           <p class="text-sm text-gray-600">Себестоимость: ${Math.floor(dish.data().price_current_dish * 10) / 10} $</p>
           <p class="text-sm text-gray-600">Зарплата: ${Math.floor(dish.data().salary_dish * 10) / 10} $</p>
           <p class="text-sm text-gray-600">Прибыль: ${Math.floor(dish.data().price_profit_dish * 10) / 10} $</p>
@@ -369,9 +369,6 @@ function initializeApp() {
           <div class="flex gap-2 mt-2">
             <button onclick="loadDishForEdit('${dish.id}')" class="bg-yellow-600 text-white p-2 rounded flex-1">Редактировать</button>
             <button onclick="deleteDish('${dish.id}')" class="bg-red-600 text-white p-2 rounded flex-1">Удалить</button>
-            <button onclick="toggleDishVisibility('${dish.id}', ${!dish.data().is_active_dish})" class="bg-blue-600 text-white p-2 rounded flex-1">
-              ${dish.data().is_active_dish ? 'Деактивировать' : 'Активировать'}
-            </button>
           </div>
         </div>
       </div>`;
@@ -380,11 +377,11 @@ function initializeApp() {
 
   function toggleDishDetails(button) {
     const details = button.nextElementSibling;
-    if (details.classList.contains('hidden')) {
-      details.classList.remove('hidden');
+    if (details.style.display === 'none' || details.style.display === '') {
+      details.style.display = 'block';
       button.textContent = 'Скрыть';
     } else {
-      details.classList.add('hidden');
+      details.style.display = 'none';
       button.textContent = 'Развернуть';
     }
   }
@@ -418,7 +415,7 @@ function initializeApp() {
         document.getElementById('dish-active').checked = dishData.is_active_dish || false;
         const container = document.getElementById('ingredients-container');
         if (container) {
-          container.innerHTML = '';
+          container.innerHTML = '<datalist id="ingredient-options"></datalist>';
           (dishData.ingredients || []).forEach((ing, index) => {
             container.innerHTML += `
               <div class="ingredient-row">
@@ -430,6 +427,7 @@ function initializeApp() {
           });
           if (!dishData.ingredients || dishData.ingredients.length === 0) {
             container.innerHTML = `
+              <datalist id="ingredient-options"></datalist>
               <div class="ingredient-row">
                 <input type="text" id="ingredient-search-0" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options">
                 <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1">
@@ -1062,9 +1060,9 @@ function initializeApp() {
       const container = document.getElementById('ingredients-container');
       if (container) {
         container.innerHTML = `
+          <datalist id="ingredient-options"></datalist>
           <div class="ingredient-row">
             <input type="text" id="ingredient-search-0" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options">
-            <datalist id="ingredient-options"></datalist>
             <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1">
             <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
           </div>
