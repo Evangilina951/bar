@@ -894,11 +894,15 @@ function initializeApp() {
       console.error('Firebase не инициализирован.');
       return;
     }
+    const datalist = document.getElementById('ingredient-options');
+    if (!datalist) {
+      console.warn('Элемент с id="ingredient-options" не найден. Функция loadIngredientsSelect прервана.');
+      return;
+    }
     const searchInputs = document.querySelectorAll('input[id^="ingredient-search-"]:not([data-loaded])');
     if (!searchInputs.length) return;
     db.collection('ingredients').orderBy('name_product').get()
       .then((ingredients) => {
-        const datalist = document.getElementById('ingredient-options');
         datalist.innerHTML = '';
         if (ingredients.empty) {
           datalist.innerHTML += '<option value="" disabled>Ингредиенты отсутствуют</option>';
