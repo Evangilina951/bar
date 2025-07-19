@@ -370,7 +370,7 @@ function initializeApp() {
           <div class="flex gap-2 mt-2">
             <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn text-white p-2 rounded flex-1">✏️</button>
             <button onclick="deleteDish('${dish.id}')" class="delete-btn text-white p-2 rounded flex-1">🗑️</button>
-            <button onclick="toggleDishVisibility('${dish.id}', ${!dish.data().is_active_dish})" class="toggle-active-btn text-white p-2 rounded flex-1">✔️</button>
+            <button onclick="toggleDishVisibility('${dish.id}', ${!dish.data().is_active_dish})" class="${dish.data().is_active_dish ? 'toggle-active-btn' : 'toggle-inactive-btn'} text-white p-2 rounded flex-1">${dish.data().is_active_dish ? '✔️' : '❌'}</button>
           </div>
         </div>
       </div>`;
@@ -654,11 +654,9 @@ function initializeApp() {
             <li class="flex items-center justify-between p-2 border-b">
               <span class="cursor-pointer" onclick="toggleCategoryFilter('${cat.id}', '${catData.name}')">${catData.name} (Порядок: ${catData.number}, Видимость: ${catData.isVisible ? 'Вкл' : 'Выкл'})</span>
               <div class="flex gap-2">
-                <button onclick="loadCategoryForEdit('${cat.id}')" class="bg-yellow-600 text-white p-1 rounded">Редактировать</button>
-                <button onclick="deleteCategory('${cat.id}')" class="bg-red-600 text-white p-1 rounded">Удалить</button>
-                <button onclick="toggleCategoryVisibility('${cat.id}', ${!catData.isVisible})" class="bg-blue-600 text-white p-1 rounded">
-                  ${catData.isVisible ? 'Скрыть' : 'Показать'}
-                </button>
+                <button onclick="loadCategoryForEdit('${cat.id}')" class="edit-btn text-white p-2 rounded flex-1">✏️</button>
+                <button onclick="deleteCategory('${cat.id}')" class="delete-btn text-white p-2 rounded flex-1">🗑️</button>
+                <button onclick="toggleCategoryVisibility('${cat.id}', ${!catData.isVisible})" class="${catData.isVisible ? 'toggle-active-btn' : 'toggle-inactive-btn'} text-white p-2 rounded flex-1">${catData.isVisible ? '✔️' : '❌'}</button>
               </div>
             </li>`;
         });
