@@ -89,7 +89,10 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      initializeApp();
+      if (typeof window.initializeAppDone === 'undefined') {
+        initializeApp();
+        window.initializeAppDone = true;
+      }
     });
   </script>
 </body>
