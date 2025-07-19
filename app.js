@@ -1163,7 +1163,7 @@ function initializeApp() {
 
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
-    loadNav();
+    if (document.getElementById('nav')) loadNav();
     if (document.getElementById('categories')) loadMenu();
     if (document.getElementById('dishes-list')) loadDishes();
     if (document.getElementById('categories-list')) loadCategoryList();
@@ -1173,4 +1173,9 @@ function initializeApp() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof window.initializeAppDone === 'undefined') {
+    initializeApp();
+    window.initializeAppDone = true;
+  }
+});
