@@ -64,7 +64,7 @@
   </div>
 
   <div class="mb-4">
-    <input type="checkbox" id="show-inactive-categories" class="mr-2"> Показать неактивные категории<br>
+    <button id="show-all-dishes" onclick="toggleShowAllDishes()" class="bg-blue-600 text-white px-4 py-2 rounded">Показать все блюда</button>
     <div id="categories-list"></div>
   </div>
 
@@ -72,18 +72,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('show-inactive-categories').addEventListener('change', function() {
-        if (typeof loadCategoryList === 'function') {
-          loadCategoryList();
-        } else {
-          console.error('Функция loadCategoryList не определена. Проверьте загрузку app.js.');
-          setTimeout(() => {
-            if (typeof loadCategoryList === 'function') {
-              loadCategoryList();
-            }
-          }, 100);
-        }
-      });
+      loadCategoryList();
     });
   </script>
 </body>
