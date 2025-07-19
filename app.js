@@ -1211,6 +1211,7 @@ function initializeApp() {
   function cancelDishForm() {
     const form = document.getElementById('dish-form');
     if (form) {
+      console.log('Сброс формы блюда');
       form.classList.add('hidden');
       form.dataset.dishId = '';
       document.getElementById('dish-name').value = '';
@@ -1231,24 +1232,30 @@ function initializeApp() {
       `;
       document.getElementById('dish-form-button').textContent = 'Добавить блюдо';
       loadIngredientsSelect();
+    } else {
+      console.error('Форма с id="dish-form" не найдена в DOM');
     }
   }
 
   function cancelCategoryForm() {
     const form = document.getElementById('category-form');
     if (form) {
+      console.log('Сброс формы категории');
       form.classList.add('hidden');
       form.dataset.categoryId = '';
       document.getElementById('category-name').value = '';
       document.getElementById('category-number').value = '';
       document.getElementById('category-visible').checked = true;
       document.getElementById('category-form-button').textContent = 'Добавить категорию';
+    } else {
+      console.error('Форма с id="category-form" не найдена в DOM');
     }
   }
 
   function cancelIngredientForm() {
     const form = document.getElementById('ingredient-form');
     if (form) {
+      console.log('Сброс формы ингредиента');
       form.classList.add('hidden');
       form.dataset.ingredientId = '';
       document.getElementById('ingredient-name').value = '';
@@ -1257,6 +1264,8 @@ function initializeApp() {
       document.getElementById('ingredient-supplier').value = '';
       document.getElementById('ingredient-weight').value = '';
       document.getElementById('ingredient-form-button').textContent = 'Сохранить';
+    } else {
+      console.error('Форма с id="ingredient-form" не найдена в DOM');
     }
   }
 
@@ -1265,10 +1274,13 @@ function initializeApp() {
     if (form) {
       console.log('Открытие формы блюда');
       form.classList.remove('hidden');
+      console.log('Класс hidden удален, текущие классы формы:', form.className);
+      console.log('Стили формы:', window.getComputedStyle(form).display);
       cancelDishForm();
       loadIngredientsSelect();
     } else {
-      console.error('Форма с id="dish-form" не найдена.');
+      console.error('Форма с id="dish-form" не найдена в DOM');
+      alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
     }
   }
 
@@ -1277,9 +1289,12 @@ function initializeApp() {
     if (form) {
       console.log('Открытие формы категории');
       form.classList.remove('hidden');
+      console.log('Класс hidden удален, текущие классы формы:', form.className);
+      console.log('Стили формы:', window.getComputedStyle(form).display);
       cancelCategoryForm();
     } else {
-      console.error('Форма с id="category-form" не найдена.');
+      console.error('Форма с id="category-form" не найдена в DOM');
+      alert('Ошибка: Форма для добавления категории не найдена. Проверьте HTML.');
     }
   }
 
@@ -1288,9 +1303,12 @@ function initializeApp() {
     if (form) {
       console.log('Открытие формы ингредиента');
       form.classList.remove('hidden');
+      console.log('Класс hidden удален, текущие классы формы:', form.className);
+      console.log('Стили формы:', window.getComputedStyle(form).display);
       cancelIngredientForm();
     } else {
-      console.error('Форма с id="ingredient-form" не найдена.');
+      console.error('Форма с id="ingredient-form" не найдена в DOM');
+      alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
     }
   }
 
@@ -1346,6 +1364,8 @@ function initializeApp() {
         console.log('Клик на кнопку "Добавить блюдо"');
         showDishForm();
       });
+    } else {
+      console.error('Кнопка с id="show-dish-form" не найдена в DOM');
     }
 
     if (showCategoryFormButton) {
@@ -1353,6 +1373,8 @@ function initializeApp() {
         console.log('Клик на кнопку "Добавить категорию"');
         showCategoryForm();
       });
+    } else {
+      console.error('Кнопка с id="show-category-form" не найдена в DOM');
     }
 
     if (showInactiveCategories) {
@@ -1360,6 +1382,8 @@ function initializeApp() {
         console.log('Изменение состояния чекбокса "Показать неактивные категории":', showInactiveCategories.checked);
         await loadCategoryList();
       });
+    } else {
+      console.warn('Чекбокс с id="show-inactive-categories" не найден в DOM');
     }
   }
 
@@ -1392,7 +1416,7 @@ function initializeApp() {
   window.placeDeliveryOrder = placeDeliveryOrder;
   window.updateDeliveryStatus = updateDeliveryStatus;
   window.addEmployee = addEmployee;
-  window.loadCategoryList = loadCategoryList; // Экспорт для устранения ReferenceError
+  window.loadCategoryList = loadCategoryList;
   window.cancelDishForm = cancelDishForm;
   window.cancelCategoryForm = cancelCategoryForm;
   window.cancelIngredientForm = cancelIngredientForm;
