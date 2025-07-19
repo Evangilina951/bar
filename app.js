@@ -8,8 +8,8 @@ function initializeApp() {
   }
   console.log('Firebase загружен успешно.');
 
-  // Проверка, существует ли уже приложение Firebase
-  if (!firebase.getApps().length) {
+  // Проверка существования приложения для версии 8.x
+  if (!firebase.apps || firebase.apps.length === 0) {
     const firebaseConfig = {
       apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
       authDomain: "evabar-ac842.firebaseapp.com",
