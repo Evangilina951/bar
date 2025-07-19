@@ -367,8 +367,9 @@ function initializeApp() {
           <p class="text-sm text-gray-600">Мин. порций: ${dish.data().min_dish || 0}</p>
           <p class="text-sm text-gray-600">Ингредиенты: ${ingredientNames.join(', ') || 'Нет'}</p>
           <div class="flex gap-2 mt-2">
-            <button onclick="loadDishForEdit('${dish.id}')" class="bg-yellow-600 text-white p-2 rounded flex-1">Редактировать</button>
-            <button onclick="deleteDish('${dish.id}')" class="bg-red-600 text-white p-2 rounded flex-1">Удалить</button>
+            <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn text-white p-2 rounded flex-1">✏️</button>
+            <button onclick="deleteDish('${dish.id}')" class="delete-btn text-white p-2 rounded flex-1">🗑️</button>
+            <button onclick="toggleDishVisibility('${dish.id}', ${!dish.data().is_active_dish})" class="toggle-active-btn text-white p-2 rounded flex-1">✔️</button>
           </div>
         </div>
       </div>`;
@@ -419,7 +420,7 @@ function initializeApp() {
           (dishData.ingredients || []).forEach((ing, index) => {
             container.innerHTML += `
               <div class="ingredient-row">
-                <input type="text" id="ingredient-search-${index}" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options" value="${ing.ingredient_id ? '' : ''}" data-ingredient-id="${ing.ingredient_id || ''}">
+                <input type="text" id="ingredient-search-${index}" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options" data-ingredient-id="${ing.ingredient_id || ''}">
                 <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
                 <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
               </div>
@@ -438,6 +439,7 @@ function initializeApp() {
           loadIngredientsSelect();
         }
         form.dataset.dishId = dishId;
+        document.getElementById('dish-form-button').onclick = editDish; // Переключаем на редактирование
         document.getElementById('dish-form-button').textContent = 'Сохранить изменения';
         form.classList.remove('hidden');
       })
@@ -923,6 +925,7 @@ function initializeApp() {
             const selectedOption = Array.from(datalist.querySelectorAll('option')).find((opt) => opt.value === e.target.value);
             if (selectedOption) {
               e.target.dataset.ingredientId = selectedOption.dataset.id;
+              e.target.value = selectedOption.value; // Устанавливаем выбранное значение
             } else {
               e.target.dataset.ingredientId = '';
             }
@@ -1069,6 +1072,7 @@ function initializeApp() {
         `;
         loadIngredientsSelect();
       }
+      document.getElementById('dish-form-button').onclick = addDish; // Возвращаем на добавление
       document.getElementById('dish-form-button').textContent = 'Добавить блюдо';
     } else {
       console.error('Форма с id="dish-form" не найдена в DOM');
