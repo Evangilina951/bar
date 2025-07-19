@@ -2,7 +2,6 @@ let firebaseApp = null;
 let showAllDishes = false;
 
 function initializeApp() {
-  // Проверка наличия Firebase SDK
   if (typeof firebase === 'undefined') {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
     return;
@@ -33,7 +32,6 @@ function initializeApp() {
   let currentCategoryFilter = null;
   let showAllIngredients = false;
 
-  // Загрузка навигации
   function loadNav() {
     const navElement = document.getElementById('nav');
     if (!navElement) {
@@ -60,7 +58,6 @@ function initializeApp() {
     console.log('Навигация вставлена в DOM');
   }
 
-  // Вход в систему
   function login() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -82,7 +79,6 @@ function initializeApp() {
       });
   }
 
-  // Выход из системы
   function logout() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -98,7 +94,6 @@ function initializeApp() {
       });
   }
 
-  // Расчет метрик блюда
   function calculateDishMetrics(ingredients) {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -130,7 +125,6 @@ function initializeApp() {
     return { price_current_dish };
   }
 
-  // Загрузка меню
   function loadMenu() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -180,7 +174,6 @@ function initializeApp() {
       });
   }
 
-  // Управление корзиной
   let orderItems = [];
   function addToOrder(dishId, name, price) {
     orderItems.push({ dishId, name, price });
@@ -200,7 +193,6 @@ function initializeApp() {
     });
   }
 
-  // Оформление заказа
   function placeOrder() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -224,7 +216,6 @@ function initializeApp() {
       });
   }
 
-  // Управление блюдами
   function addDish() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -566,7 +557,6 @@ function initializeApp() {
       });
   }
 
-  // Управление категориями
   function addCategory() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -759,7 +749,6 @@ function initializeApp() {
       });
   }
 
-  // Управление ингредиентами
   function loadInventory() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -926,7 +915,7 @@ function initializeApp() {
         searchInputs.forEach((input) => {
           input.dataset.loaded = 'true';
           const currentValue = input.value;
-          input.value = ''; // Сбрасываем значение перед повторной загрузкой
+          input.value = '';
           if (currentValue) {
             const matchingOption = Array.from(datalist.options).find(opt => opt.value === currentValue);
             if (matchingOption) {
@@ -1056,18 +1045,6 @@ function initializeApp() {
     }
   }
 
-  function showIngredientForm() {
-    const form = document.getElementById('ingredient-form');
-    if (form) {
-      form.classList.remove('hidden');
-      delete form.dataset.ingredientId;
-      document.getElementById('ingredient-form-button').textContent = 'Сохранить';
-    } else {
-      console.error('Форма с id="ingredient-form" не найдена в DOM');
-      alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
-    }
-  }
-
   function cancelDishForm() {
     const form = document.getElementById('dish-form');
     if (form) {
@@ -1135,7 +1112,6 @@ function initializeApp() {
     }
   }
 
-  // Экспорт функций в глобальную область видимости
   window.login = login;
   window.logout = logout;
   window.addToOrder = addToOrder;
@@ -1168,7 +1144,6 @@ function initializeApp() {
   window.showCategoryForm = showCategoryForm;
   window.showIngredientForm = showIngredientForm;
 
-  // Инициализация приложения
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
     loadNav();
