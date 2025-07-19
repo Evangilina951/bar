@@ -62,3 +62,54 @@ ul {
 .order-table-container tr:nth-child(even) {
   background-color: #f3f4f6;
 }
+
+/* Стили для формы ингредиентов */
+#dish-form, #category-form {
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+#ingredients-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ingredient-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dish-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.dish-image {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.dish-details {
+  display: none;
+  margin-top: 5px;
+}
+
+.edit-btn, .delete-btn, .toggle-active-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Фиксированная ширина для иконок */
+  height: 40px;
+}
+
+.edit-btn { background-color: #f4a261; }
+.delete-btn { background-color: #e76f51; }
+.toggle-active-btn { background-color: #2a9d8f; }
