@@ -1,4 +1,5 @@
 let firebaseApp = null;
+let showAllDishes = false;
 
 function initializeApp() {
   // Проверка наличия Firebase SDK
@@ -304,7 +305,7 @@ function initializeApp() {
     }
     const list = document.getElementById('dishes-list');
     if (!list) return;
-    const filterCategory = currentCategoryFilter || document.getElementById('filter-category')?.value;
+    const filterCategory = showAllDishes ? null : currentCategoryFilter || document.getElementById('filter-category')?.value;
     const dishesQuery = filterCategory ? db.collection('dishes').where('category_id', '==', filterCategory) : db.collection('dishes');
     dishesQuery.get()
       .then((dishes) => {
@@ -418,13 +419,21 @@ function initializeApp() {
         if (container) {
           container.innerHTML = '<datalist id="ingredient-options"></datalist>';
           (dishData.ingredients || []).forEach((ing, index) => {
-            container.innerHTML += `
-              <div class="ingredient-row">
-                <input type="text" id="ingredient-search-${index}" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options" data-ingredient-id="${ing.ingredient_id || ''}">
-                <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
-                <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
-              </div>
-            `;
+            db.collection('ingredients').doc(ing.ingredient_id).get()
+              .then((ingredient) => {
+                const name = ingredient.exists ? ingredient.data().name_product : 'Неизвестный ингредиент';
+                container.innerHTML += `
+                  <div class="ingredient-row">
+                    <input type="text" id="ingredient-search-${index}" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options" value="${name}" data-ingredient-id="${ing.ingredient_id || ''}">
+                    <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
+                    <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
+                  </div>
+                `;
+                if (index === dishData.ingredients.length - 1) loadIngredientsSelect();
+              })
+              .catch((error) => {
+                console.error('Ошибка загрузки ингредиента:', error);
+              });
           });
           if (!dishData.ingredients || dishData.ingredients.length === 0) {
             container.innerHTML = `
@@ -435,11 +444,11 @@ function initializeApp() {
                 <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
               </div>
             `;
+            loadIngredientsSelect();
           }
-          loadIngredientsSelect();
         }
         form.dataset.dishId = dishId;
-        document.getElementById('dish-form-button').onclick = editDish; // Переключаем на редактирование
+        document.getElementById('dish-form-button').onclick = editDish;
         document.getElementById('dish-form-button').textContent = 'Сохранить изменения';
         form.classList.remove('hidden');
       })
@@ -632,9 +641,7 @@ function initializeApp() {
     }
     const list = document.getElementById('categories-list');
     if (!list) return;
-    const showInactive = document.getElementById('show-inactive-categories')?.checked || false;
-    const categoriesQuery = showInactive ? db.collection('categories') : db.collection('categories').where('isVisible', '==', true);
-    categoriesQuery.orderBy('number', 'asc').get()
+    db.collection('categories').orderBy('number', 'asc').get()
       .then((categories) => {
         list.innerHTML = '<h2 class="text-xl font-bold mb-2">Список категорий</h2>';
         if (categories.empty) {
@@ -668,6 +675,13 @@ function initializeApp() {
 
   function toggleCategoryFilter(categoryId, categoryName) {
     currentCategoryFilter = currentCategoryFilter === categoryId ? null : categoryId;
+    showAllDishes = false;
+    loadDishes();
+  }
+
+  function toggleShowAllDishes() {
+    showAllDishes = true;
+    currentCategoryFilter = null;
     loadDishes();
   }
 
@@ -913,6 +927,15 @@ function initializeApp() {
         }
         searchInputs.forEach((input) => {
           input.dataset.loaded = 'true';
+          const currentValue = input.value;
+          input.value = ''; // Сбрасываем значение перед повторной загрузкой
+          if (currentValue) {
+            const matchingOption = Array.from(datalist.options).find(opt => opt.value === currentValue);
+            if (matchingOption) {
+              input.value = matchingOption.value;
+              input.dataset.ingredientId = matchingOption.dataset.id;
+            }
+          }
           input.addEventListener('input', (e) => {
             const value = e.target.value.toLowerCase();
             const options = datalist.querySelectorAll('option');
@@ -925,7 +948,7 @@ function initializeApp() {
             const selectedOption = Array.from(datalist.querySelectorAll('option')).find((opt) => opt.value === e.target.value);
             if (selectedOption) {
               e.target.dataset.ingredientId = selectedOption.dataset.id;
-              e.target.value = selectedOption.value; // Устанавливаем выбранное значение
+              e.target.value = selectedOption.value;
             } else {
               e.target.dataset.ingredientId = '';
             }
@@ -1072,7 +1095,7 @@ function initializeApp() {
         `;
         loadIngredientsSelect();
       }
-      document.getElementById('dish-form-button').onclick = addDish; // Возвращаем на добавление
+      document.getElementById('dish-form-button').onclick = addDish;
       document.getElementById('dish-form-button').textContent = 'Добавить блюдо';
     } else {
       console.error('Форма с id="dish-form" не найдена в DOM');
@@ -1129,6 +1152,7 @@ function initializeApp() {
   window.deleteCategory = deleteCategory;
   window.toggleCategoryVisibility = toggleCategoryVisibility;
   window.toggleCategoryFilter = toggleCategoryFilter;
+  window.toggleShowAllDishes = toggleShowAllDishes;
   window.loadDishes = loadDishes;
   window.toggleDishDetails = toggleDishDetails;
   window.addIngredientRow = addIngredientRow;
