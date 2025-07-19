@@ -1112,6 +1112,17 @@ function initializeApp() {
     }
   }
 
+  function showIngredientForm() {
+    const form = document.getElementById('ingredient-form');
+    if (form) {
+      form.classList.remove('hidden');
+      loadIngredientsSelect();
+    } else {
+      console.error('Форма с id="ingredient-form" не найдена в DOM');
+      alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
+    }
+  }
+
   window.login = login;
   window.logout = logout;
   window.addToOrder = addToOrder;
