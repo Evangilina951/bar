@@ -1276,8 +1276,7 @@ function initializeApp() {
       form.classList.remove('hidden');
       console.log('Класс hidden удален, текущие классы формы:', form.className);
       console.log('Стили формы:', window.getComputedStyle(form).display);
-      cancelDishForm();
-      loadIngredientsSelect();
+      loadIngredientsSelect(); // Загружаем ингредиенты для формы
     } else {
       console.error('Форма с id="dish-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
@@ -1291,7 +1290,6 @@ function initializeApp() {
       form.classList.remove('hidden');
       console.log('Класс hidden удален, текущие классы формы:', form.className);
       console.log('Стили формы:', window.getComputedStyle(form).display);
-      cancelCategoryForm();
     } else {
       console.error('Форма с id="category-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления категории не найдена. Проверьте HTML.');
@@ -1305,7 +1303,6 @@ function initializeApp() {
       form.classList.remove('hidden');
       console.log('Класс hidden удален, текущие классы формы:', form.className);
       console.log('Стили формы:', window.getComputedStyle(form).display);
-      cancelIngredientForm();
     } else {
       console.error('Форма с id="ingredient-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
