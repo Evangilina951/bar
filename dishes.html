@@ -26,7 +26,7 @@
     .dish-image {
       width: 62px !important;
       height: 62px !important;
-      object-fit: cover;
+      object-fit: cover !important;
       border-radius: 0.25rem;
     }
   </style>
@@ -40,13 +40,6 @@
     <div class="mb-4 flex gap-4">
       <button id="show-dish-form" class="bg-blue-600 text-white p-2 rounded">Добавить блюдо</button>
       <button id="show-category-form" class="bg-blue-600 text-white p-2 rounded">Добавить категорию</button>
-      <label class="flex items-center">
-        <input type="checkbox" id="show-inactive-categories" class="mr-2">
-        Показать неактивные категории
-      </label>
-      <select id="filter-category" class="border p-2 rounded">
-        <option value="">Все категории</option>
-      </select>
     </div>
 
     <!-- Контейнер для форм -->
@@ -128,6 +121,17 @@
       </div>
     </div>
 
+    <!-- Фильтры под формами -->
+    <div class="mb-4 flex gap-4 items-center">
+      <label class="flex items-center">
+        <input type="checkbox" id="show-inactive-categories" class="mr-2">
+        Показать неактивные категории
+      </label>
+      <select id="filter-category" class="border p-2 rounded">
+        <option value="">Все категории</option>
+      </select>
+    </div>
+
     <!-- Список категорий -->
     <div id="categories-list" class="mb-4"></div>
 
@@ -165,8 +169,7 @@
           document.getElementById('ingredient-supplier').value,
           parseFloat(document.getElementById('ingredient-weight').value) || null
         )" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
-        <button onclick="cancelIngredientForm()" class="bg-gray-600 Ascending to 2500
-        gray-600 text-white p-2 rounded flex-1">Отмена</button>
+        <button onclick="cancelIngredientForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
       </div>
     </div>
   </div>
@@ -174,6 +177,11 @@
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
         window.location.href = '/bar/index.html';
+      } else {
+        loadNav();
+        loadCategories();
+        loadCategoryList();
+        loadDishes();
       }
     });
   </script>
