@@ -213,7 +213,7 @@ function initializeApp() {
       console.error('Элемент с id="dishes-list" не найден в DOM');
       return;
     }
-    const filterCategory = showAllDishes ? null : currentCategoryFilter || document.getElementById('filter-category')?.value;
+    const filterCategory = showAllDishes ? null : currentCategoryFilter;
     const dishesQuery = filterCategory ? db.collection('dishes').where('category_id', '==', filterCategory) : db.collection('dishes');
     try {
       const dishes = await dishesQuery.get();
@@ -266,10 +266,13 @@ function initializeApp() {
     const dishData = dish.data();
     dishCard.innerHTML = `
       <div class="flex flex-col h-full">
-        ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image w-full h-40 object-cover rounded mb-2">` : '<div class="dish-image w-full h-40 bg-gray-200 rounded mb-2"></div>'}
-        <p class="font-bold">${dishData.name_dish} - ${dishData.price_dish} $</p>
-        <p class="text-sm text-gray-600">Категория: ${categoryMap[dishData.category_id] || 'Нет'}</p>
-        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2">Развернуть</button>
+        <div class="dish-image-container">
+          ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-placeholder"></div>'}
+        </div>
+        <p class="dish-name">${dishData.name_dish}</p>
+        <p class="dish-price">${dishData.price_dish} $</p>
+        <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
+        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
         <div class="dish-details hidden">
           <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
           <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
@@ -558,20 +561,13 @@ function initializeApp() {
       return;
     }
     const select = document.getElementById('dish-category');
-    const filterSelect = document.getElementById('filter-category');
-    if (!select && !filterSelect) return;
+    if (!select) return;
     db.collection('categories').orderBy('number', 'asc').get()
       .then((categories) => {
         if (select) {
           select.innerHTML = '<option value="">Выберите категорию</option>';
           categories.forEach((cat) => {
             select.innerHTML += `<option value="${cat.id}">${cat.data().name}</option>`;
-          });
-        }
-        if (filterSelect) {
-          filterSelect.innerHTML = '<option value="">Все категории</option>';
-          categories.forEach((cat) => {
-            filterSelect.innerHTML += `<option value="${cat.id}">${cat.data().name}</option>`;
           });
         }
       })
@@ -1237,7 +1233,7 @@ function initializeApp() {
     if (document.getElementById('nav')) loadNav();
     if (document.getElementById('dishes-list')) loadDishes();
     if (document.getElementById('categories-list')) loadCategoryList();
-    if (document.getElementById('dish-category') || document.getElementById('filter-category')) loadCategories();
+    if (document.getElementById('dish-category')) loadCategories();
     if (document.getElementById('inventory-list')) loadInventory();
     if (document.getElementById('ingredients-container')) loadIngredientsSelect();
   });
