@@ -44,7 +44,6 @@ function initializeApp() {
       return;
     }
     navElement.innerHTML = `
-      <h2>Админ-панель</h2>
       <nav>
         <a href="/bar/index.html">Вход</a>
         <a href="/bar/menu.html">Меню</a>
