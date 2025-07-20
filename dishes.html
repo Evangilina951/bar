@@ -1,99 +1,120 @@
-<html>
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="app.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Блюда</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .ingredient-row { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
-    #ingredients-container input { margin-right: 10px; }
-    nav a { margin-right: 15px; text-decoration: none; color: #000; }
-    nav button { margin-left: 15px; }
-    #dishes-list { display: flex; flex-wrap: wrap; gap: 10px; }
-    .dish-card { width: 200px; border: 1px solid #e5e7eb; padding: 10px; text-align: center; }
-    .dish-image { width: 62px; height: 62px; object-fit: contain; margin: 0 auto 5px; }
-    .dish-details { display: none; }
-    .edit-btn { background-color: #f4a261; }
-    .delete-btn { background-color: #e76f51; }
-    .toggle-active-btn { background-color: #2a9d8f; }
-    .toggle-inactive-btn { background-color: #e63946; }
-    .container { display: flex; height: calc(100vh - 150px); }
-    #categories-list { width: 30%; padding-right: 20px; border-right: 1px solid #e5e7eb; overflow-y: auto; }
-    #dishes-list-container { width: 70%; padding-left: 20px; overflow-y: auto; }
-  </style>
 </head>
 <body>
-  <div id="nav"></div>
+  <div class="container mx-auto p-4 flex flex-col min-h-screen">
+    <div id="nav" class="mb-4"></div>
 
-  <h1 class="text-2xl font-bold mb-4">Управление меню</h1>
+    <h1 class="text-2xl font-bold mb-4">Блюда</h1>
 
-  <div class="flex space-x-4 mb-4">
-    <button id="show-dish-form" onclick="showDishForm()" class="bg-blue-600 text-white px-4 py-2 rounded">Добавить блюдо</button>
-    <button id="show-category-form" onclick="showCategoryForm()" class="bg-green-600 text-white px-4 py-2 rounded">Добавить категорию</button>
-  </div>
+    <div class="mb-4">
+      <button onclick="showDishForm()" class="bg-green-600 text-white p-2 rounded">Добавить новое блюдо</button>
+    </div>
 
-  <div id="dish-form" class="hidden">
-    <h2 class="text-xl font-bold mb-2">Добавить/Редактировать блюдо</h2>
-    <div class="flex space-x-4">
-      <div>
-        <input type="text" id="dish-name" placeholder="Название" class="border p-2 w-full mb-2 rounded"><br>
-        <textarea id="dish-description" placeholder="Описание" class="border p-2 w-full mb-2 rounded"></textarea><br>
-        <input type="number" id="dish-price" placeholder="Цена ($)" step="0.01" class="border p-2 w-full mb-2 rounded"><br>
-        <select id="dish-category" class="border p-2 w-full mb-2 rounded">
-          <option value="">Выберите категорию</option>
-        </select><br>
-      </div>
-      <div>
-        <input type="text" id="dish-image" placeholder="URL изображения" class="border p-2 w-full mb-2 rounded"><br>
-        <input type="number" id="dish-weight" placeholder="Вес (г)" step="0.1" class="border p-2 w-full mb-2 rounded"><br>
-        <input type="number" id="dish-min-portions" placeholder="Мин. порций" step="1" class="border p-2 w-full mb-2 rounded"><br>
-        <input type="checkbox" id="dish-active" class="mr-2"> Активно<br>
+    <div id="dish-form" class="hidden mb-4">
+      <h2 class="text-xl font-bold mb-2">Форма блюда</h2>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <label class="block mb-1">Название:</label>
+            <input id="dish-name" type="text" class="border p-2 w-full rounded" required>
+          </div>
+          <div class="flex-1">
+            <label class="block mb-1">Цена ($):</label>
+            <input id="dish-price" type="number" min="0" step="0.01" class="border p-2 w-full rounded" required>
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <label class="block mb-1">Категория:</label>
+            <select id="dish-category" class="border p-2 w-full rounded" required>
+              <option value="">Выберите категорию</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block mb-1">Вес (г):</label>
+            <input id="dish-weight" type="number" min="0" step="0.1" class="border p-2 w-full rounded">
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <label class="block mb-1">Мин. порций:</label>
+            <input id="dish-min-portions" type="number" min="0" class="border p-2 w-full rounded" required>
+          </div>
+          <div class="flex-1 flex items-end">
+            <label class="flex items-center">
+              <input id="dish-active" type="checkbox" class="mr-2">
+              Активно
+            </label>
+          </div>
+        </div>
+        <div id="ingredients-container">
+          <datalist id="ingredient-options"></datalist>
+          <div class="ingredient-row flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+              <label class="block mb-1">Ингредиент:</label>
+              <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
+            </div>
+            <div class="flex-1">
+              <label class="block mb-1">Количество:</label>
+              <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
+            </div>
+          </div>
+        </div>
+        <button onclick="addIngredientRow()" class="bg-blue-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
+        <div class="flex gap-2 mt-4">
+          <button id="dish-form-button" onclick="addDish()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
+          <button onclick="cancelDishForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
+        </div>
       </div>
     </div>
-    <div id="ingredients-container" class="mb-2">
-      <div class="ingredient-row">
-        <input type="text" id="ingredient-search-0" class="border p-2 mr-2 w-2/3 rounded" placeholder="Введите название ингредиента" list="ingredient-options">
-        <datalist id="ingredient-options"></datalist>
-        <input type="number" class="dish-ingredient-quantity border p-2 w-1/3 rounded" placeholder="Количество" min="0" step="0.1">
-        <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
+
+    <div class="mb-4">
+      <button onclick="showCategoryForm()" class="bg-green-600 text-white p-2 rounded">Добавить новую категорию</button>
+    </div>
+
+    <div id="category-form" class="hidden mb-4">
+      <h2 class="text-xl font-bold mb-2">Форма категории</h2>
+      <div class="mb-2">
+        <label class="block">Название:</label>
+        <input id="category-name" type="text" class="border p-2 w-full rounded" required>
+      </div>
+      <div class="mb-2">
+        <label class="block">Порядок:</label>
+        <input id="category-number" type="number" min="0" class="border p-2 w-full rounded">
+      </div>
+      <div class="mb-2">
+        <label class="flex items-center">
+          <input id="category-visible" type="checkbox" class="mr-2" checked>
+          Видимость
+        </label>
+      </div>
+      <div class="flex gap-2">
+        <button id="category-form-button" onclick="addCategory()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
+        <button onclick="cancelCategoryForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
       </div>
     </div>
-    <button onclick="addIngredientRow()" class="bg-gray-600 text-white px-2 py-1 rounded mb-2">Добавить ингредиент</button><br>
-    <button id="dish-form-button" onclick="addDish()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">Добавить блюдо</button>
-    <button onclick="cancelDishForm()" class="bg-red-600 text-white px-4 py-2 rounded">Отмена</button>
-  </div>
 
-  <div id="category-form" class="hidden">
-    <h2 class="text-xl font-bold mb-2">Добавить/Редактировать категорию</h2>
-    <div class="flex space-x-4">
-      <div>
-        <input type="text" id="category-name" placeholder="Название" class="border p-2 w-full mb-2 rounded"><br>
-      </div>
-      <div>
-        <input type="number" id="category-number" placeholder="Порядок" step="1" class="border p-2 w-full mb-2 rounded"><br>
-        <input type="checkbox" id="category-visible" class="mr-2"> Видимость<br>
-      </div>
+    <div class="mb-4">
+      <select id="filter-category" class="border p-2 rounded">
+        <option value="">Все категории</option>
+      </select>
+      <button onclick="toggleShowAllDishes()" class="bg-blue-600 text-white p-2 rounded ml-2">Показать все</button>
     </div>
-    <button id="category-form-button" onclick="addCategory()" class="bg-green-600 text-white px-4 py-2 rounded mr-2">Добавить категорию</button>
-    <button onclick="cancelCategoryForm()" class="bg-red-600 text-white px-4 py-2 rounded">Отмена</button>
-  </div>
 
-  <div class="container mb-4">
-    <div id="categories-list"></div>
-    <div id="dishes-list-container">
-      <button id="show-all-dishes" onclick="toggleShowAllDishes()" class="bg-blue-600 text-white px-4 py-2 rounded">Показать все блюда</button>
-      <div id="dishes-list"></div>
-    </div>
-  </div>
+    <div id="categories-list" class="mb-4"></div>
+    <div id="dishes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if (typeof window.initializeAppDone === 'undefined') {
-        initializeApp();
-        window.initializeAppDone = true;
-      }
-    });
-  </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="app.js"></script>
+  </div>
 </body>
 </html>
