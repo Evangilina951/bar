@@ -4,9 +4,9 @@
   background-color: #1f2937; /* bg-gray-800 */
   color: #ffffff; /* text-white */
   padding: 1rem; /* p-4 */
-  border-radius: 0.5rem; /* rounded-lg */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-  margin-bottom: 1.5rem; /* mb-6 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+  position: relative;
+  z-index: 10;
 }
 
 #nav h2 {
@@ -19,6 +19,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1rem; /* gap-4 */
+  justify-content: center; /* Центрируем элементы */
 }
 
 #nav nav a,
@@ -63,6 +64,6 @@
 @media (max-width: 768px) {
   #nav nav {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
   }
 }
