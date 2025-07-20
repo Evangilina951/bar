@@ -198,7 +198,8 @@ function initializeApp() {
       orderList.innerHTML += `<li>${item.name} - ${item.price} $</li>`;
     });
   }
-function placeOrder() {
+
+  function placeOrder() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
       return;
@@ -352,7 +353,6 @@ function placeOrder() {
     dishCard.innerHTML = `
       <div class="flex flex-col h-full">
         ${dish.data().image_dish ? `<img src="${dish.data().image_dish}" alt="${dish.data().name_dish}" class="dish-image">` : '<div class="dish-image bg-gray-200"></div>'}
- اتفاق
         <p class="font-bold">${dish.data().name_dish} - ${dish.data().price_dish} $</p>
         <p class="text-sm text-gray-600">Категория: ${categoryMap[dish.data().category_id] || 'Нет'}</p>
         <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2">Развернуть</button>
@@ -787,15 +787,15 @@ function placeOrder() {
 
             // Отображаем таблицу ингредиентов
             list.innerHTML = `
-              <table class="order-table-container">
+              <table class="order-table-container w-full border-collapse">
                 <thead>
                   <tr>
-                    <th>Название</th>
-                    <th>Количество</th>
-                    <th>Цена ($)</th>
-                    <th>Вес (кг)</th>
-                    <th>Поставщик</th>
-                    <th>Действия</th>
+                    <th class="border p-2">Название</th>
+                    <th class="border p-2">Количество</th>
+                    <th class="border p-2">Цена ($)</th>
+                    <th class="border p-2">Вес (кг)</th>
+                    <th class="border p-2">Поставщик</th>
+                    <th class="border p-2">Действия</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -804,7 +804,7 @@ function placeOrder() {
             `;
             const tbody = list.querySelector('tbody');
             if (ingredients.empty) {
-              tbody.innerHTML = '<tr><td colspan="6">Ингредиенты отсутствуют</td></tr>';
+              tbody.innerHTML = '<tr><td colspan="6" class="border p-2 text-center">Ингредиенты отсутствуют</td></tr>';
               return;
             }
 
@@ -818,14 +818,14 @@ function placeOrder() {
 
               const row = document.createElement('tr');
               row.innerHTML = `
-                <td>${ingData.name_product || 'Без названия'}</td>
-                <td>${ingData.stock_quantity_product || 0}</td>
-                <td>${ingData.current_price_product || 0}</td>
-                <td>${ingData.weight_product != null ? ingData.weight_product : 0}</td>
-                <td>${ingData.supplier_product || 'Нет'}</td>
-                <td>
-                  <button onclick="loadIngredientForEdit('${ing.id}')" class="bg-yellow-600 text-white p-1 rounded">Редактировать</button>
-                  <button onclick="deleteIngredient('${ing.id}')" class="bg-red-600 text-white p-1 rounded ml-2">Удалить</button>
+                <td class="border p-2">${ingData.name_product || 'Без названия'}</td>
+                <td class="border p-2">${ingData.stock_quantity_product || 0}</td>
+                <td class="border p-2">${ingData.current_price_product || 0}</td>
+                <td class="border p-2">${ingData.weight_product != null ? ingData.weight_product : 0}</td>
+                <td class="border p-2">${ingData.supplier_product || 'Нет'}</td>
+                <td class="border p-2 flex gap-2">
+                  <button onclick="loadIngredientForEdit('${ing.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded">✏️</button>
+                  <button onclick="deleteIngredient('${ing.id}')" class="delete-btn bg-red-600 text-white p-2 rounded">🗑️</button>
                 </td>
               `;
               tbody.appendChild(row);
