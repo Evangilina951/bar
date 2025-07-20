@@ -30,6 +30,25 @@
   background-color: #4b5563; /* bg-gray-600 */
 }
 
+/* Стили для двухколоночной сетки */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Одна колонка на малых экранах */
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 25% 75%; /* Категории 25%, блюда 75% */
+  }
+}
+
+/* Стили для списка блюд */
+.dishes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; /* gap-4 */
+}
+
 /* Стили для карточек блюд */
 .dish-card {
   border: 1px solid #ddd;
