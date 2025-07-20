@@ -198,8 +198,7 @@ function initializeApp() {
       orderList.innerHTML += `<li>${item.name} - ${item.price} $</li>`;
     });
   }
-
-  function placeOrder() {
+function placeOrder() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
       return;
@@ -353,6 +352,7 @@ function initializeApp() {
     dishCard.innerHTML = `
       <div class="flex flex-col h-full">
         ${dish.data().image_dish ? `<img src="${dish.data().image_dish}" alt="${dish.data().name_dish}" class="dish-image">` : '<div class="dish-image bg-gray-200"></div>'}
+ اتفاق
         <p class="font-bold">${dish.data().name_dish} - ${dish.data().price_dish} $</p>
         <p class="text-sm text-gray-600">Категория: ${categoryMap[dish.data().category_id] || 'Нет'}</p>
         <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2">Развернуть</button>
@@ -761,21 +761,33 @@ function initializeApp() {
       return;
     }
     const list = document.getElementById('inventory-list');
-    if (!list) return;
+    const orderList = document.getElementById('order-list');
+    if (!list || !orderList) return;
+
     db.collection('ingredients').get()
       .then((ingredients) => {
         db.collection('dishes').get()
           .then((dishes) => {
             const usedIngredientIds = new Set();
+            const minIngredientRequirements = {};
+
+            // Собираем данные о минимальных требованиях для ингредиентов
             dishes.forEach((dish) => {
               const dishData = dish.data();
-              if (dishData.ingredients) {
-                dishData.ingredients.forEach((ing) => usedIngredientIds.add(ing.ingredient_id));
+              if (dishData.ingredients && dishData.min_dish) {
+                dishData.ingredients.forEach((ing) => {
+                  if (!minIngredientRequirements[ing.ingredient_id]) {
+                    minIngredientRequirements[ing.ingredient_id] = 0;
+                  }
+                  minIngredientRequirements[ing.ingredient_id] += ing.quantity * dishData.min_dish;
+                  usedIngredientIds.add(ing.ingredient_id);
+                });
               }
             });
 
+            // Отображаем таблицу ингредиентов
             list.innerHTML = `
-              <table>
+              <table class="order-table-container">
                 <thead>
                   <tr>
                     <th>Название</th>
@@ -799,6 +811,7 @@ function initializeApp() {
             const sortedIngredients = Array.from(ingredients.docs).sort((a, b) =>
               (a.data().name_product || '').localeCompare(b.data().name_product || '')
             );
+
             sortedIngredients.forEach((ing) => {
               const ingData = ing.data();
               if (!showAllIngredients && !usedIngredientIds.has(ing.id)) return;
@@ -817,9 +830,55 @@ function initializeApp() {
               `;
               tbody.appendChild(row);
             });
+
+            // Формируем список заказов
+            const ordersBySupplier = {};
+            sortedIngredients.forEach((ing) => {
+              const ingData = ing.data();
+              const minRequired = minIngredientRequirements[ing.id] || 0;
+              const currentStock = ingData.stock_quantity_product || 0;
+              if (minRequired > currentStock) {
+                const toOrder = minRequired - currentStock;
+                const supplier = ingData.supplier_product || 'Без поставщика';
+                if (!ordersBySupplier[supplier]) {
+                  ordersBySupplier[supplier] = [];
+                }
+                ordersBySupplier[supplier].push({
+                  name: ingData.name_product,
+                  quantity: toOrder,
+                  price: ingData.current_price_product || 0,
+                  weight: ingData.weight_product || 0
+                });
+              }
+            });
+
+            // Отображаем список заказов
+            orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
+            if (Object.keys(ordersBySupplier).length === 0) {
+              orderList.innerHTML += '<p class="text-gray-500">Нет ингредиентов для заказа</p>';
+              return;
+            }
+
+            for (const [supplier, items] of Object.entries(ordersBySupplier)) {
+              let totalPrice = 0;
+              let totalWeight = 0;
+              let orderHtml = `<h3 class="text-lg font-semibold mt-4">Заказ ${supplier}</h3><ol class="list-decimal pl-6">`;
+              items.forEach((item) => {
+                const itemPrice = item.quantity * item.price;
+                const itemWeight = item.quantity * item.weight;
+                totalPrice += itemPrice;
+                totalWeight += itemWeight;
+                orderHtml += `<li>${item.name}: ${item.quantity} ($${itemPrice.toFixed(2)})</li>`;
+              });
+              orderHtml += `</ol>`;
+              orderHtml += `<p class="mt-2">Сумма заказа: $${totalPrice.toFixed(2)}</p>`;
+              orderHtml += `<p>Общий вес: ${totalWeight.toFixed(2)} кг</p>`;
+              orderList.innerHTML += orderHtml;
+            }
           })
           .catch((error) => {
             console.error('Ошибка загрузки блюд:', error);
+            alert('Ошибка при загрузке блюд: ' + error.message);
           });
       })
       .catch((error) => {
@@ -976,25 +1035,38 @@ function initializeApp() {
     button.parentElement.remove();
   }
 
-  function addIngredient(name_product, stock_quantity_product, current_price_product, supplier_product, weight_product) {
+  function saveIngredient() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
       return;
     }
+    const form = document.getElementById('ingredient-form');
+    if (!form) {
+      console.error('Форма с id="ingredient-form" не найдена в DOM');
+      alert('Ошибка: Форма для редактирования ингредиента не найдена.');
+      return;
+    }
+
+    const name_product = document.getElementById('ingredient-name')?.value;
+    const stock_quantity_product = document.getElementById('ingredient-quantity')?.value;
+    const current_price_product = document.getElementById('ingredient-price')?.value;
+    const supplier_product = document.getElementById('ingredient-supplier')?.value || '';
+    const weight_product = document.getElementById('ingredient-weight')?.value;
+
     if (!name_product || !current_price_product) {
       alert('Пожалуйста, заполните обязательные поля: название и цену.');
       return;
     }
-    const form = document.getElementById('ingredient-form');
-    const ingredientId = form ? form.dataset.ingredientId : null;
+
     const ingredientData = {
       name_product,
-      stock_quantity_product: stock_quantity_product >= 0 ? parseInt(stock_quantity_product) : 0,
+      stock_quantity_product: stock_quantity_product ? parseInt(stock_quantity_product) : 0,
       current_price_product: parseFloat(current_price_product),
-      supplier_product: supplier_product || '',
-      weight_product: weight_product != null && weight_product >= 0 ? parseFloat(weight_product) : 0
+      supplier_product,
+      weight_product: weight_product ? parseFloat(weight_product) : 0
     };
 
+    const ingredientId = form.dataset.ingredientId;
     if (ingredientId) {
       db.collection('ingredients').doc(ingredientId).update(ingredientData)
         .then(() => {
@@ -1010,7 +1082,9 @@ function initializeApp() {
     } else {
       db.collection('ingredients').get()
         .then((ingredientsSnapshot) => {
-          const existingIngredient = ingredientsSnapshot.docs.find((doc) => doc.data().name_product.toLowerCase() === name_product.toLowerCase());
+          const existingIngredient = ingredientsSnapshot.docs.find(
+            (doc) => doc.data().name_product.toLowerCase() === name_product.toLowerCase()
+          );
           if (existingIngredient) {
             alert('Ингредиент с таким названием уже существует!');
             return;
@@ -1121,8 +1195,8 @@ function initializeApp() {
   function showIngredientForm() {
     const form = document.getElementById('ingredient-form');
     if (form) {
+      cancelIngredientForm(); // Очищаем форму перед показом
       form.classList.remove('hidden');
-      loadIngredientsSelect();
     } else {
       console.error('Форма с id="ingredient-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
@@ -1148,7 +1222,7 @@ function initializeApp() {
   window.toggleDishDetails = toggleDishDetails;
   window.addIngredientRow = addIngredientRow;
   window.removeIngredientRow = removeIngredientRow;
-  window.addIngredient = addIngredient;
+  window.saveIngredient = saveIngredient;
   window.loadInventory = loadInventory;
   window.toggleAllIngredients = toggleAllIngredients;
   window.loadIngredientForEdit = loadIngredientForEdit;
