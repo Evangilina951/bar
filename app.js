@@ -264,6 +264,9 @@ function initializeApp() {
     const dishCard = document.createElement('div');
     dishCard.className = 'dish-card';
     const dishData = dish.data();
+    const ingredientsList = ingredientNames.length > 0 
+      ? `<ul class="list-disc pl-4">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
+      : 'Нет';
     dishCard.innerHTML = `
       <div class="flex flex-col h-full">
         <div class="dish-image-container">
@@ -279,7 +282,8 @@ function initializeApp() {
           <p class="text-sm text-gray-600">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
           <p class="text-sm text-gray-600">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
           <p class="text-sm text-gray-600">Мин. порций: ${dishData.min_dish || 0}</p>
-          <p class="text-sm text-gray-600">Ингредиенты: ${ingredientNames.join(', ') || 'Нет'}</p>
+          <p class="text-sm text-gray-600">Ингредиенты:</p>
+          ${ingredientsList}
           <div class="flex gap-2 mt-2">
             <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
             <button onclick="deleteDish('${dish.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
