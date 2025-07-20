@@ -4,74 +4,82 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Инвентаризация</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container mx-auto p-4">
-    <div id="nav">
-      <h2>Админ-панель</h2>
-      <nav>
-        <a href="/bar/index.html">Вход</a>
-        <a href="/bar/menu.html">Меню</a>
-        <a href="/bar/promocodes.html">Промокоды</a>
-        <a href="/bar/dishes.html">Блюда</a>
-        <a href="/bar/inventory.html">Инвентаризация</a>
-        <a href="/bar/order-ingredients.html">Заказ ингредиентов</a>
-        <a href="/bar/personal-report.html">Личная отчетность</a>
-        <a href="/bar/general-report.html">Общая отчетность</a>
-        <a href="/bar/employees.html">Сотрудники</a>
-        <a href="/bar/delivery.html">Доставка</a>
-        <a href="/bar/delivery-orders.html">Заказы доставки</a>
-        <button onclick="logout()">Выход</button>
+  <div class="container mx-auto p-4 flex flex-col min-h-screen">
+    <div id="nav" class="mb-4">
+      <h2 class="text-2xl font-bold">Админ-панель</h2>
+      <nav class="flex flex-wrap gap-2 mt-2">
+        <a href="/bar/index.html" class="bg-blue-600 text-white px-3 py-1 rounded">Вход</a>
+        <a href="/bar/menu.html" class="bg-blue-600 text-white px-3 py-1 rounded">Меню</a>
+        <a href="/bar/promocodes.html" class="bg-blue-600 text-white px-3 py-1 rounded">Промокоды</a>
+        <a href="/bar/dishes.html" class="bg-blue-600 text-white px-3 py-1 rounded">Блюда</a>
+        <a href="/bar/inventory.html" class="bg-blue-600 text-white px-3 py-1 rounded">Инвентаризация</a>
+        <a href="/bar/order-ingredients.html" class="bg-blue-600 text-white px-3 py-1 rounded">Заказ ингредиентов</a>
+        <a href="/bar/personal-report.html" class="bg-blue-600 text-white px-3 py-1 rounded">Личная отчетность</a>
+        <a href="/bar/general-report.html" class="bg-blue-600 text-white px-3 py-1 rounded">Общая отчетность</a>
+        <a href="/bar/employees.html" class="bg-blue-600 text-white px-3 py-1 rounded">Сотрудники</a>
+        <a href="/bar/delivery.html" class="bg-blue-600 text-white px-3 py-1 rounded">Доставка</a>
+        <a href="/bar/delivery-orders.html" class="bg-blue-600 text-white px-3 py-1 rounded">Заказы доставки</a>
+        <button onclick="logout()" class="bg-red-600 text-white px-3 py-1 rounded">Выход</button>
       </nav>
     </div>
 
-    <h1 class="text-2xl font-bold mb-4 mt-4">Инвентаризация</h1>
+    <h1 class="text-2xl font-bold mb-4">Инвентаризация</h1>
 
     <div class="mb-4">
       <button onclick="showIngredientForm()" class="bg-green-600 text-white p-2 rounded">Добавить новый ингредиент</button>
     </div>
 
-    <div id="ingredient-form" class="hidden">
+    <div id="ingredient-form" class="hidden mb-4">
       <h2 class="text-xl font-bold mb-2">Форма ингредиента</h2>
-      <div class="mb-4">
-        <label>Название:</label>
+      <div class="mb-2">
+        <label class="block">Название:</label>
         <input id="ingredient-name" type="text" class="border p-2 w-full rounded" required>
       </div>
-      <div class="mb-4">
-        <label>Количество:</label>
+      <div class="mb-2">
+        <label class="block">Количество:</label>
         <input id="ingredient-quantity" type="number" min="0" class="border p-2 w-full rounded">
       </div>
-      <div class="mb-4">
-        <label>Цена ($):</label>
+      <div class="mb-2">
+        <label class="block">Цена ($):</label>
         <input id="ingredient-price" type="number" min="0" step="0.01" class="border p-2 w-full rounded" required>
       </div>
-      <div class="mb-4">
-        <label>Поставщик:</label>
+      <div class="mb-2">
+        <label class="block">Поставщик:</label>
         <input id="ingredient-supplier" type="text" class="border p-2 w-full rounded">
       </div>
-      <div class="mb-4">
-        <label>Вес (кг):</label>
+      <div class="mb-2">
+        <label class="block">Вес (кг):</label>
         <input id="ingredient-weight" type="number" min="0" step="0.01" class="border p-2 w-full rounded">
       </div>
-      <button id="ingredient-form-button" onclick="saveIngredient()" class="bg-blue-600 text-white p-2 rounded">Сохранить</button>
-      <button onclick="cancelIngredientForm()" class="bg-gray-600 text-white p-2 rounded ml-2">Отмена</button>
+      <div class="flex gap-2">
+        <button id="ingredient-form-button" onclick="saveIngredient()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
+        <button onclick="cancelIngredientForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
+      </div>
     </div>
 
     <div class="mb-4">
       <button id="toggle-all" onclick="toggleAllIngredients()" class="bg-blue-600 text-white p-2 rounded">Скрыть неиспользуемые</button>
     </div>
 
-    <div id="inventory-list" class="order-table-container"></div>
-
-    <div id="order-list" class="mt-8">
-      <h2 class="text-xl font-bold mb-2">Список заказов</h2>
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="md:w-4/5">
+        <div id="inventory-list" class="order-table-container"></div>
+      </div>
+      <div class="md:w-1/5">
+        <div id="order-list" class="mt-4 md:mt-0">
+          <h2 class="text-xl font-bold mb-2">Список заказов</h2>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="app.js"></script>
+  </div>
 </body>
 </html>
