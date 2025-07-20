@@ -155,10 +155,10 @@ function initializeApp() {
     const name_dish = document.getElementById('dish-name')?.value;
     const price_dish = parseFloat(document.getElementById('dish-price')?.value) || 0;
     const category_id = document.getElementById('dish-category')?.value;
-    const image_dish = document.getElementById('dish-image')?.value || '';
     const is_active_dish = document.getElementById('dish-active')?.checked || false;
     const weight_dish = document.getElementById('dish-weight')?.value ? parseFloat(document.getElementById('dish-weight').value) : null;
     const min_dish = parseInt(document.getElementById('dish-min-portions')?.value) || 0;
+    const image_dish = document.getElementById('dish-image')?.value || '';
     const ingredientRows = document.querySelectorAll('.ingredient-row');
     const ingredients = Array.from(ingredientRows).map((row) => {
       const ingredientId = row.querySelector('input[id^="ingredient-search-"]')?.dataset.ingredientId || '';
@@ -188,10 +188,10 @@ function initializeApp() {
         price_current_dish,
         salary_dish,
         price_profit_dish,
-        image_dish,
         is_active_dish,
         min_dish,
         weight_dish,
+        image_dish,
         ingredients
       });
       await db.collection('dishes').doc(dishRef.id).update({ dish_id: dishRef.id });
@@ -267,7 +267,7 @@ function initializeApp() {
     const dishData = dish.data();
     dishCard.innerHTML = `
       <div class="flex flex-col h-full">
-        ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-image bg-gray-200"></div>'}
+        ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image w-full h-40 object-cover rounded mb-2">` : '<div class="dish-image w-full h-40 bg-gray-200 rounded mb-2"></div>'}
         <p class="font-bold">${dishData.name_dish} - ${dishData.price_dish} $</p>
         <p class="text-sm text-gray-600">Категория: ${categoryMap[dishData.category_id] || 'Нет'}</p>
         <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2">Развернуть</button>
@@ -324,15 +324,15 @@ function initializeApp() {
         'dish-name': document.getElementById('dish-name'),
         'dish-price': document.getElementById('dish-price'),
         'dish-category': document.getElementById('dish-category'),
-        'dish-image': document.getElementById('dish-image'),
         'dish-weight': document.getElementById('dish-weight'),
         'dish-min-portions': document.getElementById('dish-min-portions'),
         'dish-active': document.getElementById('dish-active'),
+        'dish-image': document.getElementById('dish-image'),
         'ingredients-container': document.getElementById('ingredients-container'),
         'dish-form-button': document.getElementById('dish-form-button')
       };
       for (const [id, element] of Object.entries(elements)) {
-        if (!element && id !== 'dish-image') { // dish-image необязательное поле
+        if (!element) {
           console.error(`Элемент с id="${id}" не найден в DOM`);
           alert(`Ошибка: Элемент с id="${id}" не найден. Проверьте HTML.`);
           return;
@@ -342,14 +342,14 @@ function initializeApp() {
       // Отображаем форму перед заполнением
       form.classList.remove('hidden');
 
-      // Заполняем поля формы
+      // Заполняем поля формы, игнорируя устаревшие поля
       elements['dish-name'].value = dishData.name_dish || '';
       elements['dish-price'].value = dishData.price_dish || 0;
       elements['dish-category'].value = dishData.category_id || '';
-      elements['dish-image'].value = dishData.image_dish || '';
       elements['dish-weight'].value = dishData.weight_dish != null ? dishData.weight_dish : '';
       elements['dish-min-portions'].value = dishData.min_dish || 0;
       elements['dish-active'].checked = dishData.is_active_dish || false;
+      elements['dish-image'].value = dishData.image_dish || '';
 
       // Загружаем ингредиенты
       const container = elements['ingredients-container'];
@@ -426,10 +426,10 @@ function initializeApp() {
     const name_dish = document.getElementById('dish-name')?.value;
     const price_dish = parseFloat(document.getElementById('dish-price')?.value) || 0;
     const category_id = document.getElementById('dish-category')?.value;
-    const image_dish = document.getElementById('dish-image')?.value || '';
     const is_active_dish = document.getElementById('dish-active')?.checked || false;
     const weight_dish = document.getElementById('dish-weight')?.value ? parseFloat(document.getElementById('dish-weight').value) : null;
     const min_dish = parseInt(document.getElementById('dish-min-portions')?.value) || 0;
+    const image_dish = document.getElementById('dish-image')?.value || '';
     const ingredientRows = document.querySelectorAll('.ingredient-row');
     const ingredients = Array.from(ingredientRows).map((row) => {
       const ingredientId = row.querySelector('input[id^="ingredient-search-"]')?.dataset.ingredientId || '';
@@ -459,10 +459,10 @@ function initializeApp() {
         price_current_dish,
         salary_dish,
         price_profit_dish,
-        image_dish,
         is_active_dish,
         min_dish,
         weight_dish,
+        image_dish,
         ingredients
       });
       await loadDishes();
@@ -486,7 +486,7 @@ function initializeApp() {
       })
       .catch((error) => {
         console.error('Ошибка удаления блюда:', error);
-        alert('Ошибка при удалении блюда: ' + error.message);
+        alert('Ошибка при удаления блюда: ' + error.message);
       });
   }
 
@@ -1128,10 +1128,10 @@ function initializeApp() {
       document.getElementById('dish-name').value = '';
       document.getElementById('dish-price').value = '';
       document.getElementById('dish-category').value = '';
-      document.getElementById('dish-image').value = '';
       document.getElementById('dish-active').checked = false;
       document.getElementById('dish-weight').value = '';
       document.getElementById('dish-min-portions').value = '';
+      document.getElementById('dish-image').value = '';
       const container = document.getElementById('ingredients-container');
       if (container) {
         container.innerHTML = `
