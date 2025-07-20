@@ -1,130 +1,68 @@
-@import "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css";
-
-body {
-  font-family: Arial, sans-serif;
-}
-
-.page {
-  display: block;
-}
-
-.hidden {
-  display: none;
-}
-
-nav a, nav button {
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-}
-
-nav a:hover, nav button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-input, select, button {
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-ul {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-}
-
-.order-table-container {
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  margin-top: 0.5rem;
-}
-
-.order-table-container table {
+/* Стили для навигации */
+#nav {
   width: 100%;
-  border-collapse: collapse;
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #ffffff; /* text-white */
+  padding: 1rem; /* p-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  margin-bottom: 1.5rem; /* mb-6 */
 }
 
-.order-table-container th,
-.order-table-container td {
-  padding: 0.75rem;
-  text-align: left;
+#nav h2 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 0.5rem; /* mb-2 */
 }
 
-.order-table-container th {
-  background-color: #f9fafb;
-  font-weight: bold;
-}
-
-.order-table-container tr:nth-child(even) {
-  background-color: #f3f4f6;
-}
-
-#dish-form, #category-form {
-  padding: 15px;
-  border: 1px solid #e5e7eb;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-
-#ingredients-container {
+#nav nav {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 1rem; /* gap-4 */
 }
 
-.ingredient-row {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+#nav nav a,
+#nav nav button {
+  color: #ffffff; /* text-white */
+  padding: 0.5rem 1rem; /* p-2 */
+  border-radius: 0.25rem; /* rounded */
+  text-decoration: none;
+  transition: background-color 0.2s;
 }
 
+#nav nav a:hover,
+#nav nav button:hover {
+  background-color: #4b5563; /* bg-gray-600 */
+}
+
+/* Стили для карточек блюд */
 .dish-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .dish-image {
-  width: 62px;
-  height: 62px;
-  object-fit: contain;
-  margin: 0 auto 5px;
+  width: 100%;
+  height: 10rem; /* h-40 */
+  object-fit: cover;
+  border-radius: 0.5rem; /* rounded */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.edit-btn, .delete-btn, .toggle-active-btn, .toggle-inactive-btn {
+  min-width: 40px;
 }
 
 .dish-details {
   display: none;
-  margin-top: 5px;
 }
 
-.edit-btn, .delete-btn, .toggle-active-btn, .toggle-inactive-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-}
-
-.edit-btn { background-color: #f4a261; }
-.delete-btn { background-color: #e76f51; }
-.toggle-active-btn { background-color: #2a9d8f; }
-.toggle-inactive-btn { background-color: #e63946; }
-
-.container {
-  display: flex;
-  height: calc(100vh - 150px);
-}
-
-#categories-list {
-  width: 30%;
-  padding-right: 20px;
-  border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
-}
-
-#dishes-list-container {
-  width: 70%;
-  padding-left: 20px;
-  overflow-y: auto;
+/* Адаптивность для малых экранов */
+@media (max-width: 768px) {
+  #nav nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
