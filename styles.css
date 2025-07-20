@@ -1,119 +1,116 @@
-/* Стили для навигации */
-#nav {
-  width: 100%;
-  background-color: #1f2937; /* bg-gray-800 */
-  color: #ffffff; /* text-white */
-  padding: 1rem; /* p-4 */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
-  position: relative;
-  z-index: 10;
-}
-
-#nav nav {
+/* Навигация */
+nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem; /* gap-4 */
-  justify-content: center; /* Центрируем элементы */
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
-#nav nav a,
-#nav nav button {
-  color: #ffffff; /* text-white */
-  padding: 0.5rem 1rem; /* p-2 */
-  border-radius: 0.25rem; /* rounded */
+nav a,
+nav button {
+  color: white;
   text-decoration: none;
-  transition: background-color 0.2s;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s;
 }
 
-#nav nav a:hover,
-#nav nav button:hover {
-  background-color: #4b5563; /* bg-gray-600 */
+nav a:hover,
+nav button:hover {
+  background-color: #4a5568;
 }
 
-/* Стили для двухколоночной сетки */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr; /* Одна колонка на малых экранах */
-}
-
-@media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: 25% 75%; /* Категории 25%, блюда 75% */
-  }
-}
-
-/* Стили для списка блюд */
-.dishes-grid {
+/* Контейнер блюд */
+#dishes-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem; /* gap-4 */
+  gap: 1rem;
+  padding: 1rem;
 }
 
-/* Стили для карточек блюд */
+/* Карточка блюда */
 .dish-card {
-  border: 1px solid #ddd;
-  padding: 12px; /* Уменьшено для компактности */
-  border-radius: 8px;
-  background: #fff;
-  max-width: 200px; /* Ограничиваем ширину карточки */
-  margin: 0 auto; /* Центрируем карточку */
+  max-width: 200px;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .dish-image-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 0.5rem; /* mb-2 */
+  width: 100%;
+  height: 62px;
+  margin-bottom: 0.5rem;
 }
 
 .dish-image {
   width: 62px;
   height: 62px;
-  object-fit: contain; /* Изображение не растягивается */
+  object-fit: contain;
 }
 
 .dish-placeholder {
   width: 62px;
   height: 62px;
-  background-color: #e5e7eb; /* bg-gray-200 */
-  margin-bottom: 0.5rem; /* mb-2 */
+  background-color: #e2e8f0;
+  border-radius: 0.25rem;
 }
 
 .dish-name {
   font-weight: bold;
-  font-size: 0.875rem; /* text-sm */
   text-align: center;
-  margin-bottom: 0.25rem; /* mb-1 */
+  margin: 0.25rem 0;
 }
 
 .dish-price {
-  font-size: 0.875rem; /* text-sm */
   text-align: center;
-  margin-bottom: 0.25rem; /* mb-1 */
+  margin: 0.25rem 0;
 }
 
 .dish-category {
-  font-size: 0.75rem; /* text-xs */
-  color: #4b5563; /* text-gray-600 */
   text-align: center;
-  margin-bottom: 0.5rem; /* mb-2 */
-}
-
-.edit-btn, .delete-btn, .toggle-active-btn, .toggle-inactive-btn {
-  min-width: 40px;
+  color: #4a5568;
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
 }
 
 .dish-details {
-  display: none;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #4a5568;
 }
 
-/* Адаптивность для малых экранов */
-@media (max-width: 768px) {
-  #nav nav {
-    flex-direction: column;
-    align-items: center;
+.dish-details ul {
+  margin-top: 0.25rem;
+  padding-left: 1rem;
+}
+
+.dish-details ul li {
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+/* Кнопки в карточке */
+.dish-details button {
+  font-size: 0.875rem;
+}
+
+/* Адаптивность */
+@media (max-width: 640px) {
+  #dishes-list {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
+
   .dish-card {
-    max-width: 100%; /* На малых экранах карточки занимают всю ширину */
+    max-width: 150px;
   }
 }
