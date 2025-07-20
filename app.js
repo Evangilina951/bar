@@ -819,7 +819,7 @@ function initializeApp() {
               const row = document.createElement('tr');
               row.innerHTML = `
                 <td class="border p-2">${ingData.name_product || 'Без названия'}</td>
-                <td class="border p-2">${ingData.stock_quantity_product || 0}</td>
+                <td class="border p-2 quantity-cell" data-ingredient-id="${ing.id}">${ingData.stock_quantity_product || 0}</td>
                 <td class="border p-2">${ingData.current_price_product || 0}</td>
                 <td class="border p-2">${ingData.weight_product != null ? ingData.weight_product : 0}</td>
                 <td class="border p-2">${ingData.supplier_product || 'Нет'}</td>
@@ -829,6 +829,26 @@ function initializeApp() {
                 </td>
               `;
               tbody.appendChild(row);
+            });
+
+            // Добавляем обработчик для редактирования количества
+            const quantityCells = tbody.querySelectorAll('.quantity-cell');
+            quantityCells.forEach(cell => {
+              cell.addEventListener('click', function() {
+                const currentValue = this.textContent;
+                const ingredientId = this.dataset.ingredientId;
+                this.innerHTML = `
+                  <input type="number" class="border p-1 w-full rounded" value="${currentValue}" min="0">
+                `;
+                const input = this.querySelector('input');
+                input.focus();
+                input.addEventListener('blur', () => editIngredientQuantity(ingredientId, input.value));
+                input.addEventListener('keypress', (e) => {
+                  if (e.key === 'Enter') {
+                    editIngredientQuantity(ingredientId, input.value);
+                  }
+                });
+              });
             });
 
             // Формируем список заказов
@@ -884,6 +904,29 @@ function initializeApp() {
       .catch((error) => {
         console.error('Ошибка загрузки инвентаря:', error);
         alert('Ошибка при загрузке инвентаря: ' + error.message);
+      });
+  }
+
+  function editIngredientQuantity(ingredientId, newQuantity) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
+    const quantity = parseInt(newQuantity) || 0;
+    if (quantity < 0) {
+      alert('Количество не может быть отрицательным.');
+      return;
+    }
+    db.collection('ingredients').doc(ingredientId).update({
+      stock_quantity_product: quantity
+    })
+      .then(() => {
+        loadInventory();
+        console.log(`Количество ингредиента ${ingredientId} обновлено: ${quantity}`);
+      })
+      .catch((error) => {
+        console.error('Ошибка обновления количества ингредиента:', error);
+        alert('Ошибка при обновлении количества: ' + error.message);
       });
   }
 
@@ -1234,6 +1277,7 @@ function initializeApp() {
   window.showDishForm = showDishForm;
   window.showCategoryForm = showCategoryForm;
   window.showIngredientForm = showIngredientForm;
+  window.editIngredientQuantity = editIngredientQuantity;
 
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
