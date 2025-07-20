@@ -104,7 +104,20 @@ nav button:hover {
   font-size: 0.875rem;
 }
 
-/* Адаптивность */
+/* Резервные стили для двухколоночной структуры */
+@media (min-width: 1024px) {
+  .container > .grid {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    gap: 1rem;
+  }
+  .container > .grid > div:first-child {
+    border-right: 1px solid #e2e8f0;
+    padding-right: 1rem;
+  }
+}
+
+/* Адаптивность для карточек */
 @media (max-width: 640px) {
   #dishes-list {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
