@@ -45,12 +45,10 @@ function initializeApp() {
     }
     navElement.innerHTML = `
       <nav>
-        <a href="/bar/index.html">Вход</a>
         <a href="/bar/menu.html">Меню</a>
         <a href="/bar/promocodes.html">Промокоды</a>
         <a href="/bar/dishes.html">Блюда</a>
         <a href="/bar/inventory.html">Инвентаризация</a>
-        <a href="/bar/order-ingredients.html">Заказ ингредиентов</a>
         <a href="/bar/personal-report.html">Личная отчетность</a>
         <a href="/bar/general-report.html">Общая отчетность</a>
         <a href="/bar/employees.html">Сотрудники</a>
@@ -296,11 +294,11 @@ function initializeApp() {
 
   function toggleDishDetails(button) {
     const details = button.nextElementSibling;
-    if (details.style.display === 'none' || details.style.display === '') {
-      details.style.display = 'block';
+    if (details.classList.contains('hidden')) {
+      details.classList.remove('hidden');
       button.textContent = 'Скрыть';
     } else {
-      details.style.display = 'none';
+      details.classList.add('hidden');
       button.textContent = 'Развернуть';
     }
   }
@@ -375,7 +373,7 @@ function initializeApp() {
                   <label class="block mb-1">Количество:</label>
                   <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
                 </div>
-                ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>` : ''}
+                ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white rounded">🗑️</button>` : ''}
               </div>
             `;
           } catch (error) {
@@ -923,7 +921,7 @@ function initializeApp() {
     db.collection('dishes').where('ingredients', 'array-contains', { ingredient_id: ingredientId }).get()
       .then((dishes) => {
         if (!dishes.empty) {
-          alert('Нельзя удалить ингредиент, так как он используется в блюдах.');
+          alert('Нельзя удалить ингреди/deploy гредиент, так как он используется в блюдах.');
           return;
         }
         db.collection('ingredients').doc(ingredientId).delete()
@@ -1019,7 +1017,7 @@ function initializeApp() {
         <label class="block mb-1">Количество:</label>
         <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
       </div>
-      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>
+      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white rounded">🗑️</button>
     `;
     container.appendChild(row);
     loadIngredientsSelect();
@@ -1045,7 +1043,8 @@ function initializeApp() {
     const stock_quantity_product = document.getElementById('ingredient-quantity')?.value;
     const current_price_product = document.getElementById('ingredient-price')?.value;
     const supplier_product = document.getElementById('ingredient-supplier')?.value || '';
-    const weight_product = document.getElementById('ingredient-weight')?.value;
+    const weight_product = document.g
+etElementById('ingredient-weight')?.value;
 
     if (!name_product || !current_price_product) {
       alert('Пожалуйста, заполните обязательные поля: название и цену.');
@@ -1234,7 +1233,16 @@ function initializeApp() {
 
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
-    if (document.getElementById('nav')) loadNav();
+    const navElement = document.getElementById('nav');
+    if (navElement) {
+      if (user) {
+        navElement.classList.remove('hidden');
+        loadNav();
+      } else {
+        navElement.classList.add('hidden');
+        window.location.href = '/bar/index.html';
+      }
+    }
     if (document.getElementById('dishes-list')) loadDishes();
     if (document.getElementById('categories-list')) loadCategoryList();
     if (document.getElementById('dish-category')) loadCategories();
