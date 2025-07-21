@@ -6,7 +6,7 @@ nav {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #2d3748; /* Добавляем фоновый цвет для всей панели */
+  background-color: #2d3748; /* Темный фон для панели */
   padding: 1rem;
 }
 
@@ -16,13 +16,49 @@ nav button {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
-  background-color: #4a5568; /* Явный фоновый цвет для элементов */
+  background-color: #4a5568; /* Фон для элементов навигации */
   transition: background-color 0.3s;
 }
 
 nav a:hover,
 nav button:hover {
-  background-color: #718096; /* Более светлый оттенок при наведении */
+  background-color: #718096; /* Подсветка при наведении */
+}
+
+/* Стили для формы блюда */
+#dish-form {
+  display: none; /* По умолчанию скрыто, эквивалент Tailwind hidden */
+  position: relative;
+  z-index: 10; /* Устанавливаем z-index для видимости */
+  visibility: visible !important; /* Перекрываем возможные конфликты */
+  opacity: 1 !important;
+  background-color: #ffffff; /* Явный белый фон */
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#dish-form:not(.hidden) {
+  display: block !important; /* Гарантируем отображение при удалении класса hidden */
+}
+
+/* Стили для формы категории */
+#category-form {
+  display: none; /* По умолчанию скрыто */
+  position: relative;
+  z-index: 10;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#category-form:not(.hidden) {
+  display: block !important;
 }
 
 /* Контейнер блюд */
@@ -44,7 +80,7 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 200px; /* Устанавливаем минимальную высоту для выравнивания карточек */
+  min-height: 200px;
 }
 
 .dish-image-container {
@@ -73,7 +109,7 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
-  flex-grow: 1; /* Позволяет названию занимать доступное пространство */
+  flex-grow: 1;
 }
 
 .dish-price {
@@ -110,10 +146,15 @@ nav button:hover {
 }
 
 /* Стили для кнопки удаления в форме */
-.ingredient-row button {
-  padding: 0.5rem; /* Уменьшаем вертикальный padding для кнопки удаления */
-  line-height: 1; /* Устанавливаем высоту строки для центрирования иконки */
-  height: 2rem; /* Фиксированная высота кнопки */
+.ingredient-row button.bg-red-600 {
+  padding: 0.5rem !important;
+  line-height: 1 !important;
+  height: 2rem !important;
+  width: 2rem !important; /* Фиксированная ширина для квадратной формы */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
 }
 
 /* Резервные стили для двухколоночной структуры */
@@ -137,6 +178,6 @@ nav button:hover {
 
   .dish-card {
     max-width: 150px;
-    min-height: 180px; /* Уменьшаем минимальную высоту для маленьких экранов */
+    min-height: 180px;
   }
 }
