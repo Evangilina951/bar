@@ -41,6 +41,8 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  min-height: 250px; /* Минимальная высота карточки */
 }
 
 .dish-image-container {
@@ -69,6 +71,7 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
+  flex-grow: 1; /* Позволяет названию занимать доступное пространство */
 }
 
 .dish-price {
@@ -102,6 +105,29 @@ nav button:hover {
 /* Кнопки в карточке */
 .dish-details button {
   font-size: 0.875rem;
+}
+
+/* Кнопка Развернуть в карточке */
+.dish-card > .flex > button {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
+  width: calc(100% - 1rem);
+}
+
+/* Кнопка удаления ингредиента в форме */
+.ingredient-row button {
+  background-color: #e53e3e;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem; /* Центрирование относительно поля количества */
 }
 
 /* Резервные стили для двухколоночной структуры */
