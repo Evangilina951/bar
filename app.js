@@ -4,7 +4,7 @@ let showAllDishes = false;
 function initializeApp() {
   if (typeof firebase === 'undefined') {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
-    return;
+    return;function cancelDishForm()
   }
   console.log('Firebase загружен успешно.');
 
@@ -1186,28 +1186,30 @@ function initializeApp() {
     form.style.zIndex = '10';
     form.style.position = 'relative';
 
-    // Логируем состояние до сброса формы
+    // Логируем начальное состояние
     console.log('Перед сбросом формы, стиль display:', form.style.display);
     console.log('Перед сбросом формы, классы:', form.className);
 
     // Сбрасываем форму
     cancelDishForm();
 
-    // Загружаем список ингредиентов с задержкой
-    setTimeout(() => {
+    // Используем requestAnimationFrame для синхронизации с рендерингом
+    requestAnimationFrame(() => {
       loadIngredientsSelect();
       // Проверяем состояние после всех операций
       console.log('После всех операций, стиль display:', form.style.display);
       console.log('После всех операций, классы:', form.className);
       console.log('Родительский элемент формы:', form.parentElement);
-      console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container').innerHTML);
-      // Принудительно переприменяем стили, если класс hidden появился
-      if (form.classList.contains('hidden')) {
-        console.warn('Класс hidden был добавлен обратно, исправляем');
+      console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container')?.innerHTML || 'Контейнер не найден');
+      // Принудительно переприменяем стили
+      if (form.classList.contains('hidden') || form.style.display !== 'block') {
+        console.warn('Класс hidden или display: none были добавлены обратно, исправляем');
         form.classList.remove('hidden');
         form.style.display = 'block';
+        form.style.visibility = 'visible';
+        form.style.opacity = '1';
       }
-    }, 0);
+    });
   } else {
     console.error('Форма с id="dish-form" не найдена в DOM');
     alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
