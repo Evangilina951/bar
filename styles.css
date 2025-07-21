@@ -6,6 +6,8 @@ nav {
   justify-content: center;
   align-items: center;
   width: 100%;
+  background-color: #2d3748; /* Добавляем фоновый цвет для всей панели */
+  padding: 1rem;
 }
 
 nav a,
@@ -14,12 +16,13 @@ nav button {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
+  background-color: #4a5568; /* Явный фоновый цвет для элементов */
   transition: background-color 0.3s;
 }
 
 nav a:hover,
 nav button:hover {
-  background-color: #4a5568;
+  background-color: #718096; /* Более светлый оттенок при наведении */
 }
 
 /* Контейнер блюд */
@@ -104,6 +107,13 @@ nav button:hover {
 /* Кнопки в карточке */
 .dish-details button {
   font-size: 0.875rem;
+}
+
+/* Стили для кнопки удаления в форме */
+.ingredient-row button {
+  padding: 0.5rem; /* Уменьшаем вертикальный padding для кнопки удаления */
+  line-height: 1; /* Устанавливаем высоту строки для центрирования иконки */
+  height: 2rem; /* Фиксированная высота кнопки */
 }
 
 /* Резервные стили для двухколоночной структуры */
