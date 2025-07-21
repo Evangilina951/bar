@@ -41,6 +41,7 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 200px; /* Устанавливаем минимальную высоту для выравнивания карточек */
 }
 
 .dish-image-container {
@@ -69,6 +70,7 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
+  flex-grow: 1; /* Позволяет названию занимать доступное пространство */
 }
 
 .dish-price {
@@ -125,5 +127,6 @@ nav button:hover {
 
   .dish-card {
     max-width: 150px;
+    min-height: 180px; /* Уменьшаем минимальную высоту для маленьких экранов */
   }
 }
