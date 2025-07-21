@@ -1173,19 +1173,26 @@ function initializeApp() {
     }
   }
 
-  function showDishForm() {
-    const form = document.getElementById('dish-form');
-    if (form) {
-      form.classList.remove('hidden');
-      form.style.display = 'block'; // Принудительно устанавливаем display
-      cancelDishForm(); // Очищаем форму при открытии
-      loadIngredientsSelect();
-      console.log('Форма блюда открыта'); // Для отладки
-    } else {
-      console.error('Форма с id="dish-form" не найдена в DOM');
-      alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
-    }
+ function showDishForm() {
+  const form = document.getElementById('dish-form');
+  if (form) {
+    // Удаляем класс hidden и устанавливаем стили явно
+    form.classList.remove('hidden');
+    form.style.display = 'block';
+    form.style.visibility = 'visible';
+    form.style.opacity = '1';
+    form.style.zIndex = '10'; // Устанавливаем z-index для видимости
+    form.style.position = 'relative'; // Убедимся, что форма не скрыта за другими элементами
+    console.log('Форма блюда открыта, стиль display:', form.style.display);
+    console.log('Классы формы:', form.className);
+    console.log('Родительский элемент формы:', form.parentElement);
+    cancelDishForm(); // Очищаем форму при открытии
+    loadIngredientsSelect();
+  } else {
+    console.error('Форма с id="dish-form" не найдена в DOM');
+    alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
   }
+}
 
   function showCategoryForm() {
     const form = document.getElementById('category-form');
