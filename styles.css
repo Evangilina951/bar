@@ -27,12 +27,12 @@ nav button:hover {
 
 /* Стили для формы блюда */
 #dish-form {
-  display: none; /* По умолчанию скрыто, эквивалент Tailwind hidden */
+  display: none; /* По умолчанию скрыто */
   position: relative;
-  z-index: 10; /* Устанавливаем z-index для видимости */
-  visibility: visible !important; /* Перекрываем возможные конфликты */
+  z-index: 10;
+  visibility: visible !important;
   opacity: 1 !important;
-  background-color: #ffffff; /* Явный белый фон */
+  background-color: #ffffff;
   border: 1px solid #e2e8f0;
   padding: 1rem;
   border-radius: 0.5rem;
@@ -40,7 +40,7 @@ nav button:hover {
 }
 
 #dish-form:not(.hidden) {
-  display: block !important; /* Гарантируем отображение при удалении класса hidden */
+  display: block !important;
 }
 
 /* Стили для формы категории */
@@ -145,16 +145,45 @@ nav button:hover {
   font-size: 0.875rem;
 }
 
+/* Стили для строки ингредиентов */
+.ingredient-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .ingredient-row {
+    flex-direction: row;
+    align-items: center; /* Выравниваем элементы по центру по вертикали */
+    gap: 1rem;
+  }
+}
+
+/* Стили для полей ввода в строке ингредиентов */
+.ingredient-row input,
+.ingredient-row select {
+  height: 2.5rem; /* Фиксированная высота для согласованности */
+  line-height: 2.5rem;
+}
+
 /* Стили для кнопки удаления в форме */
 .ingredient-row button.bg-red-600 {
-  padding: 0.5rem !important;
-  line-height: 1 !important;
-  height: 2rem !important;
-  width: 2rem !important; /* Фиксированная ширина для квадратной формы */
+  padding: 0 !important; /* Убираем padding для точного контроля размеров */
+  height: 2.5rem !important; /* Соответствует высоте полей ввода */
+  width: 2.5rem !important; /* Квадратная форма */
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 0.25rem;
+  margin-top: 1.75rem; /* Выравнивание для мобильных устройств */
+}
+
+@media (min-width: 768px) {
+  .ingredient-row button.bg-red-600 {
+    margin-top: 0; /* Убираем margin для десктопов */
+    margin-left: 0.5rem;
+  }
 }
 
 /* Резервные стили для двухколоночной структуры */
