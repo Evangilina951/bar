@@ -1176,18 +1176,25 @@ function initializeApp() {
  function showDishForm() {
   const form = document.getElementById('dish-form');
   if (form) {
-    // Удаляем класс hidden и устанавливаем стили явно
+    // Сначала явно отображаем форму
     form.classList.remove('hidden');
     form.style.display = 'block';
     form.style.visibility = 'visible';
     form.style.opacity = '1';
-    form.style.zIndex = '10'; // Устанавливаем z-index для видимости
-    form.style.position = 'relative'; // Убедимся, что форма не скрыта за другими элементами
-    console.log('Форма блюда открыта, стиль display:', form.style.display);
-    console.log('Классы формы:', form.className);
-    console.log('Родительский элемент формы:', form.parentElement);
-    cancelDishForm(); // Очищаем форму при открытии
-    loadIngredientsSelect();
+    form.style.zIndex = '10';
+    form.style.position = 'relative';
+    
+    // Сбрасываем форму после отображения
+    cancelDishForm();
+    
+    // Загружаем список ингредиентов с небольшой задержкой
+    setTimeout(() => {
+      loadIngredientsSelect();
+      console.log('Форма блюда открыта, стиль display:', form.style.display);
+      console.log('Классы формы:', form.className);
+      console.log('Родительский элемент формы:', form.parentElement);
+      console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container').innerHTML);
+    }, 0);
   } else {
     console.error('Форма с id="dish-form" не найдена в DOM');
     alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
