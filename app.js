@@ -45,12 +45,10 @@ function initializeApp() {
     }
     navElement.innerHTML = `
       <nav>
-        <a href="/bar/index.html">Вход</a>
         <a href="/bar/menu.html">Меню</a>
         <a href="/bar/promocodes.html">Промокоды</a>
         <a href="/bar/dishes.html">Блюда</a>
         <a href="/bar/inventory.html">Инвентаризация</a>
-        <a href="/bar/order-ingredients.html">Заказ ингредиентов</a>
         <a href="/bar/personal-report.html">Личная отчетность</a>
         <a href="/bar/general-report.html">Общая отчетность</a>
         <a href="/bar/employees.html">Сотрудники</a>
@@ -275,7 +273,7 @@ function initializeApp() {
         <p class="dish-name">${dishData.name_dish}</p>
         <p class="dish-price">${dishData.price_dish} $</p>
         <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
+        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-auto text-sm">Развернуть</button>
         <div class="dish-details hidden">
           <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
           <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
@@ -375,7 +373,7 @@ function initializeApp() {
                   <label class="block mb-1">Количество:</label>
                   <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
                 </div>
-                ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>` : ''}
+                ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">🗑️</button>` : ''}
               </div>
             `;
           } catch (error) {
@@ -555,7 +553,7 @@ function initializeApp() {
       }
     } catch (error) {
       console.error('Ошибка добавления/обновления категории:', error);
-      alert('Ошибка при добавлении/обновлении категории: ' + error.message);
+      alert('Ошибка при добавлении/обновления категории: ' + error.message);
     }
   }
 
@@ -1019,7 +1017,7 @@ function initializeApp() {
         <label class="block mb-1">Количество:</label>
         <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
       </div>
-      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>
+      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">🗑️</button>
     `;
     container.appendChild(row);
     loadIngredientsSelect();
@@ -1173,6 +1171,7 @@ function initializeApp() {
     const form = document.getElementById('dish-form');
     if (form) {
       form.classList.remove('hidden');
+      cancelDishForm(); // Очищаем форму при открытии
       loadIngredientsSelect();
     } else {
       console.error('Форма с id="dish-form" не найдена в DOM');
@@ -1234,12 +1233,19 @@ function initializeApp() {
 
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
-    if (document.getElementById('nav')) loadNav();
-    if (document.getElementById('dishes-list')) loadDishes();
-    if (document.getElementById('categories-list')) loadCategoryList();
-    if (document.getElementById('dish-category')) loadCategories();
-    if (document.getElementById('inventory-list')) loadInventory();
-    if (document.getElementById('ingredients-container')) loadIngredientsSelect();
+    const navElement = document.getElementById('nav');
+    if (navElement) {
+      if (user) {
+        loadNav();
+      } else {
+        navElement.innerHTML = ''; // Скрываем навигацию для неавторизованных пользователей
+      }
+    }
+    if (document.getElementById('dishes-list') && user) loadDishes();
+    if (document.getElementById('categories-list') && user) loadCategoryList();
+    if (document.getElementById('dish-category') && user) loadCategories();
+    if (document.getElementById('inventory-list') && user) loadInventory();
+    if (document.getElementById('ingredients-container') && user) loadIngredientsSelect();
   });
 }
 
