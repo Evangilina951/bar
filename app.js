@@ -273,7 +273,7 @@ function initializeApp() {
         <p class="dish-name">${dishData.name_dish}</p>
         <p class="dish-price">${dishData.price_dish} $</p>
         <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
+        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-auto text-sm">Развернуть</button>
         <div class="dish-details hidden">
           <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
           <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
@@ -346,7 +346,7 @@ function initializeApp() {
       // Отображаем форму перед заполнением
       form.classList.remove('hidden');
 
-      // Заполняем поля формы, игнорируя устаревшие поля
+      // Заполняем поля формы
       elements['dish-name'].value = dishData.name_dish || '';
       elements['dish-price'].value = dishData.price_dish || 0;
       elements['dish-category'].value = dishData.category_id || '';
@@ -796,6 +796,7 @@ function initializeApp() {
               });
             });
 
+            orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
             const ordersBySupplier = {};
             sortedIngredients.forEach((ing) => {
               const ingData = ing.data();
@@ -816,7 +817,6 @@ function initializeApp() {
               }
             });
 
-            orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
             if (Object.keys(ordersBySupplier).length === 0) {
               orderList.innerHTML += '<p class="text-gray-500">Нет ингредиентов для заказа</p>';
               return;
@@ -921,7 +921,7 @@ function initializeApp() {
     db.collection('dishes').where('ingredients', 'array-contains', { ingredient_id: ingredientId }).get()
       .then((dishes) => {
         if (!dishes.empty) {
-          alert('Нельзя удалить ингреди/deploy гредиент, так как он используется в блюдах.');
+          alert('Нельзя удалить ингредиент, так как он используется в блюдах.');
           return;
         }
         db.collection('ingredients').doc(ingredientId).delete()
@@ -1043,8 +1043,7 @@ function initializeApp() {
     const stock_quantity_product = document.getElementById('ingredient-quantity')?.value;
     const current_price_product = document.getElementById('ingredient-price')?.value;
     const supplier_product = document.getElementById('ingredient-supplier')?.value || '';
-    const weight_product = document.g
-etElementById('ingredient-weight')?.value;
+    const weight_product = document.getElementById('ingredient-weight')?.value;
 
     if (!name_product || !current_price_product) {
       alert('Пожалуйста, заполните обязательные поля: название и цену.');
@@ -1240,7 +1239,10 @@ etElementById('ingredient-weight')?.value;
         loadNav();
       } else {
         navElement.classList.add('hidden');
-        window.location.href = '/bar/index.html';
+        // Проверяем, находится ли пользователь на странице index.html
+        if (window.location.pathname !== '/bar/index.html') {
+          window.location.href = '/bar/index.html';
+        }
       }
     }
     if (document.getElementById('dishes-list')) loadDishes();
