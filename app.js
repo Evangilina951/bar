@@ -4,7 +4,7 @@ let showAllDishes = false;
 function initializeApp() {
   if (typeof firebase === 'undefined') {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
-    return;function cancelDishForm()
+    return;
   }
   console.log('Firebase загружен успешно.');
 
@@ -1020,7 +1020,7 @@ function initializeApp() {
         <label class="block mb-1">Количество:</label>
         <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
       </div>
-      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">🗑️</button>
+      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded align-self-center">🗑️</button>
     `;
     container.appendChild(row);
     loadIngredientsSelect();
@@ -1122,47 +1122,47 @@ function initializeApp() {
   }
 
   function cancelDishForm() {
-  const form = document.getElementById('dish-form');
-  if (form) {
-    form.dataset.dishId = '';
-    document.getElementById('dish-name').value = '';
-    document.getElementById('dish-price').value = '';
-    document.getElementById('dish-category').value = '';
-    document.getElementById('dish-active').checked = false;
-    document.getElementById('dish-weight').value = '';
-    document.getElementById('dish-min-portions').value = '';
-    document.getElementById('dish-image').value = '';
-    const container = document.getElementById('ingredients-container');
-    if (container) {
-      container.innerHTML = `
-        <datalist id="ingredient-options"></datalist>
-        <div class="ingredient-row flex flex-col md:flex-row gap-4">
-          <div class="flex-1">
-            <label class="block mb-1">Ингредиент:</label>
-            <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
+    const form = document.getElementById('dish-form');
+    if (form) {
+      form.dataset.dishId = '';
+      document.getElementById('dish-name').value = '';
+      document.getElementById('dish-price').value = '';
+      document.getElementById('dish-category').value = '';
+      document.getElementById('dish-active').checked = false;
+      document.getElementById('dish-weight').value = '';
+      document.getElementById('dish-min-portions').value = '';
+      document.getElementById('dish-image').value = '';
+      const container = document.getElementById('ingredients-container');
+      if (container) {
+        container.innerHTML = `
+          <datalist id="ingredient-options"></datalist>
+          <div class="ingredient-row flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+              <label class="block mb-1">Ингредиент:</label>
+              <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
+            </div>
+            <div class="flex-1">
+              <label class="block mb-1">Количество:</label>
+              <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
+            </div>
           </div>
-          <div class="flex-1">
-            <label class="block mb-1">Количество:</label>
-            <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
-          </div>
-        </div>
-      `;
+        `;
+      } else {
+        console.error('Контейнер с id="ingredients-container" не найден в DOM');
+      }
+      document.getElementById('dish-form-button').onclick = addDish;
+      document.getElementById('dish-form-button').textContent = 'Сохранить';
+      // Гарантируем, что форма остается видимой
+      form.classList.remove('hidden');
+      form.style.display = 'block';
+      form.style.visibility = 'visible';
+      form.style.opacity = '1';
+      console.log('После cancelDishForm, стиль display:', form.style.display);
+      console.log('После cancelDishForm, классы:', form.className);
     } else {
-      console.error('Контейнер с id="ingredients-container" не найден в DOM');
+      console.error('Форма с id="dish-form" не найдена в DOM');
     }
-    document.getElementById('dish-form-button').onclick = addDish;
-    document.getElementById('dish-form-button').textContent = 'Сохранить';
-    // Гарантируем, что форма остается видимой
-    form.classList.remove('hidden');
-    form.style.display = 'block';
-    form.style.visibility = 'visible';
-    form.style.opacity = '1';
-    console.log('После cancelDishForm, стиль display:', form.style.display);
-    console.log('После cancelDishForm, классы:', form.className);
-  } else {
-    console.error('Форма с id="dish-form" не найдена в DOM');
   }
-}
 
   function cancelCategoryForm() {
     const form = document.getElementById('category-form');
@@ -1179,46 +1179,46 @@ function initializeApp() {
     }
   }
 
- function showDishForm() {
-  const form = document.getElementById('dish-form');
-  if (form) {
-    // Сначала явно отображаем форму
-    form.classList.remove('hidden');
-    form.style.display = 'block';
-    form.style.visibility = 'visible';
-    form.style.opacity = '1';
-    form.style.zIndex = '10';
-    form.style.position = 'relative';
+  function showDishForm() {
+    const form = document.getElementById('dish-form');
+    if (form) {
+      // Сначала явно отображаем форму
+      form.classList.remove('hidden');
+      form.style.display = 'block';
+      form.style.visibility = 'visible';
+      form.style.opacity = '1';
+      form.style.zIndex = '10';
+      form.style.position = 'relative';
 
-    // Логируем начальное состояние
-    console.log('Перед сбросом формы, стиль display:', form.style.display);
-    console.log('Перед сбросом формы, классы:', form.className);
+      // Логируем начальное состояние
+      console.log('Перед сбросом формы, стиль display:', form.style.display);
+      console.log('Перед сбросом формы, классы:', form.className);
 
-    // Сбрасываем форму
-    cancelDishForm();
+      // Сбрасываем форму
+      cancelDishForm();
 
-    // Используем requestAnimationFrame для синхронизации с рендерингом
-    requestAnimationFrame(() => {
-      loadIngredientsSelect();
-      // Проверяем состояние после всех операций
-      console.log('После всех операций, стиль display:', form.style.display);
-      console.log('После всех операций, классы:', form.className);
-      console.log('Родительский элемент формы:', form.parentElement);
-      console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container')?.innerHTML || 'Контейнер не найден');
-      // Принудительно переприменяем стили
-      if (form.classList.contains('hidden') || form.style.display !== 'block') {
-        console.warn('Класс hidden или display: none были добавлены обратно, исправляем');
-        form.classList.remove('hidden');
-        form.style.display = 'block';
-        form.style.visibility = 'visible';
-        form.style.opacity = '1';
-      }
-    });
-  } else {
-    console.error('Форма с id="dish-form" не найдена в DOM');
-    alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
+      // Используем requestAnimationFrame для синхронизации с рендерингом
+      requestAnimationFrame(() => {
+        loadIngredientsSelect();
+        // Проверяем состояние после всех операций
+        console.log('После всех операций, стиль display:', form.style.display);
+        console.log('После всех операций, классы:', form.className);
+        console.log('Родительский элемент формы:', form.parentElement);
+        console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container')?.innerHTML || 'Контейнер не найден');
+        // Принудительно переприменяем стили
+        if (form.classList.contains('hidden') || form.style.display !== 'block') {
+          console.warn('Класс hidden или display: none были добавлены обратно, исправляем');
+          form.classList.remove('hidden');
+          form.style.display = 'block';
+          form.style.visibility = 'visible';
+          form.style.opacity = '1';
+        }
+      });
+    } else {
+      console.error('Форма с id="dish-form" не найдена в DOM');
+      alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
+    }
   }
-}
 
   function showCategoryForm() {
     const form = document.getElementById('category-form');
@@ -1292,6 +1292,130 @@ function initializeApp() {
     if (document.getElementById('inventory-list') && user) loadInventory();
     if (document.getElementById('ingredients-container') && user) loadIngredientsSelect();
   });
+}
+
+function cancelDishForm() {
+  const form = document.getElementById('dish-form');
+  if (form) {
+    form.dataset.dishId = '';
+    document.getElementById('dish-name').value = '';
+    document.getElementById('dish-price').value = '';
+    document.getElementById('dish-category').value = '';
+    document.getElementById('dish-active').checked = false;
+    document.getElementById('dish-weight').value = '';
+    document.getElementById('dish-min-portions').value = '';
+    document.getElementById('dish-image').value = '';
+    const container = document.getElementById('ingredients-container');
+    if (container) {
+      container.innerHTML = `
+        <datalist id="ingredient-options"></datalist>
+        <div class="ingredient-row flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <label class="block mb-1">Ингредиент:</label>
+            <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
+          </div>
+          <div class="flex-1">
+            <label class="block mb-1">Количество:</label>
+            <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
+          </div>
+        </div>
+      `;
+    } else {
+      console.error('Контейнер с id="ingredients-container" не найден в DOM');
+    }
+    document.getElementById('dish-form-button').onclick = addDish;
+    document.getElementById('dish-form-button').textContent = 'Сохранить';
+    // Гарантируем, что форма остается видимой
+    form.classList.remove('hidden');
+    form.style.display = 'block';
+    form.style.visibility = 'visible';
+    form.style.opacity = '1';
+    console.log('После cancelDishForm, стиль display:', form.style.display);
+    console.log('После cancelDishForm, классы:', form.className);
+  } else {
+    console.error('Форма с id="dish-form" не найдена в DOM');
+  }
+}
+
+function cancelCategoryForm() {
+  const form = document.getElementById('category-form');
+  if (form) {
+    form.classList.add('hidden');
+    form.style.display = 'none'; // Принудительно скрываем
+    form.dataset.categoryId = '';
+    document.getElementById('category-name').value = '';
+    document.getElementById('category-number').value = '';
+    document.getElementById('category-visible').checked = true;
+    document.getElementById('category-form-button').textContent = 'Сохранить';
+  } else {
+    console.error('Форма с id="category-form" не найдена в DOM');
+  }
+}
+
+function showDishForm() {
+  const form = document.getElementById('dish-form');
+  if (form) {
+    // Сначала явно отображаем форму
+    form.classList.remove('hidden');
+    form.style.display = 'block';
+    form.style.visibility = 'visible';
+    form.style.opacity = '1';
+    form.style.zIndex = '10';
+    form.style.position = 'relative';
+
+    // Логируем начальное состояние
+    console.log('Перед сбросом формы, стиль display:', form.style.display);
+    console.log('Перед сбросом формы, классы:', form.className);
+
+    // Сбрасываем форму
+    cancelDishForm();
+
+    // Используем requestAnimationFrame для синхронизации с рендерингом
+    requestAnimationFrame(() => {
+      loadIngredientsSelect();
+      // Проверяем состояние после всех операций
+      console.log('После всех операций, стиль display:', form.style.display);
+      console.log('После всех операций, классы:', form.className);
+      console.log('Родительский элемент формы:', form.parentElement);
+      console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container')?.innerHTML || 'Контейнер не найден');
+      // Принудительно переприменяем стили
+      if (form.classList.contains('hidden') || form.style.display !== 'block') {
+        console.warn('Класс hidden или display: none были добавлены обратно, исправляем');
+        form.classList.remove('hidden');
+        form.style.display = 'block';
+        form.style.visibility = 'visible';
+        form.style.opacity = '1';
+      }
+    });
+  } else {
+    console.error('Форма с id="dish-form" не найдена в DOM');
+    alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
+  }
+}
+
+function showCategoryForm() {
+  const form = document.getElementById('category-form');
+  if (form) {
+    form.classList.remove('hidden');
+    form.style.display = 'block'; // Принудительно устанавливаем display
+    console.log('Форма категории открыта'); // Для отладки
+  } else {
+    console.error('Форма с id="category-form" не найдена в DOM');
+    alert('Ошибка: Форма для добавления категории не найдена. Проверьте HTML.');
+  }
+}
+
+function showIngredientForm() {
+  const form = document.getElementById('ingredient-form');
+  if (form) {
+    cancelIngredientForm();
+    form.classList.remove('hidden');
+    form.style.display = 'block'; // Принудительно устанавливаем display
+    console.log('Форма ингредиента открыта'); // Для отладки
+  } else {
+    console.error('Форма с id="ingredient-form" не найдена в DOM');
+    alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
