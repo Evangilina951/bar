@@ -1010,7 +1010,6 @@ function initializeApp() {
     row.className = 'ingredient-row flex flex-col md:flex-row gap-4';
     row.innerHTML = `
       <div class="flex-1">
-        <label class="block mb-1">Ингредиент:</label>
         <input type="text" id="ingredient-search-${index}" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
       </div>
       <div class="flex-1">
