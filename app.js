@@ -1147,12 +1147,16 @@ function initializeApp() {
           </div>
         </div>
       `;
+    } else {
+      console.error('Контейнер с id="ingredients-container" не найден в DOM');
     }
     document.getElementById('dish-form-button').onclick = addDish;
     document.getElementById('dish-form-button').textContent = 'Сохранить';
-    // Убедимся, что класс hidden не добавляется
+    // Гарантируем, что форма остается видимой
     form.classList.remove('hidden');
     form.style.display = 'block';
+    form.style.visibility = 'visible';
+    form.style.opacity = '1';
     console.log('После cancelDishForm, стиль display:', form.style.display);
     console.log('После cancelDishForm, классы:', form.className);
   } else {
