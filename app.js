@@ -1122,41 +1122,40 @@ function initializeApp() {
   }
 
   function cancelDishForm() {
-    const form = document.getElementById('dish-form');
-    if (form) {
-      form.classList.add('hidden');
-      form.style.display = 'none'; // Принудительно скрываем
-      form.dataset.dishId = '';
-      document.getElementById('dish-name').value = '';
-      document.getElementById('dish-price').value = '';
-      document.getElementById('dish-category').value = '';
-      document.getElementById('dish-active').checked = false;
-      document.getElementById('dish-weight').value = '';
-      document.getElementById('dish-min-portions').value = '';
-      document.getElementById('dish-image').value = '';
-      const container = document.getElementById('ingredients-container');
-      if (container) {
-        container.innerHTML = `
-          <datalist id="ingredient-options"></datalist>
-          <div class="ingredient-row flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-              <label class="block mb-1">Ингредиент:</label>
-              <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
-            </div>
-            <div class="flex-1">
-              <label class="block mb-1">Количество:</label>
-              <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
-            </div>
+  const form = document.getElementById('dish-form');
+  if (form) {
+    form.classList.add('hidden');
+    form.style.display = 'none';
+    form.dataset.dishId = '';
+    document.getElementById('dish-name').value = '';
+    document.getElementById('dish-price').value = '';
+    document.getElementById('dish-category').value = '';
+    document.getElementById('dish-active').checked = false;
+    document.getElementById('dish-weight').value = '';
+    document.getElementById('dish-min-portions').value = '';
+    document.getElementById('dish-image').value = '';
+    const container = document.getElementById('ingredients-container');
+    if (container) {
+      container.innerHTML = `
+        <datalist id="ingredient-options"></datalist>
+        <div class="ingredient-row flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <label class="block mb-1">Ингредиент:</label>
+            <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
           </div>
-        `;
-        loadIngredientsSelect();
-      }
-      document.getElementById('dish-form-button').onclick = addDish;
-      document.getElementById('dish-form-button').textContent = 'Сохранить';
-    } else {
-      console.error('Форма с id="dish-form" не найдена в DOM');
+          <div class="flex-1">
+            <label class="block mb-1">Количество:</label>
+            <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
+          </div>
+        </div>
+      `;
     }
+    document.getElementById('dish-form-button').onclick = addDish;
+    document.getElementById('dish-form-button').textContent = 'Сохранить';
+  } else {
+    console.error('Форма с id="dish-form" не найдена в DOM');
   }
+}
 
   function cancelCategoryForm() {
     const form = document.getElementById('category-form');
