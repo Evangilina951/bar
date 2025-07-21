@@ -76,6 +76,7 @@ nav button:hover {
 .dish-price {
   text-align: center;
   margin: 0.25rem 0;
+  order: 1; /* Фиксируем цену выше кнопки "Развернуть" */
 }
 
 .dish-category {
@@ -83,12 +84,14 @@ nav button:hover {
   color: #4a5568;
   font-size: 0.875rem;
   margin: 0.25rem 0;
+  order: 2; /* Фиксируем категорию выше кнопки "Развернуть" */
 }
 
 .dish-details {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
+  order: 4; /* Детали ниже кнопки "Развернуть" */
 }
 
 .dish-details ul {
@@ -99,6 +102,11 @@ nav button:hover {
 .dish-details ul li {
   font-size: 0.875rem;
   color: #4a5568;
+}
+
+/* Кнопка "Развернуть" */
+.dish-card button {
+  order: 3; /* Кнопка "Развернуть" выше деталей, но ниже цены и категории */
 }
 
 /* Кнопки в карточке */
@@ -118,6 +126,12 @@ nav button:hover {
   align-items: center;
   justify-content: center;
   margin-top: 1.5rem; /* Центрирование относительно поля количества */
+}
+
+/* Стили для форм в правой колонке */
+#dish-form, #category-form {
+  max-width: 100%;
+  margin-bottom: 1rem;
 }
 
 /* Резервные стили для двухколоночной структуры */
