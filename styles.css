@@ -6,7 +6,7 @@ nav {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #2d3748; /* Темный фон для панели */
+  background-color: #2d3748;
   padding: 1rem;
 }
 
@@ -16,18 +16,18 @@ nav button {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
-  background-color: #4a5568; /* Фон для элементов навигации */
+  background-color: #4a5568;
   transition: background-color 0.3s;
 }
 
 nav a:hover,
 nav button:hover {
-  background-color: #718096; /* Подсветка при наведении */
+  background-color: #718096;
 }
 
 /* Стили для формы блюда */
 #dish-form {
-  display: none; /* По умолчанию скрыто */
+  display: none;
   position: relative;
   z-index: 10;
   visibility: visible !important;
@@ -45,7 +45,7 @@ nav button:hover {
 
 /* Стили для формы категории */
 #category-form {
-  display: none; /* По умолчанию скрыто */
+  display: none;
   position: relative;
   z-index: 10;
   visibility: visible !important;
@@ -150,12 +150,13 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  align-items: flex-start; /* Выравнивание для мобильных */
 }
 
 @media (min-width: 768px) {
   .ingredient-row {
     flex-direction: row;
-    align-items: center; /* Выравниваем элементы по центру по вертикали */
+    align-items: center; /* Центрирование по вертикали для десктопов */
     gap: 1rem;
   }
 }
@@ -163,26 +164,29 @@ nav button:hover {
 /* Стили для полей ввода в строке ингредиентов */
 .ingredient-row input,
 .ingredient-row select {
-  height: 2.5rem; /* Фиксированная высота для согласованности */
+  height: 2.5rem;
   line-height: 2.5rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
 }
 
 /* Стили для кнопки удаления в форме */
 .ingredient-row button.bg-red-600 {
-  padding: 0 !important; /* Убираем padding для точного контроля размеров */
-  height: 2.5rem !important; /* Соответствует высоте полей ввода */
-  width: 2.5rem !important; /* Квадратная форма */
+  padding: 0 !important;
+  height: 2.5rem !important;
+  width: 2.5rem !important;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 0.25rem;
-  margin-top: 1.75rem; /* Выравнивание для мобильных устройств */
+  margin-top: 1.75rem; /* Для мобильных, чтобы выровнять с полями */
 }
 
 @media (min-width: 768px) {
   .ingredient-row button.bg-red-600 {
-    margin-top: 0; /* Убираем margin для десктопов */
+    margin-top: 0; /* Убираем отступ для десктопов */
     margin-left: 0.5rem;
+    align-self: center; /* Центрируем кнопку относительно строки */
   }
 }
 
