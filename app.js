@@ -1124,8 +1124,6 @@ function initializeApp() {
   function cancelDishForm() {
   const form = document.getElementById('dish-form');
   if (form) {
-    form.classList.add('hidden');
-    form.style.display = 'none';
     form.dataset.dishId = '';
     document.getElementById('dish-name').value = '';
     document.getElementById('dish-price').value = '';
@@ -1152,6 +1150,11 @@ function initializeApp() {
     }
     document.getElementById('dish-form-button').onclick = addDish;
     document.getElementById('dish-form-button').textContent = 'Сохранить';
+    // Убедимся, что класс hidden не добавляется
+    form.classList.remove('hidden');
+    form.style.display = 'block';
+    console.log('После cancelDishForm, стиль display:', form.style.display);
+    console.log('После cancelDishForm, классы:', form.className);
   } else {
     console.error('Форма с id="dish-form" не найдена в DOM');
   }
