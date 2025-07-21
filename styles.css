@@ -6,8 +6,6 @@ nav {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #2d3748;
-  padding: 1rem;
 }
 
 nav a,
@@ -16,67 +14,12 @@ nav button {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
-  background-color: #4a5568;
   transition: background-color 0.3s;
 }
 
 nav a:hover,
 nav button:hover {
-  background-color: #718096;
-}
-
-/* Стили для формы блюда */
-#dish-form {
-  display: none;
-  position: relative;
-  z-index: 10;
-  visibility: visible !important;
-  opacity: 1 !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-#dish-form:not(.hidden) {
-  display: block !important;
-}
-
-/* Стили для формы категории */
-#category-form {
-  display: none;
-  position: relative;
-  z-index: 10;
-  visibility: visible !important;
-  opacity: 1 !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-#category-form:not(.hidden) {
-  display: block !important;
-}
-
-/* Стили для формы ингредиента */
-#ingredient-form {
-  display: none;
-  position: relative;
-  z-index: 10;
-  visibility: visible !important;
-  opacity: 1 !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-#ingredient-form:not(.hidden) {
-  display: block !important;
+  background-color: #4a5568;
 }
 
 /* Контейнер блюд */
@@ -98,7 +41,6 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 200px;
 }
 
 .dish-image-container {
@@ -127,7 +69,6 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
-  flex-grow: 1;
 }
 
 .dish-price {
@@ -163,15 +104,26 @@ nav button:hover {
   font-size: 0.875rem;
 }
 
-/* Стили для строки ингредиентов */
-.ingredient-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: stretch; /* Растягиваем элементы для мобильных */
+/* Резервные стили для двухколоночной структуры */
+@media (min-width: 1024px) {
+  .container > .grid {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    gap: 1rem;
+  }
+  .container > .grid > div:first-child {
+    border-right: 1px solid #e2e8f0;
+    padding-right: 1rem;
+  }
 }
 
-@media (min-width: 768px) {
-  .ingredient-row {
-    flex-direction: row;
-    align-items:
+/* Адаптивность для карточек */
+@media (max-width: 640px) {
+  #dishes-list {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .dish-card {
+    max-width: 150px;
+  }
+}
