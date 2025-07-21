@@ -345,6 +345,7 @@ function initializeApp() {
 
       // Отображаем форму перед заполнением
       form.classList.remove('hidden');
+      form.style.display = 'block'; // Принудительно устанавливаем display
 
       // Заполняем поля формы, игнорируя устаревшие поля
       elements['dish-name'].value = dishData.name_dish || '';
@@ -652,6 +653,7 @@ function initializeApp() {
         form.dataset.categoryId = categoryId;
         document.getElementById('category-form-button').textContent = 'Сохранить';
         form.classList.remove('hidden');
+        form.style.display = 'block'; // Принудительно устанавливаем display
       })
       .catch((error) => {
         console.error('Ошибка загрузки категории для редактирования:', error);
@@ -906,6 +908,7 @@ function initializeApp() {
         form.dataset.ingredientId = ingredientId;
         document.getElementById('ingredient-form-button').textContent = 'Сохранить';
         form.classList.remove('hidden');
+        form.style.display = 'block'; // Принудительно устанавливаем display
       })
       .catch((error) => {
         console.error('Ошибка загрузки ингредиента для редактирования:', error);
@@ -1105,6 +1108,7 @@ function initializeApp() {
     const form = document.getElementById('ingredient-form');
     if (form) {
       form.classList.add('hidden');
+      form.style.display = 'none'; // Принудительно скрываем
       form.dataset.ingredientId = '';
       document.getElementById('ingredient-name').value = '';
       document.getElementById('ingredient-quantity').value = '';
@@ -1121,6 +1125,7 @@ function initializeApp() {
     const form = document.getElementById('dish-form');
     if (form) {
       form.classList.add('hidden');
+      form.style.display = 'none'; // Принудительно скрываем
       form.dataset.dishId = '';
       document.getElementById('dish-name').value = '';
       document.getElementById('dish-price').value = '';
@@ -1157,6 +1162,7 @@ function initializeApp() {
     const form = document.getElementById('category-form');
     if (form) {
       form.classList.add('hidden');
+      form.style.display = 'none'; // Принудительно скрываем
       form.dataset.categoryId = '';
       document.getElementById('category-name').value = '';
       document.getElementById('category-number').value = '';
@@ -1171,8 +1177,10 @@ function initializeApp() {
     const form = document.getElementById('dish-form');
     if (form) {
       form.classList.remove('hidden');
+      form.style.display = 'block'; // Принудительно устанавливаем display
       cancelDishForm(); // Очищаем форму при открытии
       loadIngredientsSelect();
+      console.log('Форма блюда открыта'); // Для отладки
     } else {
       console.error('Форма с id="dish-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления блюда не найдена. Проверьте HTML.');
@@ -1183,6 +1191,8 @@ function initializeApp() {
     const form = document.getElementById('category-form');
     if (form) {
       form.classList.remove('hidden');
+      form.style.display = 'block'; // Принудительно устанавливаем display
+      console.log('Форма категории открыта'); // Для отладки
     } else {
       console.error('Форма с id="category-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления категории не найдена. Проверьте HTML.');
@@ -1194,6 +1204,8 @@ function initializeApp() {
     if (form) {
       cancelIngredientForm();
       form.classList.remove('hidden');
+      form.style.display = 'block'; // Принудительно устанавливаем display
+      console.log('Форма ингредиента открыта'); // Для отладки
     } else {
       console.error('Форма с id="ingredient-form" не найдена в DOM');
       alert('Ошибка: Форма для добавления ингредиента не найдена. Проверьте HTML.');
