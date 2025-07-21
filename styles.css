@@ -41,8 +41,7 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
-  min-height: 250px; /* Минимальная высота карточки */
+  min-height: 200px; /* Минимальная высота карточки */
 }
 
 .dish-image-container {
@@ -107,15 +106,6 @@ nav button:hover {
   font-size: 0.875rem;
 }
 
-/* Кнопка Развернуть в карточке */
-.dish-card > .flex > button {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  right: 0.5rem;
-  width: calc(100% - 1rem);
-}
-
 /* Кнопка удаления ингредиента в форме */
 .ingredient-row button {
   background-color: #e53e3e;
@@ -151,5 +141,6 @@ nav button:hover {
 
   .dish-card {
     max-width: 150px;
+    min-height: 180px; /* Минимальная высота для малых экранов */
   }
 }
