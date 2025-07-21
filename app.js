@@ -1182,17 +1182,28 @@ function initializeApp() {
     form.style.opacity = '1';
     form.style.zIndex = '10';
     form.style.position = 'relative';
-    
-    // Сбрасываем форму после отображения
+
+    // Логируем состояние до сброса формы
+    console.log('Перед сбросом формы, стиль display:', form.style.display);
+    console.log('Перед сбросом формы, классы:', form.className);
+
+    // Сбрасываем форму
     cancelDishForm();
-    
-    // Загружаем список ингредиентов с небольшой задержкой
+
+    // Загружаем список ингредиентов с задержкой
     setTimeout(() => {
       loadIngredientsSelect();
-      console.log('Форма блюда открыта, стиль display:', form.style.display);
-      console.log('Классы формы:', form.className);
+      // Проверяем состояние после всех операций
+      console.log('После всех операций, стиль display:', form.style.display);
+      console.log('После всех операций, классы:', form.className);
       console.log('Родительский элемент формы:', form.parentElement);
       console.log('Содержимое ingredients-container:', document.getElementById('ingredients-container').innerHTML);
+      // Принудительно переприменяем стили, если класс hidden появился
+      if (form.classList.contains('hidden')) {
+        console.warn('Класс hidden был добавлен обратно, исправляем');
+        form.classList.remove('hidden');
+        form.style.display = 'block';
+      }
     }, 0);
   } else {
     console.error('Форма с id="dish-form" не найдена в DOM');
