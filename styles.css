@@ -28,7 +28,6 @@ nav button:hover {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   padding: 1rem;
-  align-items: stretch; /* Карточки растягиваются для одинаковой высоты */
 }
 
 /* Карточка блюда */
@@ -41,12 +40,9 @@ nav button:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  height: 200px; /* Фиксированная высота карточки */
-  align-self: stretch; /* Растягивает карточку по высоте */
+  justify-content: space-between;
 }
 
-/* Контейнер для изображения */
 .dish-image-container {
   display: flex;
   justify-content: center;
@@ -54,7 +50,6 @@ nav button:hover {
   width: 100%;
   height: 62px;
   margin-bottom: 0.5rem;
-  flex-shrink: 0;
 }
 
 .dish-image {
@@ -74,15 +69,11 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
-  flex-grow: 1; /* Позволяет названию занимать доступное пространство */
-  flex-shrink: 0;
 }
 
 .dish-price {
   text-align: center;
   margin: 0.25rem 0;
-  order: 1; /* Фиксируем цену выше кнопки "Развернуть" */
-  flex-shrink: 0; /* Предотвращаем сжатие */
 }
 
 .dish-category {
@@ -90,22 +81,12 @@ nav button:hover {
   color: #4a5568;
   font-size: 0.875rem;
   margin: 0.25rem 0;
-  order: 2; /* Фиксируем категорию выше кнопки "Развернуть" */
-  flex-shrink: 0; /* Предотвращаем сжатие */
 }
 
 .dish-details {
+  margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
-  order: 4; /* Детали ниже кнопки "Развернуть" */
-  flex-shrink: 0;
-  display: none; /* Скрываем по умолчанию */
-  max-height: 60px; /* Ограничиваем высоту деталей */
-  overflow-y: auto; /* Добавляем прокрутку, если контент превышает высоту */
-}
-
-.dish-details:not(.hidden) {
-  display: block; /* Показываем при раскрытии */
 }
 
 .dish-details ul {
@@ -118,45 +99,9 @@ nav button:hover {
   color: #4a5568;
 }
 
-/* Кнопка "Развернуть" */
-.dish-card button {
-  order: 3; /* Кнопка "Развернуть" выше деталей, но ниже цены и категории */
-  margin-top: auto; /* Прижимает кнопку к низу карточки */
-}
-
 /* Кнопки в карточке */
 .dish-details button {
   font-size: 0.875rem;
-}
-
-/* Кнопка удаления ингредиента в форме */
-.ingredient-row button {
-  background-color: #e53e3e;
-  color: white;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1.5rem; /* Центрирование относительно поля количества */
-}
-
-/* Стили для форм в правой колонке */
-#dish-form, #category-form {
-  max-width: 100%;
-  margin-bottom: 1rem;
-}
-
-/* Компактная компоновка формы блюда */
-.dish-form-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-.dish-form-grid .grid-cols-2 > div {
-  min-width: 0; /* Предотвращает переполнение в сетке */
 }
 
 /* Резервные стили для двухколоночной структуры */
@@ -172,7 +117,7 @@ nav button:hover {
   }
 }
 
-/* Адаптивность для карточек и формы */
+/* Адаптивность для карточек */
 @media (max-width: 640px) {
   #dishes-list {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -180,10 +125,5 @@ nav button:hover {
 
   .dish-card {
     max-width: 150px;
-    height: 180px; /* Фиксированная высота для малых экранов */
-  }
-
-  .dish-form-grid .grid-cols-2 {
-    grid-template-columns: 1fr; /* На малых экранах поля формы в один столбец */
   }
 }
