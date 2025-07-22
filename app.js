@@ -45,10 +45,12 @@ function initializeApp() {
     }
     navElement.innerHTML = `
       <nav>
+        <a href="/bar/index.html">Вход</a>
         <a href="/bar/menu.html">Меню</a>
         <a href="/bar/promocodes.html">Промокоды</a>
         <a href="/bar/dishes.html">Блюда</a>
         <a href="/bar/inventory.html">Инвентаризация</a>
+        <a href="/bar/order-ingredients.html">Заказ ингредиентов</a>
         <a href="/bar/personal-report.html">Личная отчетность</a>
         <a href="/bar/general-report.html">Общая отчетность</a>
         <a href="/bar/employees.html">Сотрудники</a>
@@ -273,7 +275,7 @@ function initializeApp() {
         <p class="dish-name">${dishData.name_dish}</p>
         <p class="dish-price">${dishData.price_dish} $</p>
         <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-auto text-sm">Развернуть</button>
+        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
         <div class="dish-details hidden">
           <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
           <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
@@ -294,11 +296,11 @@ function initializeApp() {
 
   function toggleDishDetails(button) {
     const details = button.nextElementSibling;
-    if (details.classList.contains('hidden')) {
-      details.classList.remove('hidden');
+    if (details.style.display === 'none' || details.style.display === '') {
+      details.style.display = 'block';
       button.textContent = 'Скрыть';
     } else {
-      details.classList.add('hidden');
+      details.style.display = 'none';
       button.textContent = 'Развернуть';
     }
   }
@@ -346,7 +348,7 @@ function initializeApp() {
       // Отображаем форму перед заполнением
       form.classList.remove('hidden');
 
-      // Заполняем поля формы
+      // Заполняем поля формы, игнорируя устаревшие поля
       elements['dish-name'].value = dishData.name_dish || '';
       elements['dish-price'].value = dishData.price_dish || 0;
       elements['dish-category'].value = dishData.category_id || '';
@@ -373,7 +375,7 @@ function initializeApp() {
                   <label class="block mb-1">Количество:</label>
                   <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
                 </div>
-                ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white rounded">🗑️</button>` : ''}
+                ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>` : ''}
               </div>
             `;
           } catch (error) {
@@ -796,7 +798,6 @@ function initializeApp() {
               });
             });
 
-            orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
             const ordersBySupplier = {};
             sortedIngredients.forEach((ing) => {
               const ingData = ing.data();
@@ -817,6 +818,7 @@ function initializeApp() {
               }
             });
 
+            orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
             if (Object.keys(ordersBySupplier).length === 0) {
               orderList.innerHTML += '<p class="text-gray-500">Нет ингредиентов для заказа</p>';
               return;
@@ -1010,13 +1012,14 @@ function initializeApp() {
     row.className = 'ingredient-row flex flex-col md:flex-row gap-4';
     row.innerHTML = `
       <div class="flex-1">
+        <label class="block mb-1">Ингредиент:</label>
         <input type="text" id="ingredient-search-${index}" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
       </div>
       <div class="flex-1">
         <label class="block mb-1">Количество:</label>
         <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
       </div>
-      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white rounded">🗑️</button>
+      <button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>
     `;
     container.appendChild(row);
     loadIngredientsSelect();
@@ -1231,19 +1234,7 @@ function initializeApp() {
 
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
-    const navElement = document.getElementById('nav');
-    if (navElement) {
-      if (user) {
-        navElement.classList.remove('hidden');
-        loadNav();
-      } else {
-        navElement.classList.add('hidden');
-        // Проверяем, находится ли пользователь на странице index.html
-        if (window.location.pathname !== '/bar/index.html') {
-          window.location.href = '/bar/index.html';
-        }
-      }
-    }
+    if (document.getElementById('nav')) loadNav();
     if (document.getElementById('dishes-list')) loadDishes();
     if (document.getElementById('categories-list')) loadCategoryList();
     if (document.getElementById('dish-category')) loadCategories();
