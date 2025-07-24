@@ -1,9 +1,3 @@
-/* Общие стили для приложения */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f7fafc;
-}
-
 /* Навигация */
 nav {
   display: flex;
@@ -39,7 +33,7 @@ nav button:hover {
 /* Карточка блюда */
 .dish-card {
   max-width: 200px;
-  min-height: 300px; /* Фиксированная минимальная высота для одинакового размера */
+  min-height: 300px; /* Устанавливаем минимальную высоту для равного размера */
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -50,25 +44,24 @@ nav button:hover {
   justify-content: space-between;
 }
 
-/* Контейнер изображения блюда */
 .dish-image-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100px; /* Фиксированная высота изображения */
+  height: 62px;
   margin-bottom: 0.5rem;
 }
 
 .dish-image {
-  width: 100px;
-  height: 100px;
+  width: 62px;
+  height: 62px;
   object-fit: contain;
 }
 
 .dish-placeholder {
-  width: 100px;
-  height: 100px;
+  width: 62px;
+  height: 62px;
   background-color: #e2e8f0;
   border-radius: 0.25rem;
 }
@@ -77,7 +70,6 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
-  flex-grow: 1; /* Название растягивается для выравнивания кнопки */
 }
 
 .dish-price {
@@ -92,24 +84,59 @@ nav button:hover {
   margin: 0.25rem 0;
 }
 
-/* Кнопка "Развернуть/Скрыть" фиксирована внизу карточки */
-.toggle-details-btn {
-  margin-top: auto;
-  width: 100%;
-  text-align: center;
-}
-
 .dish-details {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
+  display: none; /* По умолчанию скрыт */
 }
 
 .dish-details ul {
   margin-top: 0.25rem;
+  padding-left: 1rem;
 }
 
-/* Таблица инвентаря */
+.dish-details ul li {
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+/* Кнопка Развернуть/Скрыть */
+.dish-card > .flex > button {
+  margin-top: auto; /* Перемещаем кнопку вниз */
+}
+
+/* Кнопки в деталях карточки */
+.dish-details button {
+  font-size: 0.875rem;
+}
+
+/* Двухколоночная структура для инвентаря */
+@media (min-width: 1024px) {
+  .container > .grid {
+    display: grid;
+    grid-template-columns: 75% 25%; /* 75% для таблицы, 25% для заказов */
+    gap: 1rem;
+  }
+  .container > .grid > div:first-child {
+    border-right: 1px solid #e2e8f0;
+    padding-right: 1rem;
+  }
+}
+
+/* Адаптивность для карточек */
+@media (max-width: 640px) {
+  #dishes-list {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .dish-card {
+    max-width: 150px;
+    min-height: 250px; /* Меньшая высота для мобильных */
+  }
+}
+
+/* Стили для таблицы инвентаря */
 .order-table-container {
   width: 100%;
   border-collapse: collapse;
@@ -123,54 +150,15 @@ nav button:hover {
 }
 
 .order-table-container th {
-  background-color: #edf2f7;
-  font-weight: bold;
+  background-color: #f7fafc;
 }
 
-/* Стили для ячеек количества и цены, которые можно редактировать */
-.quantity-cell,
-.price-cell {
+.order-table-container td.quantity-cell,
+.order-table-container td.price-cell {
   cursor: pointer;
 }
 
-.quantity-cell:hover,
-.price-cell:hover {
+.order-table-container td.quantity-cell:hover,
+.order-table-container td.price-cell:hover {
   background-color: #edf2f7;
-}
-
-/* Стили для формы */
-#ingredient-form,
-#dish-form,
-#category-form {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Стили для списков */
-#categories-list,
-#inventory-list,
-#order-list {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Стили для кнопок */
-button {
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-/* Адаптивность для двухколоночной структуры */
-@media (min-width: 1024px) {
-  #inventory-list,
-  #order-list {
-    min-height: 400px; /* Минимальная высота для выравнивания колонок */
-  }
 }
