@@ -4,77 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Блюда</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <!-- Подключение Firebase 8.10.1 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="app.js"></script>
 </head>
-<body>
-  <!-- Навигация вынесена из контейнера для полной ширины -->
-  <div id="nav" class="bg-gray-800 text-white p-4 shadow-lg w-full"></div>
-
-  <div class="container mx-auto p-4 min-h-screen">
+<body class="bg-gray-100">
+  <!-- Навигационное меню -->
+  <div id="nav" class="bg-gray-800 text-white p-4"></div>
+  <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Блюда</h1>
-
-    <!-- Основной контейнер: две колонки, левая 25%, правая 75% -->
-    <div class="grid grid-cols-1 lg:grid-cols-[25%_75%] gap-4">
-      <!-- Левая колонка: категории -->
-      <div class="lg:border-r lg:border-gray-300 pr-4">
-        <div id="categories-list" class="mb-4"></div>
-        <div class="mb-4">
-          <button onclick="toggleShowAllDishes()" class="bg-blue-600 text-white p-2 rounded w-full">Показать все</button>
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <!-- Список категорий -->
+      <div id="categories-list" class="bg-white p-4 rounded shadow"></div>
+      <div class="lg:col-span-3">
+        <!-- Кнопка для отображения всех блюд -->
+        <button onclick="toggleShowAllDishes()" class="bg-gray-600 text-white p-2 rounded mb-4">Показать все</button>
+        <div class="flex gap-4 mb-4">
+          <button onclick="showDishForm()" class="bg-blue-600 text-white p-2 rounded">Добавить новое блюдо</button>
+          <button onclick="showCategoryForm()" class="bg-blue-600 text-white p-2 rounded">Добавить новую категорию</button>
         </div>
-      </div>
-
-      <!-- Правая колонка: кнопки, формы, блюда -->
-      <div class="flex flex-col gap-4">
-        <!-- Кнопки добавления -->
-        <div class="flex flex-col md:flex-row gap-4">
-          <button onclick="showDishForm()" class="bg-green-600 text-white p-2 rounded flex-1">Добавить новое блюдо</button>
-          <button onclick="showCategoryForm()" class="bg-green-600 text-white p-2 rounded flex-1">Добавить новую категорию</button>
-        </div>
-
-        <!-- Форма блюда -->
-        <div id="dish-form" class="hidden mb-4">
+        <!-- Форма для добавления/редактирования блюда -->
+        <div id="dish-form" class="hidden bg-white p-4 rounded shadow mb-4">
           <h2 class="text-xl font-bold mb-2">Форма блюда</h2>
-          <div class="flex flex-col gap-4">
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-1">
-                <label class="block mb-1">Название:</label>
-                <input id="dish-name" type="text" class="border p-2 w-full rounded" required>
-              </div>
-              <div class="flex-1">
-                <label class="block mb-1">Цена ($):</label>
-                <input id="dish-price" type="number" min="0" step="0.01" class="border p-2 w-full rounded" required>
-              </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1">Название:</label>
+              <input type="text" id="dish-name" class="border p-2 w-full rounded" placeholder="Название блюда">
             </div>
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-1">
-                <label class="block mb-1">Категория:</label>
-                <select id="dish-category" class="border p-2 w-full rounded" required>
-                  <option value="">Выберите категорию</option>
-                </select>
-              </div>
-              <div class="flex-1">
-                <label class="block mb-1">Вес (г):</label>
-                <input id="dish-weight" type="number" min="0" step="0.1" class="border p-2 w-full rounded">
-              </div>
+            <div>
+              <label class="block mb-1">Цена ($):</label>
+              <input type="number" id="dish-price" class="border p-2 w-full rounded" placeholder="Цена" min="0" step="0.01">
             </div>
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-1">
-                <label class="block mb-1">Мин. порций:</label>
-                <input id="dish-min-portions" type="number" min="0" class="border p-2 w-full rounded" required>
-              </div>
-              <div class="flex-1 flex items-end">
-                <label class="flex items-center">
-                  <input id="dish-active" type="checkbox" class="mr-2">
-                  Активно
-                </label>
-              </div>
+            <div>
+              <label class="block mb-1">Категория:</label>
+              <select id="dish-category" class="border p-2 w-full rounded">
+                <option value="">Выберите категорию</option>
+              </select>
             </div>
-            <div class="flex-1">
+            <div>
+              <label class="block mb-1">Вес (г):</label>
+              <input type="number" id="dish-weight" class="border p-2 w-full rounded" placeholder="Вес" min="0" step="0.1">
+            </div>
+            <div>
+              <label class="block mb-1">Мин. порций:</label>
+              <input type="number" id="dish-min-portions" class="border p-2 w-full rounded" placeholder="Минимальное количество порций" min="0">
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" id="dish-active" class="mr-2">
+              <label for="dish-active">Активно</label>
+            </div>
+            <div class="md:col-span-2">
               <label class="block mb-1">Изображение (URL):</label>
-              <input id="dish-image" type="url" class="border p-2 w-full rounded" placeholder="Введите URL изображения">
+              <input type="text" id="dish-image" class="border p-2 w-full rounded" placeholder="URL изображения">
             </div>
-            <div id="ingredients-container">
+            <div id="ingredients-container" class="md:col-span-2">
               <datalist id="ingredient-options"></datalist>
               <div class="ingredient-row flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
@@ -87,46 +73,39 @@
                 </div>
               </div>
             </div>
-            <button onclick="addIngredientRow()" class="bg-blue-600 text-white p-2 rounded mt-2">Добавить ингредиент</button>
-            <div class="flex gap-2 mt-4">
-              <button id="dish-form-button" onclick="addDish()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
-              <button onclick="cancelDishForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
-            </div>
+          </div>
+          <button onclick="addIngredientRow()" class="bg-blue-600 text-white p-2 rounded mt-4">Добавить ингредиент</button>
+          <div class="flex gap-4 mt-4">
+            <button id="dish-form-button" onclick="addDish()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
+            <button onclick="cancelDishForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
           </div>
         </div>
-
-        <!-- Форма категории -->
-        <div id="category-form" class="hidden mb-4">
+        <!-- Форма для добавления/редактирования категории -->
+        <div id="category-form" class="hidden bg-white p-4 rounded shadow mb-4">
           <h2 class="text-xl font-bold mb-2">Форма категории</h2>
-          <div class="mb-2">
-            <label class="block">Название:</label>
-            <input id="category-name" type="text" class="border p-2 w-full rounded" required>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1">Название:</label>
+              <input type="text" id="category-name" class="border p-2 w-full rounded" placeholder="Название категории">
+            </div>
+            <div>
+              <label class="block mb-1">Порядок:</label>
+              <input type="number" id="category-number" class="border p-2 w-full rounded" placeholder="Порядковый номер" min="0">
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" id="category-visible" class="mr-2" checked>
+              <label for="category-visible">Видимость</label>
+            </div>
           </div>
-          <div class="mb-2">
-            <label class="block">Порядок:</label>
-            <input id="category-number" type="number" min="0" class="border p-2 w-full rounded">
-          </div>
-          <div class="mb-2">
-            <label class="flex items-center">
-              <input id="category-visible" type="checkbox" class="mr-2" checked>
-              Видимость
-            </label>
-          </div>
-          <div class="flex gap-2">
+          <div class="flex gap-4 mt-4">
             <button id="category-form-button" onclick="addCategory()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
             <button onclick="cancelCategoryForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
           </div>
         </div>
-
         <!-- Список блюд -->
-        <div id="dishes-list" class="dishes-grid"></div>
+        <div id="dishes-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
       </div>
     </div>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="app.js"></script>
   </div>
 </body>
 </html>
