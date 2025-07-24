@@ -45,17 +45,13 @@ function initializeApp() {
     }
     navElement.innerHTML = `
       <nav>
-        <a href="/bar/index.html">Вход</a>
         <a href="/bar/menu.html">Меню</a>
         <a href="/bar/promocodes.html">Промокоды</a>
         <a href="/bar/dishes.html">Блюда</a>
         <a href="/bar/inventory.html">Инвентаризация</a>
-        <a href="/bar/order-ingredients.html">Заказ ингредиентов</a>
         <a href="/bar/personal-report.html">Личная отчетность</a>
         <a href="/bar/general-report.html">Общая отчетность</a>
         <a href="/bar/employees.html">Сотрудники</a>
-        <a href="/bar/delivery.html">Доставка</a>
-        <a href="/bar/delivery-orders.html">Заказы доставки</a>
         <button onclick="logout()">Выход</button>
       </nav>
     `;
