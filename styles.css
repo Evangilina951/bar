@@ -1,3 +1,8 @@
+/* Общий стиль для скрытия элементов */
+.hidden {
+  display: none !important;
+}
+
 /* Навигация */
 nav {
   display: flex;
@@ -33,7 +38,7 @@ nav button:hover {
 /* Карточка блюда */
 .dish-card {
   max-width: 200px;
-  min-height: 300px; /* Устанавливаем минимальную высоту для равного размера */
+  min-height: 300px; /* Фиксированная минимальная высота для равных карточек */
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -88,7 +93,7 @@ nav button:hover {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
-  display: none; /* По умолчанию скрыт */
+  display: none; /* Скрываем детали по умолчанию */
 }
 
 .dish-details ul {
@@ -111,21 +116,23 @@ nav button:hover {
   font-size: 0.875rem;
 }
 
-/* Двухколоночная структура для инвентаря */
+/* Двухколоночная структура для блюд и инвентаря */
 @media (min-width: 1024px) {
-  .container > .grid {
-    display: grid;
-    grid-template-columns: 75% 25%; /* 75% для таблицы, 25% для заказов */
+  .container > .grid,
+  .container > .inventory-grid {
+    display: grid !important;
+    grid-template-columns: 25% 75% !important; /* 25% для категорий/заказов, 75% для блюд/таблицы */
     gap: 1rem;
   }
-  .container > .grid > div:first-child {
+  .container > .grid > div:first-child,
+  .container > .inventory-grid > div:first-child {
     border-right: 1px solid #e2e8f0;
     padding-right: 1rem;
   }
 }
 
 /* Адаптивность для карточек */
-@media (max-width: 640px) {
+@media (max-width: 640Spx) {
   #dishes-list {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
