@@ -5,7 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Инвентаризация</title>
+  <!-- Подключение Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Подключение кастомных стилей -->
   <link rel="stylesheet" href="/bar/styles.css">
   <!-- Подключение Firebase SDK 8.10.1 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -57,15 +59,15 @@
     <!-- Кнопка переключения отображения всех ингредиентов -->
     <button id="toggle-all" onclick="toggleAllIngredients()" class="bg-gray-600 text-white p-2 rounded mb-4">Показать все</button>
 
-    <!-- Двухколоночная структура: таблица и список заказов -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <!-- Двухколоночная структура -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 inventory-grid">
       <!-- Левая колонка: Таблица инвентаря -->
-      <div class="lg:col-span-3">
-        <div id="inventory-list" class="bg-white p-4 rounded shadow-md"></div>
+      <div class="lg:col-span-3 bg-white p-4 rounded shadow-md">
+        <div id="inventory-list"></div>
       </div>
       <!-- Правая колонка: Список заказов -->
-      <div class="lg:col-span-1">
-        <div id="order-list" class="bg-white p-4 rounded shadow-md">
+      <div class="lg:col-span-1 bg-white p-4 rounded shadow-md">
+        <div id="order-list">
           <h2 class="text-xl font-bold mb-2">Список заказов</h2>
         </div>
       </div>
