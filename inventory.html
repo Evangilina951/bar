@@ -1,59 +1,74 @@
+<!-- Основная структура страницы инвентаря -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Инвентаризация</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Подключение Firebase 8.10.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/bar/styles.css">
+  <!-- Подключение Firebase SDK 8.10.1 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="app.js"></script>
+  <script src="/bar/app.js"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 font-sans">
   <!-- Навигационное меню -->
   <div id="nav" class="bg-gray-800 text-white p-4"></div>
+
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Инвентаризация</h1>
-    <!-- Кнопка для добавления нового ингредиента -->
+
+    <!-- Кнопка добавления ингредиента -->
     <button onclick="showIngredientForm()" class="bg-blue-600 text-white p-2 rounded mb-4">Добавить новый ингредиент</button>
+
     <!-- Форма для добавления/редактирования ингредиента -->
-    <div id="ingredient-form" class="hidden bg-white p-4 rounded shadow mb-4">
-      <h2 class="text-xl font-bold mb-2">Форма ингредиента</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div id="ingredient-form" class="hidden bg-white p-4 rounded shadow-md mb-4">
+      <h2 class="text-lg font-semibold mb-2">Форма ингредиента</h2>
+      <div class="flex flex-col gap-4">
         <div>
           <label class="block mb-1">Название:</label>
-          <input type="text" id="ingredient-name" class="border p-2 w-full rounded" placeholder="Название ингредиента">
+          <input id="ingredient-name" type="text" class="border p-2 w-full rounded" placeholder="Название ингредиента">
         </div>
         <div>
           <label class="block mb-1">Количество:</label>
-          <input type="number" id="ingredient-quantity" class="border p-2 w-full rounded" placeholder="Количество" min="0">
+          <input id="ingredient-quantity" type="number" class="border p-2 w-full rounded" placeholder="Количество" min="0">
         </div>
         <div>
           <label class="block mb-1">Цена ($):</label>
-          <input type="number" id="ingredient-price" class="border p-2 w-full rounded" placeholder="Цена" min="0" step="0.01">
+          <input id="ingredient-price" type="number" class="border p-2 w-full rounded" placeholder="Цена" min="0" step="0.01">
         </div>
         <div>
           <label class="block mb-1">Поставщик:</label>
-          <input type="text" id="ingredient-supplier" class="border p-2 w-full rounded" placeholder="Поставщик">
+          <input id="ingredient-supplier" type="text" class="border p-2 w-full rounded" placeholder="Поставщик">
         </div>
         <div>
           <label class="block mb-1">Вес (кг):</label>
-          <input type="number" id="ingredient-weight" class="border p-2 w-full rounded" placeholder="Вес" min="0" step="0.01">
+          <input id="ingredient-weight" type="number" class="border p-2 w-full rounded" placeholder="Вес" min="0" step="0.01">
+        </div>
+        <div class="flex gap-2">
+          <button id="ingredient-form-button" onclick="saveIngredient()" class="bg-green-600 text-white p-2 rounded flex-1">Сохранить</button>
+          <button onclick="cancelIngredientForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
         </div>
       </div>
-      <div class="flex gap-4 mt-4">
-        <button id="ingredient-form-button" onclick="saveIngredient()" class="bg-blue-600 text-white p-2 rounded flex-1">Сохранить</button>
-        <button onclick="cancelIngredientForm()" class="bg-gray-600 text-white p-2 rounded flex-1">Отмена</button>
-      </div>
     </div>
-    <!-- Кнопка для переключения отображения всех ингредиентов -->
+
+    <!-- Кнопка переключения отображения всех ингредиентов -->
     <button id="toggle-all" onclick="toggleAllIngredients()" class="bg-gray-600 text-white p-2 rounded mb-4">Показать все</button>
-    <!-- Двухколоночная структура: инвентарь слева, заказы справа -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div id="inventory-list" class="bg-white p-4 rounded shadow"></div>
-      <div id="order-list" class="bg-white p-4 rounded shadow"></div>
+
+    <!-- Двухколоночная структура: таблица и список заказов -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <!-- Левая колонка: Таблица инвентаря -->
+      <div class="lg:col-span-3">
+        <div id="inventory-list" class="bg-white p-4 rounded shadow-md"></div>
+      </div>
+      <!-- Правая колонка: Список заказов -->
+      <div class="lg:col-span-1">
+        <div id="order-list" class="bg-white p-4 rounded shadow-md">
+          <h2 class="text-xl font-bold mb-2">Список заказов</h2>
+        </div>
+      </div>
     </div>
   </div>
 </body>
