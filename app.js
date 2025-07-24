@@ -1,6 +1,9 @@
+```javascript
+// Глобальные переменные для хранения состояния приложения
 let firebaseApp = null;
 let showAllDishes = false;
 
+// Инициализация приложения
 function initializeApp() {
   if (typeof firebase === 'undefined') {
     console.error('Firebase SDK не загружен. Проверьте подключение скриптов.');
@@ -8,6 +11,7 @@ function initializeApp() {
   }
   console.log('Firebase загружен успешно.');
 
+  // Проверка, инициализировано ли приложение Firebase
   if (!firebase.apps || firebase.apps.length === 0) {
     const firebaseConfig = {
       apiKey: "AIzaSyB3PAQQTpeTxlaeT7cIXqqspGDOcAkBQog",
@@ -37,6 +41,7 @@ function initializeApp() {
   let currentCategoryFilter = null;
   let showAllIngredients = false;
 
+  // Функция загрузки навигационного меню
   function loadNav() {
     const navElement = document.getElementById('nav');
     if (!navElement) {
@@ -58,6 +63,7 @@ function initializeApp() {
     console.log('Навигация вставлена в DOM');
   }
 
+  // Функция входа в систему
   function login() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -79,6 +85,7 @@ function initializeApp() {
       });
   }
 
+  // Функция выхода из системы
   function logout() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -94,6 +101,7 @@ function initializeApp() {
       });
   }
 
+  // Расчет себестоимости блюда
   async function calculateDishMetrics(ingredients) {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -135,6 +143,7 @@ function initializeApp() {
     }
   }
 
+  // Добавление нового блюда
   async function addDish() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -199,6 +208,7 @@ function initializeApp() {
     }
   }
 
+  // Загрузка списка блюд
   async function loadDishes() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -255,6 +265,7 @@ function initializeApp() {
     }
   }
 
+  // Отрисовка карточки блюда
   function renderDishCard(dish, ingredientNames, categoryMap, price_current_dish) {
     const list = document.getElementById('dishes-list');
     const dishCard = document.createElement('div');
@@ -271,7 +282,7 @@ function initializeApp() {
         <p class="dish-name">${dishData.name_dish}</p>
         <p class="dish-price">${dishData.price_dish} $</p>
         <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
+        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm toggle-details-btn">Развернуть</button>
         <div class="dish-details hidden">
           <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
           <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
@@ -290,17 +301,19 @@ function initializeApp() {
     list.appendChild(dishCard);
   }
 
+  // Переключение видимости деталей блюда
   function toggleDishDetails(button) {
     const details = button.nextElementSibling;
-    if (details.style.display === 'none' || details.style.display === '') {
-      details.style.display = 'block';
+    if (details.classList.contains('hidden')) {
+      details.classList.remove('hidden');
       button.textContent = 'Скрыть';
     } else {
-      details.style.display = 'none';
+      details.classList.add('hidden');
       button.textContent = 'Развернуть';
     }
   }
 
+  // Загрузка блюда для редактирования
   async function loadDishForEdit(dishId) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -321,7 +334,6 @@ function initializeApp() {
       }
       const dishData = dish.data();
 
-      // Проверка всех элементов формы
       const elements = {
         'dish-name': document.getElementById('dish-name'),
         'dish-price': document.getElementById('dish-price'),
@@ -341,10 +353,8 @@ function initializeApp() {
         }
       }
 
-      // Отображаем форму перед заполнением
       form.classList.remove('hidden');
 
-      // Заполняем поля формы, игнорируя устаревшие поля
       elements['dish-name'].value = dishData.name_dish || '';
       elements['dish-price'].value = dishData.price_dish || 0;
       elements['dish-category'].value = dishData.category_id || '';
@@ -353,7 +363,6 @@ function initializeApp() {
       elements['dish-active'].checked = dishData.is_active_dish || false;
       elements['dish-image'].value = dishData.image_dish || '';
 
-      // Загружаем ингредиенты
       const container = elements['ingredients-container'];
       if (container) {
         container.innerHTML = '<datalist id="ingredient-options"></datalist>';
@@ -408,6 +417,7 @@ function initializeApp() {
     }
   }
 
+  // Обновление блюда
   async function editDish() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -476,6 +486,7 @@ function initializeApp() {
     }
   }
 
+  // Удаление блюда
   function deleteDish(dishId) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -488,10 +499,11 @@ function initializeApp() {
       })
       .catch((error) => {
         console.error('Ошибка удаления блюда:', error);
-        alert('Ошибка при удаления блюда: ' + error.message);
+        alert('Ошибка при удалении блюда: ' + error.message);
       });
   }
 
+  // Переключение видимости блюда
   function toggleDishVisibility(dishId, isActive) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -507,6 +519,7 @@ function initializeApp() {
       });
   }
 
+  // Добавление/обновление категории
   async function addCategory() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -555,6 +568,7 @@ function initializeApp() {
     }
   }
 
+  // Загрузка категорий в выпадающий список
   function loadCategories() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -576,6 +590,7 @@ function initializeApp() {
       });
   }
 
+  // Загрузка списка категорий
   function loadCategoryList() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -613,18 +628,21 @@ function initializeApp() {
       });
   }
 
+  // Переключение фильтра по категориям
   function toggleCategoryFilter(categoryId, categoryName) {
     currentCategoryFilter = currentCategoryFilter === categoryId ? null : categoryId;
     showAllDishes = false;
     loadDishes();
   }
 
+  // Показать все блюда без фильтра
   function toggleShowAllDishes() {
     showAllDishes = true;
     currentCategoryFilter = null;
     loadDishes();
   }
 
+  // Загрузка категории для редактирования
   function loadCategoryForEdit(categoryId) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -657,6 +675,7 @@ function initializeApp() {
       });
   }
 
+  // Удаление категории
   function deleteCategory(categoryId) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -685,6 +704,7 @@ function initializeApp() {
       });
   }
 
+  // Переключение видимости категории
   function toggleCategoryVisibility(categoryId, isVisible) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -701,6 +721,7 @@ function initializeApp() {
       });
   }
 
+  // Загрузка инвентаря и заказов
   function loadInventory() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -764,7 +785,7 @@ function initializeApp() {
               row.innerHTML = `
                 <td class="border p-2">${ingData.name_product || 'Без названия'}</td>
                 <td class="border p-2 quantity-cell" data-ingredient-id="${ing.id}">${ingData.stock_quantity_product || 0}</td>
-                <td class="border p-2">${ingData.current_price_product || 0}</td>
+                <td class="border p-2 price-cell" data-ingredient-id="${ing.id}">${ingData.current_price_product || 0}</td>
                 <td class="border p-2">${ingData.weight_product != null ? ingData.weight_product : 0}</td>
                 <td class="border p-2">${ingData.supplier_product || 'Нет'}</td>
                 <td class="border p-2 flex gap-2">
@@ -775,6 +796,7 @@ function initializeApp() {
               tbody.appendChild(row);
             });
 
+            // Добавление обработчиков для редактирования количества
             const quantityCells = tbody.querySelectorAll('.quantity-cell');
             quantityCells.forEach(cell => {
               cell.addEventListener('click', function() {
@@ -789,6 +811,26 @@ function initializeApp() {
                 input.addEventListener('keypress', (e) => {
                   if (e.key === 'Enter') {
                     editIngredientQuantity(ingredientId, input.value);
+                  }
+                });
+              });
+            });
+
+            // Добавление обработчиков для редактирования цены
+            const priceCells = tbody.querySelectorAll('.price-cell');
+            priceCells.forEach(cell => {
+              cell.addEventListener('click', function() {
+                const currentValue = this.textContent;
+                const ingredientId = this.dataset.ingredientId;
+                this.innerHTML = `
+                  <input type="number" class="border p-1 w-full rounded" value="${currentValue}" min="0" step="0.01">
+                `;
+                const input = this.querySelector('input');
+                input.focus();
+                input.addEventListener('blur', () => editIngredientPrice(ingredientId, input.value));
+                input.addEventListener('keypress', (e) => {
+                  if (e.key === 'Enter') {
+                    editIngredientPrice(ingredientId, input.value);
                   }
                 });
               });
@@ -848,6 +890,7 @@ function initializeApp() {
       });
   }
 
+  // Обновление количества ингредиента
   function editIngredientQuantity(ingredientId, newQuantity) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -871,12 +914,38 @@ function initializeApp() {
       });
   }
 
+  // Обновление цены ингредиента
+  function editIngredientPrice(ingredientId, newPrice) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
+    const price = parseFloat(newPrice) || 0;
+    if (price < 0) {
+      alert('Цена не может быть отрицательной.');
+      return;
+    }
+    db.collection('ingredients').doc(ingredientId).update({
+      current_price_product: price
+    })
+      .then(() => {
+        loadInventory();
+        console.log(`Цена ингредиента ${ingredientId} обновлена: ${price}`);
+      })
+      .catch((error) => {
+        console.error('Ошибка обновления цены ингредиента:', error);
+        alert('Ошибка при обновлении цены: ' + error.message);
+      });
+  }
+
+  // Переключение отображения всех ингредиентов
   function toggleAllIngredients() {
     showAllIngredients = !showAllIngredients;
     document.getElementById('toggle-all').textContent = showAllIngredients ? 'Скрыть неиспользуемые' : 'Показать все';
     loadInventory();
   }
 
+  // Загрузка ингредиента для редактирования
   function loadIngredientForEdit(ingredientId) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -911,6 +980,7 @@ function initializeApp() {
       });
   }
 
+  // Удаление ингредиента
   function deleteIngredient(ingredientId) {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -939,6 +1009,7 @@ function initializeApp() {
       });
   }
 
+  // Загрузка ингредиентов для автодополнения
   function loadIngredientsSelect() {
     if (!firebaseApp) {
       console.error('Firebase не инициализирован.');
@@ -996,6 +1067,7 @@ function initializeApp() {
       });
   }
 
+  // Добавление строки для ингредиента в форму
   function addIngredientRow() {
     const container = document.getElementById('ingredients-container');
     if (!container) {
@@ -1021,10 +1093,12 @@ function initializeApp() {
     loadIngredientsSelect();
   }
 
+  // Удаление строки ингредиента
   function removeIngredientRow(button) {
     button.parentElement.remove();
   }
 
+  // Сохранение ингредиента
   function saveIngredient() {
     if (!firebaseApp) {
       alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -1099,6 +1173,7 @@ function initializeApp() {
     }
   }
 
+  // Отмена формы ингредиента
   function cancelIngredientForm() {
     const form = document.getElementById('ingredient-form');
     if (form) {
@@ -1115,6 +1190,7 @@ function initializeApp() {
     }
   }
 
+  // Отмена формы блюда
   function cancelDishForm() {
     const form = document.getElementById('dish-form');
     if (form) {
@@ -1151,6 +1227,7 @@ function initializeApp() {
     }
   }
 
+  // Отмена формы категории
   function cancelCategoryForm() {
     const form = document.getElementById('category-form');
     if (form) {
@@ -1165,6 +1242,7 @@ function initializeApp() {
     }
   }
 
+  // Показ формы для добавления блюда
   function showDishForm() {
     const form = document.getElementById('dish-form');
     if (form) {
@@ -1176,6 +1254,7 @@ function initializeApp() {
     }
   }
 
+  // Показ формы для добавления категории
   function showCategoryForm() {
     const form = document.getElementById('category-form');
     if (form) {
@@ -1186,6 +1265,7 @@ function initializeApp() {
     }
   }
 
+  // Показ формы для добавления ингредиента
   function showIngredientForm() {
     const form = document.getElementById('ingredient-form');
     if (form) {
@@ -1197,6 +1277,7 @@ function initializeApp() {
     }
   }
 
+  // Регистрация глобальных функций
   window.login = login;
   window.logout = logout;
   window.addDish = addDish;
@@ -1227,7 +1308,9 @@ function initializeApp() {
   window.showCategoryForm = showCategoryForm;
   window.showIngredientForm = showIngredientForm;
   window.editIngredientQuantity = editIngredientQuantity;
+  window.editIngredientPrice = editIngredientPrice;
 
+  // Обработчик изменения состояния авторизации
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
     if (document.getElementById('nav')) loadNav();
@@ -1239,6 +1322,7 @@ function initializeApp() {
   });
 }
 
+// Запуск инициализации приложения после загрузки DOM
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof window.initializeAppDone === 'undefined') {
     initializeApp();
