@@ -702,174 +702,196 @@ function initializeApp() {
   }
 
   function loadInventory() {
-    if (!firebaseApp) {
-      console.error('Firebase не инициализирован.');
-      return;
-    }
-    const list = document.getElementById('inventory-list');
-    const orderList = document.getElementById('order-list');
-    if (!list || !orderList) return;
+  if (!firebaseApp) {
+    console.error('Firebase не инициализирован.');
+    return;
+  }
+  const list = document.getElementById('inventory-list');
+  const orderList = document.getElementById('order-list');
+  if (!list || !orderList) return;
 
-    db.collection('ingredients').get()
-      .then((ingredients) => {
-        db.collection('dishes').get()
-          .then((dishes) => {
-            const usedIngredientIds = new Set();
-            const minIngredientRequirements = {};
+  db.collection('ingredients').get()
+    .then((ingredients) => {
+      db.collection('dishes').get()
+        .then((dishes) => {
+          const usedIngredientIds = new Set();
+          const minIngredientRequirements = {};
 
-            dishes.forEach((dish) => {
-              const dishData = dish.data();
-              if (dishData.ingredients && dishData.min_dish) {
-                dishData.ingredients.forEach((ing) => {
-                  if (!minIngredientRequirements[ing.ingredient_id]) {
-                    minIngredientRequirements[ing.ingredient_id] = 0;
-                  }
-                  minIngredientRequirements[ing.ingredient_id] += ing.quantity * dishData.min_dish;
-                  usedIngredientIds.add(ing.ingredient_id);
-                });
-              }
-            });
-
-            list.innerHTML = `
-              <table class="order-table-container w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th class="border p-2">Название</th>
-                    <th class="border p-2">Количество</th>
-                    <th class="border p-2">Цена ($)</th>
-                    <th class="border p-2">Вес (кг)</th>
-                    <th class="border p-2">Поставщик</th>
-                    <th class="border p-2">Действия</th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            `;
-            const tbody = list.querySelector('tbody');
-            if (ingredients.empty) {
-              tbody.innerHTML = '<tr><td colspan="6" class="border p-2 text-center">Ингредиенты отсутствуют</td></tr>';
-              return;
-            }
-
-            const sortedIngredients = Array.from(ingredients.docs).sort((a, b) =>
-              (a.data().name_product || '').localeCompare(b.data().name_product || '')
-            );
-
-            sortedIngredients.forEach((ing) => {
-              const ingData = ing.data();
-              if (!showAllIngredients && !usedIngredientIds.has(ing.id)) return;
-
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td class="border p-2">${ingData.name_product || 'Без названия'}</td>
-                <td class="border p-2 quantity-cell" data-ingredient-id="${ing.id}">${ingData.stock_quantity_product || 0}</td>
-                <td class="border p-2">${ingData.current_price_product || 0}</td>
-                <td class="border p-2">${ingData.weight_product != null ? ingData.weight_product : 0}</td>
-                <td class="border p-2">${ingData.supplier_product || 'Нет'}</td>
-                <td class="border p-2 flex gap-2">
-                  <button onclick="loadIngredientForEdit('${ing.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded">✏️</button>
-                  <button onclick="deleteIngredient('${ing.id}')" class="delete-btn bg-red-600 text-white p-2 rounded">🗑️</button>
-                </td>
-              `;
-              tbody.appendChild(row);
-            });
-
-            const quantityCells = tbody.querySelectorAll('.quantity-cell');
-            quantityCells.forEach(cell => {
-              cell.addEventListener('click', function() {
-                const currentValue = this.textContent;
-                const ingredientId = this.dataset.ingredientId;
-                this.innerHTML = `
-                  <input type="number" class="border p-1 w-full rounded" value="${currentValue}" min="0">
-                `;
-                const input = this.querySelector('input');
-                input.focus();
-                input.addEventListener('blur', () => editIngredientQuantity(ingredientId, input.value));
-                input.addEventListener('keypress', (e) => {
-                  if (e.key === 'Enter') {
-                    editIngredientQuantity(ingredientId, input.value);
-                  }
-                });
-              });
-            });
-
-            const ordersBySupplier = {};
-            sortedIngredients.forEach((ing) => {
-              const ingData = ing.data();
-              const minRequired = minIngredientRequirements[ing.id] || 0;
-              const currentStock = ingData.stock_quantity_product || 0;
-              if (minRequired > currentStock) {
-                const toOrder = minRequired - currentStock;
-                const supplier = ingData.supplier_product || 'Без поставщика';
-                if (!ordersBySupplier[supplier]) {
-                  ordersBySupplier[supplier] = [];
+          dishes.forEach((dish) => {
+            const dishData = dish.data();
+            if (dishData.ingredients && dishData.min_dish) {
+              dishData.ingredients.forEach((ing) => {
+                if (!minIngredientRequirements[ing.ingredient_id]) {
+                  minIngredientRequirements[ing.ingredient_id] = 0;
                 }
-                ordersBySupplier[supplier].push({
-                  name: ingData.name_product,
-                  quantity: toOrder,
-                  price: ingData.current_price_product || 0,
-                  weight: ingData.weight_product || 0
-                });
-              }
-            });
-
-            orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
-            if (Object.keys(ordersBySupplier).length === 0) {
-              orderList.innerHTML += '<p class="text-gray-500">Нет ингредиентов для заказа</p>';
-              return;
-            }
-
-            for (const [supplier, items] of Object.entries(ordersBySupplier)) {
-              let totalPrice = 0;
-              let totalWeight = 0;
-              let orderHtml = `<h3 class="text-lg font-semibold mt-4">Заказ ${supplier}</h3><ol class="list-decimal pl-6">`;
-              items.forEach((item) => {
-                const itemPrice = item.quantity * item.price;
-                const itemWeight = item.quantity * item.weight;
-                totalPrice += itemPrice;
-                totalWeight += itemWeight;
-                orderHtml += `<li>${item.name}: ${item.quantity} ($${itemPrice.toFixed(2)})</li>`;
+                minIngredientRequirements[ing.ingredient_id] += ing.quantity * dishData.min_dish;
+                usedIngredientIds.add(ing.ingredient_id);
               });
-              orderHtml += `</ol>`;
-              orderHtml += `<p class="mt-2">Сумма заказа: $${totalPrice.toFixed(2)}</p>`;
-              orderHtml += `<p>Общий вес: ${totalWeight.toFixed(2)} кг</p>`;
-              orderList.innerHTML += orderHtml;
             }
-          })
-          .catch((error) => {
-            console.error('Ошибка загрузки блюд:', error);
-            alert('Ошибка при загрузке блюд: ' + error.message);
           });
-      })
-      .catch((error) => {
-        console.error('Ошибка загрузки инвентаря:', error);
-        alert('Ошибка при загрузке инвентаря: ' + error.message);
-      });
-  }
 
-  function editIngredientQuantity(ingredientId, newQuantity) {
-    if (!firebaseApp) {
-      alert('Firebase не инициализирован. Перезагрузите страницу.');
-      return;
-    }
-    const quantity = parseInt(newQuantity) || 0;
-    if (quantity < 0) {
-      alert('Количество не может быть отрицательным.');
-      return;
-    }
-    db.collection('ingredients').doc(ingredientId).update({
-      stock_quantity_product: quantity
+          list.innerHTML = `
+            <table class="order-table-container w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="border p-2">Название</th>
+                  <th class="border p-2">Количество</th>
+                  <th class="border p-2">Цена ($)</th>
+                  <th class="border p-2">Вес (кг)</th>
+                  <th class="border p-2">Поставщик</th>
+                  <th class="border p-2">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          `;
+          const tbody = list.querySelector('tbody');
+          if (ingredients.empty) {
+            tbody.innerHTML = '<tr><td colspan="6" class="border p-2 text-center">Ингредиенты отсутствуют</td></tr>';
+            return;
+          }
+
+          const sortedIngredients = Array.from(ingredients.docs).sort((a, b) =>
+            (a.data().name_product || '').localeCompare(b.data().name_product || '')
+          );
+
+          sortedIngredients.forEach((ing) => {
+            const ingData = ing.data();
+            if (!showAllIngredients && !usedIngredientIds.has(ing.id)) return;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="border p-2">${ingData.name_product || 'Без названия'}</td>
+              <td class="border p-2 quantity-cell" data-ingredient-id="${ing.id}">${ingData.stock_quantity_product || 0}</td>
+              <td class="border p-2 price-cell" data-ingredient-id="${ing.id}">${ingData.current_price_product || 0}</td>
+              <td class="border p-2">${ingData.weight_product != null ? ingData.weight_product : 0}</td>
+              <td class="border p-2">${ingData.supplier_product || 'Нет'}</td>
+              <td class="border p-2 flex gap-2">
+                <button onclick="loadIngredientForEdit('${ing.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded">✏️</button>
+                <button onclick="deleteIngredient('${ing.id}')" class="delete-btn bg-red-600 text-white p-2 rounded">🗑️</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+
+          // Обработчик для редактирования количества
+          const quantityCells = tbody.querySelectorAll('.quantity-cell');
+          quantityCells.forEach(cell => {
+            cell.addEventListener('click', function() {
+              const currentValue = this.textContent;
+              const ingredientId = this.dataset.ingredientId;
+              this.innerHTML = `
+                <input type="number" class="border p-1 w-full rounded" value="${currentValue}" min="0">
+              `;
+              const input = this.querySelector('input');
+              input.focus();
+              input.addEventListener('blur', () => editIngredientQuantity(ingredientId, input.value, 'stock_quantity_product'));
+              input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                  editIngredientQuantity(ingredientId, input.value, 'stock_quantity_product');
+                }
+              });
+            });
+          });
+
+          // Обработчик для редактирования цены
+          const priceCells = tbody.querySelectorAll('.price-cell');
+          priceCells.forEach(cell => {
+            cell.addEventListener('click', function() {
+              const currentValue = this.textContent;
+              const ingredientId = this.dataset.ingredientId;
+              this.innerHTML = `
+                <input type="number" class="border p-1 w-full rounded" value="${currentValue}" min="0" step="0.01">
+              `;
+              const input = this.querySelector('input');
+              input.focus();
+              input.addEventListener('blur', () => editIngredientQuantity(ingredientId, input.value, 'current_price_product'));
+              input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                  editIngredientQuantity(ingredientId, input.value, 'current_price_product');
+                }
+              });
+            });
+          });
+
+          const ordersBySupplier = {};
+          sortedIngredients.forEach((ing) => {
+            const ingData = ing.data();
+            const minRequired = minIngredientRequirements[ing.id] || 0;
+            const currentStock = ingData.stock_quantity_product || 0;
+            if (minRequired > currentStock) {
+              const toOrder = minRequired - currentStock;
+              const supplier = ingData.supplier_product || 'Без поставщика';
+              if (!ordersBySupplier[supplier]) {
+                ordersBySupplier[supplier] = [];
+              }
+              ordersBySupplier[supplier].push({
+                name: ingData.name_product,
+                quantity: toOrder,
+                price: ingData.current_price_product || 0,
+                weight: ingData.weight_product || 0
+              });
+            }
+          });
+
+          orderList.innerHTML = '<h2 class="text-xl font-bold mb-2">Список заказов</h2>';
+          if (Object.keys(ordersBySupplier).length === 0) {
+            orderList.innerHTML += '<p class="text-gray-500">Нет ингредиентов для заказа</p>';
+            return;
+          }
+
+          for (const [supplier, items] of Object.entries(ordersBySupplier)) {
+            let totalPrice = 0;
+            let totalWeight = 0;
+            let orderHtml = `<h3 class="text-lg font-semibold mt-4">Заказ ${supplier}</h3><ol class="list-decimal pl-6">`;
+            items.forEach((item) => {
+              const itemPrice = item.quantity * item.price;
+              const itemWeight = item.quantity * item.weight;
+              totalPrice += itemPrice;
+              totalWeight += itemWeight;
+              orderHtml += `<li>${item.name}: ${item.quantity} ($${itemPrice.toFixed(2)})</li>`;
+            });
+            orderHtml += `</ol>`;
+            orderHtml += `<p class="mt-2">Сумма заказа: $${totalPrice.toFixed(2)}</p>`;
+            orderHtml += `<p>Общий вес: ${totalWeight.toFixed(2)} кг</p>`;
+            orderList.innerHTML += orderHtml;
+          }
+        })
+        .catch((error) => {
+          console.error('Ошибка загрузки блюд:', error);
+          alert('Ошибка при загрузке блюд: ' + error.message);
+        });
     })
-      .then(() => {
-        loadInventory();
-        console.log(`Количество ингредиента ${ingredientId} обновлено: ${quantity}`);
-      })
-      .catch((error) => {
-        console.error('Ошибка обновления количества ингредиента:', error);
-        alert('Ошибка при обновлении количества: ' + error.message);
-      });
+    .catch((error) => {
+      console.error('Ошибка загрузки инвентаря:', error);
+      alert('Ошибка при загрузке инвентаря: ' + error.message);
+    });
+}
+
+// Обновленная функция editIngredientQuantity для поддержки цены
+function editIngredientQuantity(ingredientId, newValue, field) {
+  if (!firebaseApp) {
+    alert('Firebase не инициализирован. Перезагрузите страницу.');
+    return;
   }
+  const value = field === 'current_price_product' ? parseFloat(newValue) : parseInt(newValue);
+  if (value < 0) {
+    alert(`${field === 'current_price_product' ? 'Цена' : 'Количество'} не может быть отрицательным.`);
+    return;
+  }
+  const updateData = {};
+  updateData[field] = value;
+  db.collection('ingredients').doc(ingredientId).update(updateData)
+    .then(() => {
+      loadInventory();
+      console.log(`${field === 'current_price_product' ? 'Цена' : 'Количество'} ингредиента ${ingredientId} обновлено: ${value}`);
+    })
+    .catch((error) => {
+      console.error(`Ошибка обновления ${field === 'current_price_product' ? 'цены' : 'количества'} ингредиента:`, error);
+      alert(`Ошибка при обновлении ${field === 'current_price_product' ? 'цены' : 'количества'}: ` + error.message);
+    });
+}
 
   function toggleAllIngredients() {
     showAllIngredients = !showAllIngredients;
