@@ -577,43 +577,41 @@ function initializeApp() {
   }
 
   function loadCategoryList() {
-    if (!firebaseApp) {
-      console.error('Firebase не инициализирован.');
-      return;
-    }
-    const list = document.getElementById('categories-list');
-    if (!list) return;
-    db.collection('categories').orderBy("number", "asc").get()
-      .then((categories) => {
-        list.innerHTML = '<h2 class="text-xl font-bold mb-2">Список категорий</h2>';
-        if (categories.empty) {
-          list.innerHTML += '<li class="text-gray-500">Категории отсутствуют</li>';
-          return;
-        }
-        categories.forEach((cat) => {
-          const catData = cat.data();
-          list.innerHTML += `
-            <li class="flex items-center justify-between p-2 border-b">
-              <span class="cursor-pointer" onclick="toggleCategoryFilter('${cat.id}', '${catData.name}')">${catData.number}. ${catData.name}</span>
-              <div class="flex gap-2">
-                <button onclick="loadCategoryForEdit('${cat.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
-                <button onclick="deleteCategory('${cat.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
-                <button onclick="toggleCategoryVisibility('${cat.id}', ${!catData.isVisible})" class="${catData.isVisible ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${catData.isVisible ? '✔️' : '❌'}</button>
-              </div>
-            </li>`;
-        });
-      })
-      .catch((error) => {
-        console.error('Ошибка загрузки списка категорий:', error);
-        if (error.code === 'failed-precondition' && error.message.includes('requires an index')) {
-          alert('Для загрузки категорий требуется индекс в Firestore.
-
- Пожалуйста, создайте его в консоли Firebase.');
-        } else {
-          alert('Ошибка при загрузке категорий: ' + error.message);
-        }
-      });
+  if (!firebaseApp) {
+    console.error('Firebase не инициализирован.');
+    return;
   }
+  const list = document.getElementById('categories-list');
+  if (!list) return;
+  db.collection('categories').orderBy("number", "asc").get()
+    .then((categories) => {
+      list.innerHTML = '<h2 class="text-xl font-bold mb-2">Список категорий</h2>';
+      if (categories.empty) {
+        list.innerHTML += '<li class="text-gray-500">Категории отсутствуют</li>';
+        return;
+      }
+      categories.forEach((cat) => {
+        const catData = cat.data();
+        list.innerHTML += `
+          <li class="flex items-center justify-between p-2 border-b">
+            <span class="cursor-pointer" onclick="toggleCategoryFilter('${cat.id}', '${catData.name}')">${catData.number}. ${catData.name}</span>
+            <div class="flex gap-2">
+              <button onclick="loadCategoryForEdit('${cat.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
+              <button onclick="deleteCategory('${cat.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
+              <button onclick="toggleCategoryVisibility('${cat.id}', ${!catData.isVisible})" class="${catData.isVisible ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${catData.isVisible ? '✔️' : '❌'}</button>
+            </div>
+          </li>`;
+      });
+    })
+    .catch((error) => {
+      console.error('Ошибка загрузки списка категорий:', error);
+      if (error.code === 'failed-precondition' && error.message.includes('requires an index')) {
+        alert('Для загрузки категорий требуется индекс в Firestore. Пожалуйста, создайте его в консоли Firebase.');
+      } else {
+        alert('Ошибка при загрузке категорий: ' + error.message);
+      }
+    });
+}
 
   function toggleCategoryFilter(categoryId, categoryName) {
     currentCategoryFilter = currentCategoryFilter === categoryId ? null : categoryId;
