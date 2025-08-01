@@ -256,40 +256,40 @@ function initializeApp() {
   }
 
   function renderDishCard(dish, ingredientNames, categoryMap, price_current_dish) {
-    const list = document.getElementById('dishes-list');
-    const dishCard = document.createElement('div');
-    dishCard.className = 'dish-card';
-    const dishData = dish.data();
-    const ingredientsList = ingredientNames.length > 0 
-      ? `<ul class="list-disc pl-4">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
-      : 'Нет';
-    dishCard.innerHTML = `
-      <div class="flex flex-col h-full">
-        <div class="dish-image-container">
-          ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-placeholder"></div>'}
+  const list = document.getElementById('dishes-list');
+  const dishCard = document.createElement('div');
+  dishCard.className = 'dish-card';
+  const dishData = dish.data();
+  const ingredientsList = ingredientNames.length > 0 
+    ? `<ul class="list-disc pl-4">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
+    : 'Нет';
+  dishCard.innerHTML = `
+    <div class="flex flex-col h-full">
+      <div class="dish-image-container">
+        ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-placeholder"></div>'}
+      </div>
+      <p class="dish-name">${dishData.name_dish}</p>
+      <p class="dish-price">${dishData.price_dish} $</p>
+      <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
+      <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
+      <div class="dish-details" style="display: none;">
+        <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
+        <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
+        <p class="text-sm text-gray-600">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
+        <p class="text-sm text-gray-600">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
+        <p class="text-sm text-gray-600">Мин. порций: ${dishData.min_dish || 0}</p>
+        <p class="text-sm text-gray-600">Ингредиенты:</p>
+        ${ingredientsList}
+        <div class="flex gap-2 mt-2">
+          <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
+          <button onclick="deleteDish('${dish.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
+          <button onclick="toggleDishVisibility('${dish.id}', ${!dishData.is_active_dish})" class="${dishData.is_active_dish ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${dishData.is_active_dish ? '✔️' : '❌'}</button>
         </div>
-        <p class="dish-name">${dishData.name_dish}</p>
-        <p class="dish-price">${dishData.price_dish} $</p>
-        <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
-        <div class="dish-details hidden">
-          <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
-          <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
-          <p class="text-sm text-gray-600">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
-          <p class="text-sm text-gray-600">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
-          <p class="text-sm text-gray-600">Мин. порций: ${dishData.min_dish || 0}</p>
-          <p class="text-sm text-gray-600">Ингредиенты:</p>
-          ${ingredientsList}
-          <div class="flex gap-2 mt-2">
-            <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
-            <button onclick="deleteDish('${dish.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
-            <button onclick="toggleDishVisibility('${dish.id}', ${!dishData.is_active_dish})" class="${dishData.is_active_dish ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${dishData.is_active_dish ? '✔️' : '❌'}</button>
-          </div>
-        </div>
-      </div>`;
-    list.appendChild(dishCard);
-  }
-
+      </div>
+    </div>`;
+  list.appendChild(dishCard);
+}
+  
   function toggleDishDetails(button) {
     const details = button.nextElementSibling;
     if (details.style.display === 'none' || details.style.display === '') {
