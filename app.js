@@ -647,6 +647,11 @@ function initializeApp() {
   function toggleShowAllDishes() {
     showAllDishes = true;
     currentCategoryFilter = null;
+    searchQuery = ''; // Сбрасываем поисковый запрос
+    const searchInput = document.getElementById('dish-search');
+    if (searchInput) {
+      searchInput.value = ''; // Очищаем поле поиска
+    }
     loadDishes();
   }
 
