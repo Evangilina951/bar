@@ -583,7 +583,7 @@ function initializeApp() {
     }
     const list = document.getElementById('categories-list');
     if (!list) return;
-    db.collection('categories').orderBy('number', 'asc').get()
+    db.collection('categories').orderBy("number", "asc").get()
       .then((categories) => {
         list.innerHTML = '<h2 class="text-xl font-bold mb-2">Список категорий</h2>';
         if (categories.empty) {
@@ -606,7 +606,9 @@ function initializeApp() {
       .catch((error) => {
         console.error('Ошибка загрузки списка категорий:', error);
         if (error.code === 'failed-precondition' && error.message.includes('requires an index')) {
-          alert('Для загрузки категорий требуется индекс в Firestore. Пожалуйста, создайте его в консоли Firebase.');
+          alert('Для загрузки категорий требуется индекс в Firestore.
+
+ Пожалуйста, создайте его в консоли Firebase.');
         } else {
           alert('Ошибка при загрузке категорий: ' + error.message);
         }
@@ -764,7 +766,7 @@ function initializeApp() {
               row.innerHTML = `
                 <td class="border p-2">${ingData.name_product || 'Без названия'}</td>
                 <td class="border p-2 quantity-cell" data-ingredient-id="${ing.id}">${ingData.stock_quantity_product || 0}</td>
-                <td class="border p-2">${ingData.current_price_product || 0}</td>
+                <td class="border p-2 price-cell" data-ingredient-id="${ing.id}">${ingData.current_price_product || 0}</td>
                 <td class="border p-2">${ingData.weight_product != null ? ingData.weight_product : 0}</td>
                 <td class="border p-2">${ingData.supplier_product || 'Нет'}</td>
                 <td class="border p-2 flex gap-2">
@@ -789,6 +791,25 @@ function initializeApp() {
                 input.addEventListener('keypress', (e) => {
                   if (e.key === 'Enter') {
                     editIngredientQuantity(ingredientId, input.value);
+                  }
+                });
+              });
+            });
+
+            const priceCells = tbody.querySelectorAll('.price-cell');
+            priceCells.forEach(cell => {
+              cell.addEventListener('click', function() {
+                const currentValue = this.textContent;
+                const ingredientId = this.dataset.ingredientId;
+                this.innerHTML = `
+                  <input type="number" class="border p-1 w-full rounded" value="${currentValue}" min="0" step="0.01">
+                `;
+                const input = this.querySelector('input');
+                input.focus();
+                input.addEventListener('blur', () => editIngredientPrice(ingredientId, input.value));
+                input.addEventListener('keypress', (e) => {
+                  if (e.key === 'Enter') {
+                    editIngredientPrice(ingredientId, input.value);
                   }
                 });
               });
@@ -868,6 +889,29 @@ function initializeApp() {
       .catch((error) => {
         console.error('Ошибка обновления количества ингредиента:', error);
         alert('Ошибка при обновлении количества: ' + error.message);
+      });
+  }
+
+  function editIngredientPrice(ingredientId, newPrice) {
+    if (!firebaseApp) {
+      alert('Firebase не инициализирован. Перезагрузите страницу.');
+      return;
+    }
+    const price = parseFloat(newPrice) || 0;
+    if (price < 0) {
+      alert('Цена не может быть отрицательной.');
+      return;
+    }
+    db.collection('ingredients').doc(ingredientId).update({
+      current_price_product: price
+    })
+      .then(() => {
+        loadInventory();
+        console.log(`Цена ингредиента ${ingredientId} обновлена: ${price}`);
+      })
+      .catch((error) => {
+        console.error('Ошибка обновления цены ингредиента:', error);
+        alert('Ошибка при обновлении цены: ' + error.message);
       });
   }
 
@@ -1227,6 +1271,7 @@ function initializeApp() {
   window.showCategoryForm = showCategoryForm;
   window.showIngredientForm = showIngredientForm;
   window.editIngredientQuantity = editIngredientQuantity;
+  window.editIngredientPrice = editIngredientPrice;
 
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
