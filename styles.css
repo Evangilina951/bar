@@ -33,7 +33,6 @@ nav button:hover {
 /* Карточка блюда */
 .dish-card {
   width: 200px;
-  min-height: 350px; /* Фиксированная минимальная высота для одинакового размера */
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -41,9 +40,11 @@ nav button:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  min-height: 300px; /* Минимальная высота для подстраивания под самую высокую карточку */
 }
 
+/* Контейнер изображения */
 .dish-image-container {
   display: flex;
   justify-content: center;
@@ -66,32 +67,39 @@ nav button:hover {
   border-radius: 0.25rem;
 }
 
+/* Название блюда */
 .dish-name {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
-  flex-grow: 0; /* Предотвращаем растяжение */
+  min-height: 3rem; /* Резервируем место для длинных названий (примерно 2 строки) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
+/* Цена */
 .dish-price {
   text-align: center;
   margin: 0.25rem 0;
-  flex-grow: 0;
 }
 
+/* Категория */
 .dish-category {
   text-align: center;
   color: #4a5568;
   font-size: 0.875rem;
   margin: 0.25rem 0;
-  flex-grow: 0;
 }
 
+/* Детали блюда (скрыты по умолчанию) */
 .dish-details {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
-  flex-grow: 1; /* Занимает оставшееся пространство */
+  display: none; /* Скрываем детали по умолчанию */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -110,6 +118,13 @@ nav button:hover {
 /* Кнопки в карточке */
 .dish-details button {
   font-size: 0.875rem;
+}
+
+/* Кнопка "Развернуть" */
+.dish-card > button {
+  margin-top: 0.5rem;
+  align-self: center;
+  width: 100%;
 }
 
 /* Резервные стили для двухколоночной структуры */
@@ -133,6 +148,10 @@ nav button:hover {
 
   .dish-card {
     width: 150px;
-    min-height: 300px; /* Уменьшенная высота для маленьких экранов */
+    min-height: 250px; /* Уменьшенная высота для маленьких экранов */
+  }
+
+  .dish-name {
+    min-height: 2.5rem; /* Меньше места для названий на маленьких экранах */
   }
 }
