@@ -6,6 +6,10 @@ nav {
   justify-content: center;
   align-items: center;
   width: 100%;
+  background-color: #2d3748; /* Темно-серый фон для меню */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 nav a,
@@ -15,11 +19,12 @@ nav button {
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
   transition: background-color 0.3s;
+  font-size: 1rem;
 }
 
 nav a:hover,
 nav button:hover {
-  background-color: #4a5568;
+  background-color: #4a5568; /* Цвет ховера */
 }
 
 /* Контейнер блюд */
@@ -98,9 +103,8 @@ nav button:hover {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
-  display: none; /* Скрываем детали по умолчанию */
+  display: none !important; /* Явно скрываем детали */
   flex-grow: 1;
-  display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
@@ -127,14 +131,14 @@ nav button:hover {
   width: 100%;
 }
 
-/* Резервные стили для двухколоночной структуры */
+/* Двухколоночная структура для Tailwind grid */
 @media (min-width: 1024px) {
-  .container > .grid {
+  .container > div.grid {
     display: grid;
     grid-template-columns: 25% 75%;
     gap: 1rem;
   }
-  .container > .grid > div:first-child {
+  .container > div.grid > div:first-child {
     border-right: 1px solid #e2e8f0;
     padding-right: 1rem;
   }
