@@ -32,7 +32,8 @@ nav button:hover {
 
 /* Карточка блюда */
 .dish-card {
-  max-width: 200px;
+  width: 200px;
+  min-height: 350px; /* Фиксированная минимальная высота для одинакового размера */
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -69,11 +70,13 @@ nav button:hover {
   font-weight: bold;
   text-align: center;
   margin: 0.25rem 0;
+  flex-grow: 0; /* Предотвращаем растяжение */
 }
 
 .dish-price {
   text-align: center;
   margin: 0.25rem 0;
+  flex-grow: 0;
 }
 
 .dish-category {
@@ -81,12 +84,17 @@ nav button:hover {
   color: #4a5568;
   font-size: 0.875rem;
   margin: 0.25rem 0;
+  flex-grow: 0;
 }
 
 .dish-details {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #4a5568;
+  flex-grow: 1; /* Занимает оставшееся пространство */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .dish-details ul {
@@ -124,6 +132,7 @@ nav button:hover {
   }
 
   .dish-card {
-    max-width: 150px;
+    width: 150px;
+    min-height: 300px; /* Уменьшенная высота для маленьких экранов */
   }
 }
