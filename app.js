@@ -1,5 +1,6 @@
 let firebaseApp = null;
 let showAllDishes = false;
+let searchQuery = ''; // Переменная для хранения поискового запроса
 
 function initializeApp() {
   if (typeof firebase === 'undefined') {
@@ -209,8 +210,10 @@ function initializeApp() {
       console.error('Элемент с id="dishes-list" не найден в DOM');
       return;
     }
-    const filterCategory = showAllDishes ? null : currentCategoryFilter;
-    const dishesQuery = filterCategory ? db.collection('dishes').where('category_id', '==', filterCategory) : db.collection('dishes');
+    let dishesQuery = db.collection('dishes');
+    if (!showAllDishes && currentCategoryFilter) {
+      dishesQuery = dishesQuery.where('category_id', '==', currentCategoryFilter);
+    }
     try {
       const dishes = await dishesQuery.get();
       const categories = await db.collection('categories').get();
@@ -245,7 +248,18 @@ function initializeApp() {
         }
         return { dish, ingredientNames, price_current_dish };
       });
-      const dishDataArray = await Promise.all(dishPromises);
+      let dishDataArray = await Promise.all(dishPromises);
+      // Фильтрация по поисковому запросу
+      if (searchQuery) {
+        dishDataArray = dishDataArray.filter(({ dish }) => 
+          dish.data().name_dish.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+      list.innerHTML = '';
+      if (dishDataArray.length === 0) {
+        list.innerHTML = '<p class="text-gray-500">Блюда не найдены</p>';
+        return;
+      }
       dishDataArray.forEach(({ dish, ingredientNames, price_current_dish }) => {
         renderDishCard(dish, ingredientNames, categoryMap, price_current_dish);
       });
@@ -256,40 +270,40 @@ function initializeApp() {
   }
 
   function renderDishCard(dish, ingredientNames, categoryMap, price_current_dish) {
-  const list = document.getElementById('dishes-list');
-  const dishCard = document.createElement('div');
-  dishCard.className = 'dish-card';
-  const dishData = dish.data();
-  const ingredientsList = ingredientNames.length > 0 
-    ? `<ul class="list-disc pl-4">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
-    : 'Нет';
-  dishCard.innerHTML = `
-    <div class="flex flex-col h-full">
-      <div class="dish-image-container">
-        ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-placeholder"></div>'}
-      </div>
-      <p class="dish-name">${dishData.name_dish}</p>
-      <p class="dish-price">${dishData.price_dish} $</p>
-      <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-      <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
-      <div class="dish-details" style="display: none;">
-        <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
-        <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
-        <p class="text-sm text-gray-600">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
-        <p class="text-sm text-gray-600">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
-        <p class="text-sm text-gray-600">Мин. порций: ${dishData.min_dish || 0}</p>
-        <p class="text-sm text-gray-600">Ингредиенты:</p>
-        ${ingredientsList}
-        <div class="flex gap-2 mt-2">
-          <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
-          <button onclick="deleteDish('${dish.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
-          <button onclick="toggleDishVisibility('${dish.id}', ${!dishData.is_active_dish})" class="${dishData.is_active_dish ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${dishData.is_active_dish ? '✔️' : '❌'}</button>
+    const list = document.getElementById('dishes-list');
+    const dishCard = document.createElement('div');
+    dishCard.className = 'dish-card';
+    const dishData = dish.data();
+    const ingredientsList = ingredientNames.length > 0 
+      ? `<ul class="list-disc pl-4">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
+      : 'Нет';
+    dishCard.innerHTML = `
+      <div class="flex flex-col h-full">
+        <div class="dish-image-container">
+          ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-placeholder"></div>'}
         </div>
-      </div>
-    </div>`;
-  list.appendChild(dishCard);
-}
-  
+        <p class="dish-name">${dishData.name_dish}</p>
+        <p class="dish-price">${dishData.price_dish} $</p>
+        <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
+        <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
+        <div class="dish-details" style="display: none;">
+          <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
+          <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
+          <p class="text-sm text-gray-600">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
+          <p class="text-sm text-gray-600">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
+          <p class="text-sm text-gray-600">Мин. порций: ${dishData.min_dish || 0}</p>
+          <p class="text-sm text-gray-600">Ингредиенты:</p>
+          ${ingredientsList}
+          <div class="flex gap-2 mt-2">
+            <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
+            <button onclick="deleteDish('${dish.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
+            <button onclick="toggleDishVisibility('${dish.id}', ${!dishData.is_active_dish})" class="${dishData.is_active_dish ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${dishData.is_active_dish ? '✔️' : '❌'}</button>
+          </div>
+        </div>
+      </div>`;
+    list.appendChild(dishCard);
+  }
+
   function toggleDishDetails(button) {
     const details = button.nextElementSibling;
     if (details.style.display === 'none' || details.style.display === '') {
@@ -577,41 +591,52 @@ function initializeApp() {
   }
 
   function loadCategoryList() {
-  if (!firebaseApp) {
-    console.error('Firebase не инициализирован.');
-    return;
-  }
-  const list = document.getElementById('categories-list');
-  if (!list) return;
-  db.collection('categories').orderBy("number", "asc").get()
-    .then((categories) => {
-      list.innerHTML = '<h2 class="text-xl font-bold mb-2">Список категорий</h2>';
-      if (categories.empty) {
-        list.innerHTML += '<li class="text-gray-500">Категории отсутствуют</li>';
-        return;
-      }
-      categories.forEach((cat) => {
-        const catData = cat.data();
-        list.innerHTML += `
-          <li class="flex items-center justify-between p-2 border-b">
-            <span class="cursor-pointer" onclick="toggleCategoryFilter('${cat.id}', '${catData.name}')">${catData.number}. ${catData.name}</span>
-            <div class="flex gap-2">
-              <button onclick="loadCategoryForEdit('${cat.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
-              <button onclick="deleteCategory('${cat.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
-              <button onclick="toggleCategoryVisibility('${cat.id}', ${!catData.isVisible})" class="${catData.isVisible ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${catData.isVisible ? '✔️' : '❌'}</button>
-            </div>
-          </li>`;
+    if (!firebaseApp) {
+      console.error('Firebase не инициализирован.');
+      return;
+    }
+    const list = document.getElementById('categories-list');
+    if (!list) return;
+    db.collection('categories').orderBy("number", "asc").get()
+      .then((categories) => {
+        list.innerHTML = `
+          <input type="text" id="dish-search" class="border p-2 w-full rounded mb-4" placeholder="Поиск по названию блюда">
+          <h2 class="text-xl font-bold mb-2">Список категорий</h2>
+        `;
+        if (categories.empty) {
+          list.innerHTML += '<li class="text-gray-500">Категории отсутствуют</li>';
+          return;
+        }
+        categories.forEach((cat) => {
+          const catData = cat.data();
+          list.innerHTML += `
+            <li class="flex items-center justify-between p-2 border-b">
+              <span class="cursor-pointer" onclick="toggleCategoryFilter('${cat.id}', '${catData.name}')">${catData.number}. ${catData.name}</span>
+              <div class="flex gap-2">
+                <button onclick="loadCategoryForEdit('${cat.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
+                <button onclick="deleteCategory('${cat.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
+                <button onclick="toggleCategoryVisibility('${cat.id}', ${!catData.isVisible})" class="${catData.isVisible ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${catData.isVisible ? '✔️' : '❌'}</button>
+              </div>
+            </li>`;
+        });
+        // Добавляем обработчик события для поиска
+        const searchInput = document.getElementById('dish-search');
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            loadDishes();
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка загрузки списка категорий:', error);
+        if (error.code === 'failed-precondition' && error.message.includes('requires an index')) {
+          alert('Для загрузки категорий требуется индекс в Firestore. Пожалуйста, создайте его в консоли Firebase.');
+        } else {
+          alert('Ошибка при загрузке категорий: ' + error.message);
+        }
       });
-    })
-    .catch((error) => {
-      console.error('Ошибка загрузки списка категорий:', error);
-      if (error.code === 'failed-precondition' && error.message.includes('requires an index')) {
-        alert('Для загрузки категорий требуется индекс в Firestore. Пожалуйста, создайте его в консоли Firebase.');
-      } else {
-        alert('Ошибка при загрузке категорий: ' + error.message);
-      }
-    });
-}
+  }
 
   function toggleCategoryFilter(categoryId, categoryName) {
     currentCategoryFilter = currentCategoryFilter === categoryId ? null : categoryId;
