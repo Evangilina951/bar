@@ -23,7 +23,6 @@ nav {
   }
   .column-right {
     width: 100%;
-    border-left: 2px solid #ef4444; /* Отладочная граница (красная) */
   }
 }
 
@@ -67,11 +66,6 @@ nav {
   flex-direction: column;
   justify-content: flex-start;
   min-height: 320px;
-  transition: transform 0.2s ease;
-}
-
-.dish-card:hover {
-  transform: translateY(-4px);
 }
 
 /* Контейнер изображения */
