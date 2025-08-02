@@ -1,21 +1,23 @@
 /* Основные стили страницы */
 .page-body {
   background-color: #f7fafc;
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
 }
 
 /* Контейнер */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 24px;
 }
 
 /* Заголовок страницы */
 .page-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 16px;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1a202c;
 }
 
 /* Навигация */
@@ -26,59 +28,64 @@ nav {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #2d3748; /* Темно-серый фон для меню */
+  background-color: #2d3748;
   padding: 16px;
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 nav a,
 nav button {
   color: white;
   text-decoration: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   font-size: 16px;
+  font-weight: 500;
 }
 
 nav a:hover,
 nav button:hover {
-  background-color: #4a5568; /* Цвет ховера */
+  background-color: #4a5568;
+  transform: translateY(-1px);
 }
 
 /* Двухколоночная структура */
 .columns {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 @media (min-width: 1024px) {
   .columns {
     display: grid;
-    grid-template-columns: 1fr 3fr; /* 25% левая, 75% правая */
-    gap: 16px;
+    grid-template-columns: 1fr 3fr;
+    gap: 24px;
   }
   .column-left {
     width: 100%;
-    border-right: 2px solid blue; /* Отладочная граница для левой колонки */
-    padding-right: 16px;
+    border-right: 2px solid #3b82f6; /* Отладочная граница (синяя) */
+    padding-right: 24px;
   }
   .column-right {
     width: 100%;
-    border-left: 2px solid red; /* Отладочная граница для правой колонки */
+    border-left: 2px solid #ef4444; /* Отладочная граница (красная) */
   }
 }
 
 /* Стили для кнопок */
 .button {
-  padding: 8px 16px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button-gray {
@@ -103,6 +110,7 @@ nav button:hover {
 
 .button:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 /* Группа кнопок */
@@ -110,33 +118,63 @@ nav button:hover {
   display: flex;
   justify-content: flex-end;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 /* Поле поиска */
 .input-search {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 6px;
   margin-bottom: 16px;
   font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.input-search:focus {
+  border-color: #2563eb;
+  outline: none;
 }
 
 /* Заголовок секции */
 .section-title {
   font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 8px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1a202c;
+}
+
+/* Список категорий */
+#categories-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 16px;
+  color: #1a202c;
+}
+
+#categories-list li .button-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+#categories-list li .button {
+  padding: 6px 12px;
+  font-size: 12px;
 }
 
 /* Формы */
 .form {
   background-color: white;
-  padding: 16px;
-  border: 1px solid #d1d5db;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .form.hidden {
@@ -167,16 +205,24 @@ nav button:hover {
 
 .form-label {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   font-size: 14px;
+  font-weight: 500;
+  color: #1a202c;
 }
 
 .form-input {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+  outline: none;
 }
 
 .checkbox-label {
@@ -197,7 +243,7 @@ nav button:hover {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 @media (min-width: 768px) {
@@ -209,23 +255,28 @@ nav button:hover {
 /* Контейнер блюд */
 #dishes-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
   padding: 16px;
 }
 
 /* Карточка блюда */
 .dish-card {
-  width: 200px;
+  width: 220px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 8px;
+  padding: 12px;
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 300px;
+  min-height: 320px;
+  transition: transform 0.2s ease;
+}
+
+.dish-card:hover {
+  transform: translateY(-4px);
 }
 
 /* Контейнер изображения */
@@ -234,39 +285,43 @@ nav button:hover {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 62px;
-  margin-bottom: 8px;
+  height: 80px;
+  margin-bottom: 12px;
 }
 
 .dish-image {
-  width: 62px;
-  height: 62px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
 }
 
 .dish-placeholder {
-  width: 62px;
-  height: 62px;
+  width: 80px;
+  height: 80px;
   background-color: #e2e8f0;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 /* Название блюда */
 .dish-name {
-  font-weight: bold;
+  font-weight: 600;
   text-align: center;
-  margin: 4px 0;
+  margin: 8px 0;
   min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+  font-size: 16px;
+  color: #1a202c;
 }
 
 /* Цена */
 .dish-price {
   text-align: center;
-  margin: 4px 0;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #1a202c;
 }
 
 /* Категория */
@@ -274,12 +329,12 @@ nav button:hover {
   text-align: center;
   color: #4a5568;
   font-size: 14px;
-  margin: 4px 0;
+  margin: 8px 0;
 }
 
 /* Детали блюда (скрыты по умолчанию) */
 .dish-details {
-  margin-top: 8px;
+  margin-top: 12px;
   font-size: 14px;
   color: #4a5568;
   display: none;
@@ -289,7 +344,7 @@ nav button:hover {
 }
 
 .dish-details ul {
-  margin-top: 4px;
+  margin-top: 8px;
   padding-left: 16px;
 }
 
@@ -299,29 +354,43 @@ nav button:hover {
 }
 
 /* Кнопки в карточке */
-.dish-details button {
-  font-size: 14px;
+.dish-details .button {
+  font-size: 12px;
+  padding: 6px 12px;
 }
 
 /* Кнопка "Развернуть" */
-.dish-card > button {
-  margin-top: 8px;
-  align-self: center;
-  width: 100%;
+.dish-card > .button {
+  margin: 12px auto 0;
+  width: 80%;
+  max-width: 200px;
+  text-align: center;
 }
 
 /* Адаптивность для карточек */
 @media (max-width: 640px) {
   #dishes-list {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
   }
 
   .dish-card {
-    width: 150px;
-    min-height: 250px;
+    width: 160px;
+    min-height: 280px;
   }
 
   .dish-name {
     min-height: 40px;
+    font-size: 14px;
+  }
+
+  .dish-image-container {
+    height: 60px;
+  }
+
+  .dish-image,
+  .dish-placeholder {
+    width: 60px;
+    height: 60px;
   }
 }
