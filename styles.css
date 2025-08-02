@@ -3,6 +3,23 @@ nav {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+nav a,
+nav button {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+nav a:hover,
+nav button:hover {
+  background-color: #4a5568;
+  transform: translateY(-1px);
+}
+
 /* Двухколоночная структура */
 .columns {
   display: flex;
