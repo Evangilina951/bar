@@ -16,8 +16,8 @@
     <div id="nav" class="flex flex-wrap gap-4 justify-center items-center w-full bg-gray-800 p-4 rounded-lg mb-6 shadow"></div>
     <h1 class="text-2xl font-bold mb-6">Инвентаризация</h1>
     <!-- Двухколоночная сетка -->
-    <div class="columns">
-      <!-- Левая колонка: таблица инвентаря -->
+    <div class="columns-inventory">
+      <!-- Левая колонка: таблица инвентаря (75%) -->
       <div class="column-left">
         <button id="toggle-all" onclick="toggleAllIngredients()" class="bg-gray-600 text-white py-2 px-4 rounded mb-4 hover:bg-gray-700 transition">Показать все</button>
         <button onclick="showIngredientForm()" class="bg-blue-600 text-white py-2 px-4 rounded mb-4 hover:bg-blue-700 transition">Добавить новый ингредиент</button>
@@ -52,7 +52,7 @@
         </div>
         <div id="inventory-list" class="bg-white border rounded-lg shadow-sm"></div>
       </div>
-      <!-- Правая колонка: список заказов -->
+      <!-- Правая колонка: список заказов (25%) -->
       <div class="column-right">
         <div id="order-list" class="space-y-4"></div>
       </div>
