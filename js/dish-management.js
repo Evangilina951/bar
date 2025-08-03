@@ -231,7 +231,14 @@ function showDishForm() {
   const form = document.getElementById('dish-form');
   if (form) {
     form.classList.remove('hidden');
+    const ingredientButtonContainer = form.querySelector('.ingredient-button-container');
     const buttonGroup = form.querySelector('.dish-form-button-group');
+    if (ingredientButtonContainer) {
+      console.log('Классы .ingredient-button-container:', ingredientButtonContainer.className);
+      console.log('Стили .ingredient-button-container margin-top:', getComputedStyle(ingredientButtonContainer).marginTop);
+    } else {
+      console.error('.ingredient-button-container не найден в #dish-form');
+    }
     if (buttonGroup) {
       console.log('Классы .dish-form-button-group:', buttonGroup.className);
       console.log('Стили .dish-form-button-group gap:', getComputedStyle(buttonGroup).gap);
@@ -242,6 +249,32 @@ function showDishForm() {
   } else {
     console.error('Форма с id="dish-form" не найдена');
   }
+}
+
+function addIngredientRow() {
+  const container = document.getElementById('ingredients-container');
+  if (!container) {
+    console.error('Контейнер с id="ingredients-container" не найден');
+    return;
+  }
+  const rowCount = container.querySelectorAll('.ingredient-row').length;
+  const newRow = document.createElement('div');
+  newRow.className = 'ingredient-row';
+  newRow.innerHTML = `
+    <div>
+      <input type="text" id="ingredient-search-${rowCount}" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options">
+    </div>
+    <div>
+      <input type="number" class="dish-ingredient-quantity form-input" placeholder="Количество" min="0" step="0.1">
+    </div>
+    <button onclick="removeIngredientRow(this)" class="btn btn-delete btn-small">Удалить</button>
+  `;
+  container.appendChild(newRow);
+  loadIngredientsSelect();
+}
+
+function removeIngredientRow(button) {
+  button.parentElement.remove();
 }
 
 async function loadDishForEdit(dishId) {
@@ -304,11 +337,9 @@ async function loadDishForEdit(dishId) {
           return `
             <div class="ingredient-row">
               <div>
-                <label class="form-label">Ингредиент:</label>
                 <input type="text" id="ingredient-search-${index}" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options" value="${name}" data-ingredient-id="${ing.ingredient_id || ''}">
               </div>
               <div>
-                <label class="form-label">Количество:</label>
                 <input type="number" class="dish-ingredient-quantity form-input" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
               </div>
               ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="btn btn-delete btn-small">Удалить</button>` : ''}
@@ -326,11 +357,9 @@ async function loadDishForEdit(dishId) {
           <datalist id="ingredient-options"></datalist>
           <div class="ingredient-row">
             <div>
-              <label class="form-label">Ингредиент:</label>
               <input type="text" id="ingredient-search-0" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options">
             </div>
             <div>
-              <label class="form-label">Количество:</label>
               <input type="number" class="dish-ingredient-quantity form-input" placeholder="Количество" min="0" step="0.1">
             </div>
           </div>
@@ -466,6 +495,8 @@ window.loadDishes = loadDishes;
 window.renderDishCard = renderDishCard;
 window.toggleDishDetails = toggleDishDetails;
 window.showDishForm = showDishForm;
+window.addIngredientRow = addIngredientRow;
+window.removeIngredientRow = removeIngredientRow;
 window.loadDishForEdit = loadDishForEdit;
 window.editDish = editDish;
 window.deleteDish = deleteDish;
