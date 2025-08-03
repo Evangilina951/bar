@@ -1,7 +1,7 @@
 /* Общие стили */
 .button-group {
   display: flex;
-  gap: 8px;
+  gap: 12px; /* Увеличен с 8px до 12px для предотвращения слияния кнопок */
   margin-bottom: 16px;
 }
 
@@ -32,30 +32,30 @@
 }
 
 .btn-edit {
-  background-color: #d97706; /* Аналог bg-yellow-600 */
+  background-color: #d97706;
   color: #ffffff;
 }
 
 .btn-edit:hover {
-  background-color: #b45309; /* Аналог hover:bg-yellow-700 */
+  background-color: #b45309;
 }
 
 .btn-delete {
-  background-color: #dc2626; /* Аналог bg-red-600 */
+  background-color: #dc2626;
   color: #ffffff;
 }
 
 .btn-delete:hover {
-  background-color: #b91c1c; /* Аналог hover:bg-red-700 */
+  background-color: #b91c1c;
 }
 
 .btn-active {
-  background-color: #16a34a; /* Аналог bg-green-600 */
+  background-color: #16a34a;
   color: #ffffff;
 }
 
 .btn-active:hover {
-  background-color: #15803d; /* Аналог hover:bg-green-700 */
+  background-color: #15803d;
 }
 
 .btn-inactive {
@@ -162,13 +162,18 @@
 }
 
 .dish-detail-text {
-  font-size: 12px;
+  font-size: 14px; /* Увеличен с 12px до 14px */
   color: #4a5568;
 }
 
 .dish-ingredients {
   list-style-type: disc;
   padding-left: 16px;
+}
+
+.dish-ingredients li {
+  font-size: 16px; /* Увеличен с 14px до 16px */
+  color: #4a5568;
 }
 
 /* Навигация */
@@ -321,20 +326,23 @@ nav button:hover {
 div.columns-dishes div.column-right #dishes-list {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  gap: 4px !important;
+  row-gap: 16px !important; /* Увеличен вертикальный интервал */
+  column-gap: 4px !important; /* Сохранён горизонтальный интервал */
   padding: 0px !important;
 }
 
 /* Переопределение Tailwind gap */
 div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
-  gap: 4px !important;
+  row-gap: 16px !important;
+  column-gap: 4px !important;
 }
 
 /* Адаптивность для карточек */
 @media (max-width: 640px) {
   div.columns-dishes div.column-right #dishes-list {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
-    gap: 4px !important;
+    row-gap: 16px !important;
+    column-gap: 4px !important;
     padding: 0px !important;
   }
 }
@@ -421,7 +429,7 @@ div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
 }
 
 .dish-details ul li {
-  font-size: 14px;
+  font-size: 16px;
   color: #4a5568;
 }
 
