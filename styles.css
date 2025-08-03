@@ -163,19 +163,19 @@ nav button:hover {
 }
 
 /* Контейнер блюд (для dishes.html) */
-.columns-dishes .column-right #dishes-list {
+div.columns-dishes div.column-right #dishes-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 8px !important; /* Ещё меньший отступ между карточками */
-  padding: 8px !important;
+  gap: 4px !important; /* Минимальный отступ между карточками */
+  padding: 4px !important;
 }
 
 /* Адаптивность для карточек */
 @media (max-width: 640px) {
-  .columns-dishes .column-right #dishes-list {
+  div.columns-dishes div.column-right #dishes-list {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 6px !important; /* Ещё меньший отступ для мобильных */
-    padding: 8px !important;
+    gap: 2px !important; /* Минимальный отступ для мобильных */
+    padding: 4px !important;
   }
 }
 
@@ -184,10 +184,10 @@ nav button:hover {
   width: 220px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 12px;
-  margin: 0; /* Убраны внешние отступы для карточек */
+  padding: 8px; /* Уменьшен внутренний отступ */
+  margin: 0; /* Убраны внешние отступы */
   background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Уменьшена тень */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -201,20 +201,7 @@ nav button:hover {
   align-items: center;
   width: 100%;
   height: 80px;
-  margin-bottom: 12px;
-}
-
-.dish-image {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
-
-.dish-placeholder {
-  width: 80px;
-  height: 80px;
-  background-color: #e2e8f0;
-  border-radius: 6px;
+  margin-bottom: 8px; /* Уменьшен отступ */
 }
 
 /* Название блюда */
@@ -249,7 +236,7 @@ nav button:hover {
 
 /* Детали блюда (скрыты по умолчанию) */
 .dish-details {
-  margin-top: 12px;
+  margin-top: 8px;
   font-size: 14px;
   color: #4a5568;
   display: none;
@@ -276,7 +263,7 @@ nav button:hover {
 
 /* Кнопка "Развернуть" */
 .dish-card > button {
-  margin: 12px auto 0;
+  margin: 8px auto 0;
   width: 80%;
   max-width: 200px;
   text-align: center;
@@ -287,7 +274,9 @@ nav button:hover {
   .dish-card {
     width: 160px;
     min-height: 280px;
-    margin: 0; /* Убраны внешние отступы */
+    padding: 6px; /* Уменьшен внутренний отступ */
+    margin: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .dish-name {
@@ -297,6 +286,7 @@ nav button:hover {
 
   .dish-image-container {
     height: 60px;
+    margin-bottom: 6px;
   }
 
   .dish-image,
