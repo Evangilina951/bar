@@ -9,13 +9,27 @@
   display: flex;
   gap: 16px !important;
   margin-bottom: 16px;
+  margin-top: 24px !important; /* Добавлен отступ сверху для разделения от ingredient-button-container */
   flex-wrap: wrap;
 }
 
 .ingredient-button-container {
-  margin-top: 16px; /* Отступ от блока ингредиентов */
+  margin-top: 24px; /* Увеличен отступ для разделения от ингредиентов */
+  margin-bottom: 16px; /* Добавлен отступ снизу */
   display: flex;
   justify-content: flex-start;
+}
+
+.ingredient-row {
+  display: flex;
+  gap: 16px; /* Отступ между полями ингредиента и количества */
+  align-items: center; /* Выравнивание по центру по вертикали */
+  margin-bottom: 8px; /* Отступ между строками ингредиентов */
+}
+
+.ingredient-row > div {
+  flex: 1; /* Поля равномерно распределяют пространство */
+  min-width: 0; /* Предотвращает переполнение */
 }
 
 .btn {
@@ -500,12 +514,18 @@ div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
   .dish-form-button-group {
     flex-direction: column;
     gap: 8px !important;
+    margin-top: 16px !important;
   }
   .btn-large {
     width: 100%;
   }
   .ingredient-button-container {
-    margin-top: 8px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+  .ingredient-row {
+    flex-direction: row; /* Гарантируем горизонтальное расположение */
+    gap: 8px;
   }
 }
 
