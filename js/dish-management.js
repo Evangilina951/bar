@@ -173,6 +173,8 @@ async function loadDishes() {
     dishDataArray.forEach(({ dish, ingredientNames, price_current_dish }) => {
       renderDishCard(dish, ingredientNames, categoryMap, price_current_dish);
     });
+    console.log('Карточки блюд загружены, текущий gap:', document.getElementById('dishes-list').style.gap);
+    console.log('Классы #dishes-list:', document.getElementById('dishes-list').className);
   } catch (error) {
     console.error('Ошибка загрузки блюд:', error);
     alert('Ошибка при загрузке блюд: ' + error.message);
@@ -185,29 +187,29 @@ function renderDishCard(dish, ingredientNames, categoryMap, price_current_dish) 
   dishCard.className = 'dish-card';
   const dishData = dish.data();
   const ingredientsList = ingredientNames.length > 0 
-    ? `<ul class="list-disc pl-4">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
+    ? `<ul class="dish-ingredients">${ingredientNames.map(name => `<li>${name}</li>`).join('')}</ul>` 
     : 'Нет';
   dishCard.innerHTML = `
-    <div class="flex flex-col h-full">
+    <div class="dish-card-inner">
       <div class="dish-image-container">
         ${dishData.image_dish ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="dish-image">` : '<div class="dish-placeholder"></div>'}
       </div>
       <p class="dish-name">${dishData.name_dish}</p>
       <p class="dish-price">${dishData.price_dish} $</p>
       <p class="dish-category">${categoryMap[dishData.category_id] || 'Нет'}</p>
-      <button onclick="toggleDishDetails(this)" class="bg-gray-600 text-white p-1 rounded mt-2 text-sm">Развернуть</button>
+      <button onclick="toggleDishDetails(this)" class="btn btn-secondary btn-small">Развернуть</button>
       <div class="dish-details" style="display: none;">
-        <p class="text-sm text-gray-600">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
-        <p class="text-sm text-gray-600">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
-        <p class="text-sm text-gray-600">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
-        <p class="text-sm text-gray-600">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
-        <p class="text-sm text-gray-600">Мин. порций: ${dishData.min_dish || 0}</p>
-        <p class="text-sm text-gray-600">Ингредиенты:</p>
+        <p class="dish-detail-text">Себестоимость: ${Math.round(price_current_dish * 100) / 100} $</p>
+        <p class="dish-detail-text">Зарплата: ${Math.round(dishData.salary_dish * 100) / 100} $</p>
+        <p class="dish-detail-text">Прибыль: ${Math.round(dishData.price_profit_dish * 100) / 100} $</p>
+        <p class="dish-detail-text">Вес: ${dishData.weight_dish != null ? dishData.weight_dish : 0} г</p>
+        <p class="dish-detail-text">Мин. порций: ${dishData.min_dish || 0}</p>
+        <p class="dish-detail-text">Ингредиенты:</p>
         ${ingredientsList}
-        <div class="flex gap-2 mt-2">
-          <button onclick="loadDishForEdit('${dish.id}')" class="edit-btn bg-yellow-600 text-white p-2 rounded flex-1">✏️</button>
-          <button onclick="deleteDish('${dish.id}')" class="delete-btn bg-red-600 text-white p-2 rounded flex-1">🗑️</button>
-          <button onclick="toggleDishVisibility('${dish.id}', ${!dishData.is_active_dish})" class="${dishData.is_active_dish ? 'toggle-active-btn bg-green-600' : 'toggle-inactive-btn bg-gray-600'} text-white p-2 rounded flex-1">${dishData.is_active_dish ? '✔️' : '❌'}</button>
+        <div class="button-group">
+          <button onclick="loadDishForEdit('${dish.id}')" class="btn btn-edit">✏️</button>
+          <button onclick="deleteDish('${dish.id}')" class="btn btn-delete">🗑️</button>
+          <button onclick="toggleDishVisibility('${dish.id}', ${!dishData.is_active_dish})" class="btn ${dishData.is_active_dish ? 'btn-active' : 'btn-inactive'}">${dishData.is_active_dish ? '✔️' : '❌'}</button>
         </div>
       </div>
     </div>`;
@@ -283,16 +285,16 @@ async function loadDishForEdit(dishId) {
           const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
           const name = ingredient.exists ? ingredient.data().name_product : 'Неизвестный ингредиент';
           return `
-            <div class="ingredient-row flex flex-col md:flex-row gap-4">
-              <div class="flex-1">
-                <label class="block mb-1">Ингредиент:</label>
-                <input type="text" id="ingredient-search-${index}" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options" value="${name}" data-ingredient-id="${ing.ingredient_id || ''}">
+            <div class="ingredient-row">
+              <div>
+                <label class="form-label">Ингредиент:</label>
+                <input type="text" id="ingredient-search-${index}" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options" value="${name}" data-ingredient-id="${ing.ingredient_id || ''}">
               </div>
-              <div class="flex-1">
-                <label class="block mb-1">Количество:</label>
-                <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
+              <div>
+                <label class="form-label">Количество:</label>
+                <input type="number" class="dish-ingredient-quantity form-input" placeholder="Количество" min="0" step="0.1" value="${ing.quantity || 0}">
               </div>
-              ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="bg-red-600 text-white p-1 rounded mt-2 md:mt-0 md:ml-2">Удалить</button>` : ''}
+              ${index > 0 ? `<button onclick="removeIngredientRow(this)" class="btn btn-delete btn-small">Удалить</button>` : ''}
             </div>
           `;
         } catch (error) {
@@ -305,14 +307,14 @@ async function loadDishForEdit(dishId) {
       if (!dishData.ingredients || dishData.ingredients.length === 0) {
         container.innerHTML = `
           <datalist id="ingredient-options"></datalist>
-          <div class="ingredient-row flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-              <label class="block mb-1">Ингредиент:</label>
-              <input type="text" id="ingredient-search-0" class="border p-2 w-full rounded" placeholder="Введите название ингредиента" list="ingredient-options">
+          <div class="ingredient-row">
+            <div>
+              <label class="form-label">Ингредиент:</label>
+              <input type="text" id="ingredient-search-0" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options">
             </div>
-            <div class="flex-1">
-              <label class="block mb-1">Количество:</label>
-              <input type="number" class="dish-ingredient-quantity border p-2 w-full rounded" placeholder="Количество" min="0" step="0.1">
+            <div>
+              <label class="form-label">Количество:</label>
+              <input type="number" class="dish-ingredient-quantity form-input" placeholder="Количество" min="0" step="0.1">
             </div>
           </div>
         `;
