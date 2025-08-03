@@ -91,18 +91,18 @@
               <datalist id="ingredient-options"></datalist>
               <div class="ingredient-row">
                 <div>
-                  <label class="form-label">Ингредиент:</label>
                   <input type="text" id="ingredient-search-0" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options">
                 </div>
                 <div>
-                  <label class="form-label">Количество:</label>
                   <input type="number" class="dish-ingredient-quantity form-input" placeholder="Количество" min="0" step="0.1">
                 </div>
               </div>
             </div>
+            <div class="ingredient-button-container">
+              <button onclick="addIngredientRow()" class="btn btn-primary btn-large">Добавить ингредиент</button>
+            </div>
           </div>
           <div class="dish-form-button-group">
-            <button onclick="addIngredientRow()" class="btn btn-primary btn-large">Добавить ингредиент</button>
             <button id="dish-form-button" onclick="addDish()" class="btn btn-primary btn-large">Сохранить</button>
             <button onclick="cancelDishForm()" class="btn btn-secondary btn-large">Отмена</button>
           </div>
