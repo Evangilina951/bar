@@ -163,11 +163,20 @@ nav button:hover {
 }
 
 /* Контейнер блюд (для dishes.html) */
-#dishes-list {
+.column-right #dishes-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px; /* Уменьшенный отступ между карточками */
-  padding: 8px; /* Уменьшенный внешний отступ */
+  gap: 12px !important; /* Уменьшенный отступ между карточками */
+  padding: 8px !important;
+}
+
+/* Адаптивность для карточек */
+@media (max-width: 640px) {
+  .column-right #dishes-list {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px !important; /* Уменьшенный отступ для мобильных */
+    padding: 8px !important;
+  }
 }
 
 /* Карточка блюда (для dishes.html) */
@@ -274,12 +283,6 @@ nav button:hover {
 
 /* Адаптивность для карточек */
 @media (max-width: 640px) {
-  #dishes-list {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px; /* Уменьшенный отступ для мобильных */
-    padding: 8px;
-  }
-
   .dish-card {
     width: 160px;
     min-height: 280px;
