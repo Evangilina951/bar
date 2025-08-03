@@ -99,8 +99,10 @@ function initializeApp() {
     if (document.getElementById('nav')) loadNav();
     if (document.getElementById('dishes-list')) {
       loadDishes();
-      document.getElementById('dishes-list').style.gap = '4px';
-      console.log('Установлен gap: 4px для #dishes-list');
+      const dishesList = document.getElementById('dishes-list');
+      dishesList.style.rowGap = '16px';
+      dishesList.style.columnGap = '4px';
+      console.log('Установлен row-gap: 16px, column-gap: 4px для #dishes-list');
     }
     if (document.getElementById('categories-list')) loadCategoryList();
     if (document.getElementById('dish-category')) loadCategories();
