@@ -1,6 +1,19 @@
-/* Навигация (дополнение к Tailwind) */
+/* Навигация */
 nav {
+  background-color: #1f2937; /* Тёмный фон (аналог bg-gray-800) */
+  color: #ffffff; /* Белый текст */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+  max-width: 1280px; /* Аналог container mx-auto */
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 nav a,
@@ -16,7 +29,7 @@ nav button {
 
 nav a:hover,
 nav button:hover {
-  background-color: #4a5568;
+  background-color: #4a5568; /* Аналог hover:bg-gray-600 */
   transform: translateY(-1px);
 }
 
