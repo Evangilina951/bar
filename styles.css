@@ -7,9 +7,15 @@
 
 .dish-form-button-group {
   display: flex;
-  gap: 16px !important; /* Увеличен gap для кнопок в форме блюда */
+  gap: 16px !important;
   margin-bottom: 16px;
-  flex-wrap: wrap; /* Для предотвращения слияния на маленьких экранах */
+  flex-wrap: wrap;
+}
+
+.ingredient-button-container {
+  margin-top: 16px; /* Отступ от блока ингредиентов */
+  display: flex;
+  justify-content: flex-start;
 }
 
 .btn {
@@ -21,8 +27,8 @@
 }
 
 .btn-large {
-  padding: 10px 20px; /* Увеличено для больших кнопок */
-  font-size: 16px; /* Увеличен шрифт */
+  padding: 10px 20px;
+  font-size: 16px;
 }
 
 .btn-primary {
@@ -184,7 +190,7 @@
 }
 
 .dish-ingredients li {
-  font-size: 14px; /* Возвращён к 14px */
+  font-size: 14px;
   color: #4a5568;
 }
 
@@ -489,7 +495,7 @@ div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
   }
 }
 
-/* Адаптивность для таблицы инвентаря */
+/* Адаптивность для формы блюда */
 @media (max-width: 640px) {
   .dish-form-button-group {
     flex-direction: column;
@@ -497,6 +503,9 @@ div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
   }
   .btn-large {
     width: 100%;
+  }
+  .ingredient-button-container {
+    margin-top: 8px;
   }
 }
 
