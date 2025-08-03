@@ -227,6 +227,23 @@ function toggleDishDetails(button) {
   }
 }
 
+function showDishForm() {
+  const form = document.getElementById('dish-form');
+  if (form) {
+    form.classList.remove('hidden');
+    const buttonGroup = form.querySelector('.dish-form-button-group');
+    if (buttonGroup) {
+      console.log('Классы .dish-form-button-group:', buttonGroup.className);
+      console.log('Стили .dish-form-button-group gap:', getComputedStyle(buttonGroup).gap);
+      console.log('Кнопки в .dish-form-button-group:', buttonGroup.querySelectorAll('button').length);
+    } else {
+      console.error('.dish-form-button-group не найден в #dish-form');
+    }
+  } else {
+    console.error('Форма с id="dish-form" не найдена');
+  }
+}
+
 async function loadDishForEdit(dishId) {
   if (!firebaseApp) {
     alert('Firebase не инициализирован. Перезагрузите страницу.');
@@ -448,6 +465,7 @@ window.addDish = addDish;
 window.loadDishes = loadDishes;
 window.renderDishCard = renderDishCard;
 window.toggleDishDetails = toggleDishDetails;
+window.showDishForm = showDishForm;
 window.loadDishForEdit = loadDishForEdit;
 window.editDish = editDish;
 window.deleteDish = deleteDish;
