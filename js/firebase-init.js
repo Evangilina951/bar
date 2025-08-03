@@ -97,7 +97,11 @@ function initializeApp() {
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
     if (document.getElementById('nav')) loadNav();
-    if (document.getElementById('dishes-list')) loadDishes();
+    if (document.getElementById('dishes-list')) {
+      loadDishes();
+      document.getElementById('dishes-list').style.gap = '4px';
+      console.log('Установлен gap: 4px для #dishes-list');
+    }
     if (document.getElementById('categories-list')) loadCategoryList();
     if (document.getElementById('dish-category')) loadCategories();
     if (document.getElementById('inventory-list')) loadInventory();
