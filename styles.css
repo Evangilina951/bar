@@ -166,8 +166,8 @@ nav button:hover {
 #dishes-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
-  padding: 16px;
+  gap: 16px; /* Уменьшенный отступ между карточками */
+  padding: 8px; /* Уменьшенный внешний отступ */
 }
 
 /* Карточка блюда (для dishes.html) */
@@ -276,7 +276,8 @@ nav button:hover {
 @media (max-width: 640px) {
   #dishes-list {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px;
+    gap: 12px; /* Уменьшенный отступ для мобильных */
+    padding: 8px;
   }
 
   .dish-card {
@@ -309,4 +310,40 @@ nav button:hover {
   #inventory-list {
     overflow-x: auto;
   }
+}
+
+/* Стили для формы блюда */
+#dish-form .grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+#dish-form input[type="text"],
+#dish-form input[type="number"],
+#dish-form select {
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#dish-form input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 8px;
+}
+
+#dish-form .ingredient-row input {
+  font-size: 14px;
+}
+
+#dish-form .ingredient-row label {
+  font-size: 14px;
+  color: #1a202c;
+}
+
+#dish-form button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
 }
