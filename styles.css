@@ -1,8 +1,15 @@
 /* Общие стили */
 .button-group {
   display: flex;
-  gap: 12px; /* Увеличен с 8px до 12px для предотвращения слияния кнопок */
+  gap: 12px;
   margin-bottom: 16px;
+}
+
+.dish-form-button-group {
+  display: flex;
+  gap: 16px !important; /* Увеличен gap для кнопок в форме блюда */
+  margin-bottom: 16px;
+  flex-wrap: wrap; /* Для предотвращения слияния на маленьких экранах */
 }
 
 .btn {
@@ -11,6 +18,11 @@
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.btn-large {
+  padding: 10px 20px; /* Увеличено для больших кнопок */
+  font-size: 16px; /* Увеличен шрифт */
 }
 
 .btn-primary {
@@ -162,7 +174,7 @@
 }
 
 .dish-detail-text {
-  font-size: 14px; /* Увеличен с 12px до 14px */
+  font-size: 14px;
   color: #4a5568;
 }
 
@@ -172,7 +184,7 @@
 }
 
 .dish-ingredients li {
-  font-size: 16px; /* Увеличен с 14px до 16px */
+  font-size: 14px; /* Возвращён к 14px */
   color: #4a5568;
 }
 
@@ -326,8 +338,8 @@ nav button:hover {
 div.columns-dishes div.column-right #dishes-list {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  row-gap: 16px !important; /* Увеличен вертикальный интервал */
-  column-gap: 4px !important; /* Сохранён горизонтальный интервал */
+  row-gap: 16px !important;
+  column-gap: 4px !important;
   padding: 0px !important;
 }
 
@@ -429,7 +441,7 @@ div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
 }
 
 .dish-details ul li {
-  font-size: 16px;
+  font-size: 14px;
   color: #4a5568;
 }
 
@@ -474,6 +486,17 @@ div.columns-dishes div.column-right #dishes-list[class*="gap-"] {
 
   .dish-card > button {
     width: 90%;
+  }
+}
+
+/* Адаптивность для таблицы инвентаря */
+@media (max-width: 640px) {
+  .dish-form-button-group {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+  .btn-large {
+    width: 100%;
   }
 }
 
