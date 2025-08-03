@@ -40,14 +40,16 @@ function initializeApp() {
     }
     navElement.innerHTML = `
       <nav>
-        <a href="/bar/menu.html">Меню</a>
-        <a href="/bar/promocodes.html">Промокоды</a>
-        <a href="/bar/dishes.html">Блюда</a>
-        <a href="/bar/inventory.html">Инвентаризация</a>
-        <a href="/bar/personal-report.html">Личная отчетность</a>
-        <a href="/bar/general-report.html">Общая отчетность</a>
-        <a href="/bar/employees.html">Сотрудники</a>
-        <button onclick="logout()">Выход</button>
+        <div class="nav-container">
+          <a href="/bar/menu.html">Меню</a>
+          <a href="/bar/promocodes.html">Промокоды</a>
+          <a href="/bar/dishes.html">Блюда</a>
+          <a href="/bar/inventory.html">Инвентаризация</a>
+          <a href="/bar/personal-report.html">Личная отчетность</a>
+          <a href="/bar/general-report.html">Общая отчетность</a>
+          <a href="/bar/employees.html">Сотрудники</a>
+          <button onclick="logout()">Выход</button>
+        </div>
       </nav>
     `;
     console.log('Навигация вставлена в DOM');
