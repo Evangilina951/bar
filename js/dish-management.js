@@ -236,12 +236,14 @@ function showDishForm() {
     if (ingredientButtonContainer) {
       console.log('Классы .ingredient-button-container:', ingredientButtonContainer.className);
       console.log('Стили .ingredient-button-container margin-top:', getComputedStyle(ingredientButtonContainer).marginTop);
+      console.log('Стили .ingredient-button-container margin-bottom:', getComputedStyle(ingredientButtonContainer).marginBottom);
     } else {
       console.error('.ingredient-button-container не найден в #dish-form');
     }
     if (buttonGroup) {
       console.log('Классы .dish-form-button-group:', buttonGroup.className);
       console.log('Стили .dish-form-button-group gap:', getComputedStyle(buttonGroup).gap);
+      console.log('Стили .dish-form-button-group margin-top:', getComputedStyle(buttonGroup).marginTop);
       console.log('Кнопки в .dish-form-button-group:', buttonGroup.querySelectorAll('button').length);
     } else {
       console.error('.dish-form-button-group не найден в #dish-form');
@@ -259,7 +261,7 @@ function addIngredientRow() {
   }
   const rowCount = container.querySelectorAll('.ingredient-row').length;
   const newRow = document.createElement('div');
-  newRow.className = 'ingredient-row';
+  newRow.className = 'ingredient-row flex';
   newRow.innerHTML = `
     <div>
       <input type="text" id="ingredient-search-${rowCount}" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options">
@@ -335,7 +337,7 @@ async function loadDishForEdit(dishId) {
           const ingredient = await db.collection('ingredients').doc(ing.ingredient_id).get();
           const name = ingredient.exists ? ingredient.data().name_product : 'Неизвестный ингредиент';
           return `
-            <div class="ingredient-row">
+            <div class="ingredient-row flex">
               <div>
                 <input type="text" id="ingredient-search-${index}" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options" value="${name}" data-ingredient-id="${ing.ingredient_id || ''}">
               </div>
@@ -355,7 +357,7 @@ async function loadDishForEdit(dishId) {
       if (!dishData.ingredients || dishData.ingredients.length === 0) {
         container.innerHTML = `
           <datalist id="ingredient-options"></datalist>
-          <div class="ingredient-row">
+          <div class="ingredient-row flex">
             <div>
               <input type="text" id="ingredient-search-0" class="form-input" placeholder="Введите название ингредиента" list="ingredient-options">
             </div>
