@@ -6,7 +6,11 @@ body {
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 0 16px; /* Уменьшенный padding для минимизации отступов */
+}
+
+.container.dishes-page {
+  padding: 0; /* Убираем padding для dishes.html */
 }
 
 .text-2xl {
@@ -269,19 +273,19 @@ nav button:hover {
 .columns-inventory {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 @media (min-width: 1024px) {
   .columns-inventory {
     display: grid;
     grid-template-columns: 3fr 1fr;
-    gap: 24px;
+    gap: 16px;
   }
   .column-left {
     width: 100%;
     border-right: 2px solid #3b82f6;
-    padding-right: 24px;
+    padding-right: 16px;
   }
   .column-right {
     width: 100%;
@@ -292,19 +296,19 @@ nav button:hover {
 .columns-dishes {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 @media (min-width: 1024px) {
   .columns-dishes {
     display: grid;
     grid-template-columns: 1fr 3fr;
-    gap: 24px;
+    gap: 16px;
   }
   .column-left {
     width: 100%;
     border-right: 2px solid #3b82f6;
-    padding-right: 24px;
+    padding-right: 16px;
   }
   .column-right {
     width: 100%;
@@ -315,19 +319,19 @@ nav button:hover {
 .columns-menu {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 @media (min-width: 1024px) {
   .columns-menu {
     display: grid;
     grid-template-columns: 3fr 1fr;
-    gap: 24px;
+    gap: 16px;
   }
   .column-left {
     width: 100%;
     border-right: 2px solid #3b82f6;
-    padding-right: 24px;
+    padding-right: 16px;
   }
   .column-right {
     width: 100%;
@@ -336,6 +340,14 @@ nav button:hover {
 
 /* Карточка блюда в меню */
 #menu-dishes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  row-gap: 16px;
+  column-gap: 4px;
+  padding: 0;
+}
+
+.menu-dishes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   row-gap: 16px;
