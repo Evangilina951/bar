@@ -1,161 +1,249 @@
-let activeOrder = []; // Массив для хранения активного заказа: [{ dishId, name, price, quantity }]
+let orderItems = [];
+let promoDiscount = 0;
 
-async function loadMenu() {
+function loadMenuDishes() {
   if (!firebaseApp) {
     console.error('Firebase не инициализирован.');
     return;
   }
-  const db = firebaseApp.firestore();
-  const dishesList = document.getElementById('menu-dishes-list');
-  if (!dishesList) {
-    console.error('Элемент с id="menu-dishes-list" не найден в DOM');
+  const list = document.getElementById('dishes-list');
+  if (!list) {
+    console.error('Элемент с id="dishes-list" не найден в DOM');
     return;
   }
-
-  try {
-    // Загрузка активных категорий
-    const categoriesSnapshot = await db.collection('categories')
-      .where('is_visible', '==', true)
-      .orderBy('number', 'asc')
-      .get();
-    if (categoriesSnapshot.empty) {
-      dishesList.innerHTML = '<p class="text-gray-500">Нет активных категорий</p>';
-      return;
-    }
-
-    dishesList.innerHTML = '';
-    // Проходим по каждой категории
-    for (const category of categoriesSnapshot.docs) {
-      const categoryData = category.data();
-      // Заголовок категории
-      const categoryHeader = document.createElement('h2');
-      categoryHeader.className = 'text-lg font-semibold mt-4 mb-2';
-      categoryHeader.textContent = categoryData.name;
-      dishesList.appendChild(categoryHeader);
-
-      // Загрузка активных блюд в категории
-      const dishesSnapshot = await db.collection('dishes')
-        .where('category_id', '==', category.id)
-        .where('is_active_dish', '==', true)
-        .orderBy('name_dish', 'asc')
-        .get();
-
-      if (dishesSnapshot.empty) {
-        const noDishes = document.createElement('p');
-        noDishes.className = 'text-gray-500';
-        noDishes.textContent = 'Нет активных блюд';
-        dishesList.appendChild(noDishes);
-        continue;
+  const db = firebaseApp.firestore();
+  
+  db.collection('categories').where('isVisible', '==', true).orderBy('number', 'asc').get()
+    .then((categories) => {
+      list.innerHTML = '';
+      if (categories.empty) {
+        list.innerHTML = '<p class="text-gray-500">Категории отсутствуют</p>';
+        return;
       }
-
-      // Контейнер для блюд в категории
-      const categoryDishes = document.createElement('div');
-      categoryDishes.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
-      dishesSnapshot.forEach((dish) => {
-        const dishData = dish.data();
-        const dishCard = document.createElement('div');
-        dishCard.className = 'menu-dish-card';
-        dishCard.onclick = () => addToOrder(dish.id, dishData.name_dish, dishData.price_dish);
-        dishCard.innerHTML = `
-          <div class="menu-dish-name">${dishData.name_dish}</div>
-          <div class="menu-dish-image-container">
-            ${dishData.image_dish 
-              ? `<img src="${dishData.image_dish}" alt="${dishData.name_dish}" class="menu-dish-image">`
-              : '<div class="menu-dish-placeholder"></div>'}
-          </div>
-          <div class="menu-dish-price">${dishData.price_dish} $</div>
-        `;
-        categoryDishes.appendChild(dishCard);
+      const categoryPromises = categories.docs.map(async (cat) => {
+        const catData = cat.data();
+        const dishes = await db.collection('dishes')
+          .where('category_id', '==', cat.id)
+          .where('is_active_dish', '==', true)
+          .get();
+        if (!dishes.empty) {
+          list.innerHTML += `<h2 class="text-lg font-semibold mt-4 mb-2">${catData.number}. ${catData.name}</h2>`;
+          dishes.forEach((dish) => {
+            const dishData = dish.data();
+            renderMenuDishCard(dish.id, dishData);
+          });
+        }
       });
-      dishesList.appendChild(categoryDishes);
-    }
-  } catch (error) {
-    console.error('Ошибка загрузки меню:', error);
-    alert('Ошибка при загрузке меню: ' + error.message);
-  }
+      Promise.all(categoryPromises)
+        .then(() => updateOrderSummary())
+        .catch((error) => {
+          console.error('Ошибка загрузки блюд:', error);
+          alert('Ошибка при загрузке блюд: ' + error.message);
+        });
+    })
+    .catch((error) => {
+      console.error('Ошибка загрузки категорий:', error);
+      alert('Ошибка при загрузке категорий: ' + error.message);
+    });
 }
 
-function addToOrder(dishId, name, price) {
-  const existingItem = activeOrder.find(item => item.dishId === dishId);
+function renderMenuDishCard(dishId, dishData) {
+  const list = document.getElementById('dishes-list');
+  const card = document.createElement('div');
+  card.className = 'menu-dish-card bg-white rounded-lg shadow p-2 cursor-pointer';
+  card.onclick = () => addToOrder(dishId, dishData);
+  card.innerHTML = `
+    <div class="menu-dish-name font-semibold text-center mb-2">${dishData.name_dish}</div>
+    <div class="menu-dish-image-container flex justify-center mb-2">
+      ${dishData.image_dish 
+        ? `<img src="${dishData.image_dish}" class="menu-dish-image" alt="${dishData.name_dish}">`
+        : '<div class="menu-dish-placeholder"></div>'
+      }
+    </div>
+    <div class="menu-dish-price text-green-600 text-center font-semibold">$${dishData.price_dish.toFixed(2)}</div>
+  `;
+  list.appendChild(card);
+}
+
+function addToOrder(dishId, dishData) {
+  const existingItem = orderItems.find(item => item.dishId === dishId);
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
-    activeOrder.push({ dishId, name, price, quantity: 1 });
+    orderItems.push({
+      dishId,
+      name: dishData.name_dish,
+      price: dishData.price_dish,
+      quantity: 1,
+      ingredients: dishData.ingredients || []
+    });
   }
-  updateOrderDisplay();
+  updateOrderSummary();
 }
 
 function removeFromOrder(dishId) {
-  activeOrder = activeOrder.filter(item => item.dishId !== dishId);
-  updateOrderDisplay();
+  orderItems = orderItems.filter(item => item.dishId !== dishId);
+  updateOrderSummary();
 }
 
-function updateOrderQuantity(dishId, change) {
-  const item = activeOrder.find(item => item.dishId === dishId);
+function updateOrderItemQuantity(dishId, newQuantity) {
+  const item = orderItems.find(item => item.dishId === dishId);
   if (item) {
-    item.quantity = Math.max(1, item.quantity + change);
-    updateOrderDisplay();
+    newQuantity = parseInt(newQuantity) || 0;
+    if (newQuantity <= 0) {
+      removeFromOrder(dishId);
+    } else {
+      item.quantity = newQuantity;
+    }
+    updateOrderSummary();
   }
 }
 
-function updateOrderDisplay() {
-  const orderItems = document.getElementById('order-items');
-  const orderTotal = document.getElementById('order-total');
-  if (!orderItems || !orderTotal) {
-    console.error('Элементы order-items или order-total не найдены');
+async function updateOrderSummary() {
+  const orderItemsContainer = document.getElementById('order-items');
+  const orderTotalElement = document.getElementById('order-total-amount');
+  const missingIngredientsElement = document.getElementById('missing-ingredients');
+  
+  if (!orderItemsContainer || !orderTotalElement || !missingIngredientsElement) {
+    console.error('Не найдены элементы DOM для активного заказа');
     return;
   }
 
-  orderItems.innerHTML = '';
-  if (activeOrder.length === 0) {
-    orderItems.innerHTML = '<p class="text-gray-500">Заказ пуст</p>';
-    orderTotal.textContent = 'Сумма заказа: 0 $';
-    return;
-  }
-
+  orderItemsContainer.innerHTML = '';
   let total = 0;
-  activeOrder.forEach(item => {
-    const itemTotal = item.price * item.quantity;
-    total += itemTotal;
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span>${item.name} (${item.quantity} x ${item.price} $)</span>
-      <div class="order-item-controls">
-        <button onclick="updateOrderQuantity('${item.dishId}', -1)" class="btn btn-small btn-secondary">-</button>
-        <button onclick="updateOrderQuantity('${item.dishId}', 1)" class="btn btn-small btn-primary">+</button>
+  const db = firebaseApp.firestore();
+  const ingredientRequirements = {};
+
+  for (const item of orderItems) {
+    const subtotal = item.price * item.quantity;
+    total += subtotal;
+    item.ingredients.forEach(ing => {
+      if (!ingredientRequirements[ing.ingredient_id]) {
+        ingredientRequirements[ing.ingredient_id] = 0;
+      }
+      ingredientRequirements[ing.ingredient_id] += ing.quantity * item.quantity;
+    });
+
+    const orderItem = document.createElement('div');
+    orderItem.className = 'order-item flex items-center justify-between mb-2';
+    orderItem.innerHTML = `
+      <span>${item.name} ($${item.price.toFixed(2)})</span>
+      <div class="flex items-center gap-2">
+        <button onclick="updateOrderItemQuantity('${item.dishId}', ${item.quantity - 1})" class="btn btn-small bg-gray-600 text-white">-</button>
+        <input type="number" value="${item.quantity}" min="1" class="border p-1 w-12 text-center" onchange="updateOrderItemQuantity('${item.dishId}', this.value)">
+        <button onclick="updateOrderItemQuantity('${item.dishId}', ${item.quantity + 1})" class="btn btn-small bg-gray-600 text-white">+</button>
         <button onclick="removeFromOrder('${item.dishId}')" class="btn btn-small btn-delete">✖</button>
       </div>
     `;
-    orderItems.appendChild(li);
-  });
-  orderTotal.textContent = `Сумма заказа: ${total.toFixed(2)} $`;
+    orderItemsContainer.appendChild(orderItem);
+  }
+
+  total = total * (1 - promoDiscount);
+  orderTotalElement.textContent = `$${total.toFixed(2)}`;
+
+  const missingIngredients = [];
+  for (const [ingredientId, requiredQuantity] of Object.entries(ingredientRequirements)) {
+    try {
+      const ingredient = await db.collection('ingredients').doc(ingredientId).get();
+      if (ingredient.exists) {
+        const ingData = ingredient.data();
+        const stock = ingData.stock_quantity_product || 0;
+        if (stock < requiredQuantity) {
+          missingIngredients.push(`${ingData.name_product} (${(requiredQuantity - stock).toFixed(2)})`);
+        }
+      }
+    } catch (error) {
+      console.error(`Ошибка проверки ингредиента ${ingredientId}:`, error);
+    }
+  }
+
+  if (missingIngredients.length > 0) {
+    missingIngredientsElement.textContent = `Не хватает: ${missingIngredients.join(', ')}`;
+    missingIngredientsElement.classList.remove('hidden');
+  } else {
+    missingIngredientsElement.classList.add('hidden');
+  }
 }
 
 function applyPromoCode() {
   const promoCode = document.getElementById('promo-code')?.value;
-  if (promoCode) {
-    alert(`Промокод "${promoCode}" применен (заглушка)`);
-    // Здесь должна быть логика проверки и применения промокода
-  } else {
-    alert('Введите промокод');
+  if (!promoCode) {
+    alert('Введите промокод.');
+    return;
   }
+  const db = firebaseApp.firestore();
+  db.collection('promocodes').where('code', '==', promoCode).get()
+    .then((snapshot) => {
+      if (snapshot.empty) {
+        alert('Промокод недействителен.');
+        promoDiscount = 0;
+      } else {
+        const promoData = snapshot.docs[0].data();
+        if (promoData.isActive && (!promoData.expiryDate || new Date(promoData.expiryDate) > new Date())) {
+          promoDiscount = promoData.discount / 100;
+          alert(`Промокод применен! Скидка: ${promoData.discount}%`);
+        } else {
+          alert('Промокод истек или неактивен.');
+          promoDiscount = 0;
+        }
+      }
+      updateOrderSummary();
+    })
+    .catch((error) => {
+      console.error('Ошибка проверки промокода:', error);
+      alert('Ошибка при проверке промокода: ' + error.message);
+    });
 }
 
-function cancelPromoCode() {
-  const promoInput = document.getElementById('promo-code');
-  if (promoInput) {
-    promoInput.value = '';
-    alert('Промокод отменен (заглушка)');
-    // Здесь должна быть логика отмены промокода
+function submitOrder() {
+  if (!firebaseApp) {
+    alert('Firebase не инициализирован. Перезагрузите страницу.');
+    return;
   }
+  if (orderItems.length === 0) {
+    alert('Заказ пуст. Добавьте блюда в заказ.');
+    return;
+  }
+  const db = firebaseApp.firestore();
+  const orderData = {
+    items: orderItems.map(item => ({
+      dishId: item.dishId,
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    total: parseFloat(document.getElementById('order-total-amount').textContent.replace('$', '')),
+    createdAt: new Date().toISOString(),
+    status: 'pending'
+  };
+  db.collection('orders').add(orderData)
+    .then(() => {
+      orderItems = [];
+      promoDiscount = 0;
+      document.getElementById('promo-code').value = '';
+      updateOrderSummary();
+      alert('Заказ успешно оформлен!');
+    })
+    .catch((error) => {
+      console.error('Ошибка оформления заказа:', error);
+      alert('Ошибка при оформлении заказа: ' + error.message);
+    });
+}
+
+function cancelOrder() {
+  orderItems = [];
+  promoDiscount = 0;
+  document.getElementById('promo-code').value = '';
+  updateOrderSummary();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  loadMenu();
+  loadMenuDishes();
 });
 
 window.addToOrder = addToOrder;
 window.removeFromOrder = removeFromOrder;
-window.updateOrderQuantity = updateOrderQuantity;
+window.updateOrderItemQuantity = updateOrderItemQuantity;
 window.applyPromoCode = applyPromoCode;
-window.cancelPromoCode = cancelPromoCode;
+window.submitOrder = submitOrder;
+window.cancelOrder = cancelOrder;
