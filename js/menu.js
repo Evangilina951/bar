@@ -22,6 +22,7 @@ function loadMenuDishes() {
       }
       const categoryPromises = categories.docs.map(async (cat) => {
         const catData = cat.data();
+        console.log('Загружена категория:', cat.id, catData); // Логирование данных категории
         const dishes = await db.collection('dishes')
           .where('category_id', '==', cat.id)
           .where('is_active_dish', '==', true)
@@ -30,6 +31,7 @@ function loadMenuDishes() {
           list.innerHTML += `<h2 class="text-lg font-semibold mt-4 mb-2">${catData.number}. ${catData.name}</h2>`;
           dishes.forEach((dish) => {
             const dishData = dish.data();
+            console.log('Загружено блюдо:', dish.id, dishData); // Логирование данных блюда
             renderMenuDishCard(dish.id, dishData);
           });
         }
@@ -48,10 +50,14 @@ function loadMenuDishes() {
 }
 
 function renderMenuDishCard(dishId, dishData) {
+  console.log('Рендеринг карточки для блюда:', dishId, dishData); // Логирование перед рендерингом
   const list = document.getElementById('dishes-list');
   const card = document.createElement('div');
   card.className = 'menu-dish-card bg-white rounded-lg shadow p-2 cursor-pointer';
-  card.onclick = () => addToOrder(dishId, dishData);
+  card.onclick = () => {
+    console.log('Клик по блюду:', dishId, dishData.name_dish); // Логирование клика
+    addToOrder(dishId, dishData);
+  };
   card.innerHTML = `
     <div class="menu-dish-name font-semibold text-center mb-2">${dishData.name_dish}</div>
     <div class="menu-dish-image-container flex justify-center mb-2">
@@ -66,10 +72,15 @@ function renderMenuDishCard(dishId, dishData) {
 }
 
 function addToOrder(dishId, dishData) {
+  console.log('Добавление в заказ:', dishId, dishData); // Логирование данных при добавлении
   const existingItem = orderItems.find(item => item.dishId === dishId);
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
+    if (!dishData.name_dish || !dishData.price_dish) {
+      console.error('Некорректные данные блюда:', dishData);
+      return;
+    }
     orderItems.push({
       dishId,
       name: dishData.name_dish,
@@ -238,6 +249,7 @@ function cancelOrder() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  console.log('Событие DOMContentLoaded: Загрузка блюд'); // Логирование загрузки
   loadMenuDishes();
 });
 
