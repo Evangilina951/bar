@@ -97,12 +97,17 @@ function initializeApp() {
   auth.onAuthStateChanged((user) => {
     console.log('Состояние авторизации:', user ? 'Авторизован' : 'Не авторизован');
     if (document.getElementById('nav')) loadNav();
-    if (document.getElementById('dishes-list')) {
-      loadDishes();
-      const dishesList = document.getElementById('dishes-list');
-      dishesList.style.rowGap = '16px';
-      dishesList.style.columnGap = '4px';
-      console.log('Установлен row-gap: 16px, column-gap: 4px для #dishes-list');
+    // Пропускаем loadDishes для menu.html
+    if (document.getElementById('dishes-list') && window.location.pathname !== '/bar/menu.html') {
+      if (typeof loadDishes === 'function') {
+        loadDishes();
+        const dishesList = document.getElementById('dishes-list');
+        dishesList.style.rowGap = '16px';
+        dishesList.style.columnGap = '4px';
+        console.log('Установлен row-gap: 16px, column-gap: 4px для #dishes-list');
+      } else {
+        console.warn('Функция loadDishes не определена. Пропуск загрузки блюд.');
+      }
     }
     if (document.getElementById('categories-list')) loadCategoryList();
     if (document.getElementById('dish-category')) loadCategories();
