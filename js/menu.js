@@ -22,7 +22,7 @@ function loadMenuDishes() {
       }
       const categoryPromises = categories.docs.map(async (cat) => {
         const catData = cat.data();
-        console.log('Загружена категория:', cat.id, catData); // Логирование данных категории
+        console.log('Загружена категория:', cat.id, catData);
         const dishes = await db.collection('dishes')
           .where('category_id', '==', cat.id)
           .where('is_active_dish', '==', true)
@@ -31,13 +31,16 @@ function loadMenuDishes() {
           list.innerHTML += `<h2 class="text-lg font-semibold mt-4 mb-2">${catData.number}. ${catData.name}</h2>`;
           dishes.forEach((dish) => {
             const dishData = dish.data();
-            console.log('Загружено блюдо:', dish.id, dishData); // Логирование данных блюда
+            console.log('Загружено блюдо:', dish.id, dishData);
             renderMenuDishCard(dish.id, dishData);
           });
         }
       });
       Promise.all(categoryPromises)
-        .then(() => updateOrderSummary())
+        .then(() => {
+          console.log('Все блюда загружены и отрендерены');
+          updateOrderSummary();
+        })
         .catch((error) => {
           console.error('Ошибка загрузки блюд:', error);
           alert('Ошибка при загрузке блюд: ' + error.message);
@@ -50,14 +53,15 @@ function loadMenuDishes() {
 }
 
 function renderMenuDishCard(dishId, dishData) {
-  console.log('Рендеринг карточки для блюда:', dishId, dishData); // Логирование перед рендерингом
+  console.log('Рендеринг карточки для блюда:', dishId, dishData);
   const list = document.getElementById('dishes-list');
   const card = document.createElement('div');
   card.className = 'menu-dish-card bg-white rounded-lg shadow p-2 cursor-pointer';
-  card.onclick = () => {
-    console.log('Клик по блюду:', dishId, dishData.name_dish); // Логирование клика
+  card.setAttribute('data-dish-id', dishId); // Добавляем data-атрибут для отладки
+  card.addEventListener('click', () => {
+    console.log('Клик по блюду:', dishId, dishData.name_dish);
     addToOrder(dishId, dishData);
-  };
+  });
   card.innerHTML = `
     <div class="menu-dish-name font-semibold text-center mb-2">${dishData.name_dish}</div>
     <div class="menu-dish-image-container flex justify-center mb-2">
@@ -69,18 +73,19 @@ function renderMenuDishCard(dishId, dishData) {
     <div class="menu-dish-price text-green-600 text-center font-semibold">$${dishData.price_dish.toFixed(2)}</div>
   `;
   list.appendChild(card);
+  console.log('Карточка добавлена в DOM:', card.outerHTML); // Лог HTML карточки
 }
 
 function addToOrder(dishId, dishData) {
-  console.log('Добавление в заказ:', dishId, dishData); // Логирование данных при добавлении
+  console.log('Добавление в заказ:', dishId, dishData);
+  if (!dishData.name_dish || !dishData.price_dish) {
+    console.error('Некорректные данные блюда:', dishData);
+    return;
+  }
   const existingItem = orderItems.find(item => item.dishId === dishId);
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
-    if (!dishData.name_dish || !dishData.price_dish) {
-      console.error('Некорректные данные блюда:', dishData);
-      return;
-    }
     orderItems.push({
       dishId,
       name: dishData.name_dish,
@@ -249,7 +254,7 @@ function cancelOrder() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  console.log('Событие DOMContentLoaded: Загрузка блюд'); // Логирование загрузки
+  console.log('Событие DOMContentLoaded: Загрузка блюд');
   loadMenuDishes();
 });
 
